@@ -8,6 +8,9 @@ var resolveBowerPath = function(componentPath) {
 module.exports = {
     cache: true,
 
+    //entry: '/app/app.js',
+    //output: 'bundle.js',
+
     resolve: {
         alias: {
             jquery: resolveBowerPath('/jquery/dist/jquery.js'),

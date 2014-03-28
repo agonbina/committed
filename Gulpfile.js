@@ -24,7 +24,7 @@ gulp.task('browser-sync', function () {
    browserSync.init([paths.css, paths.html], {
        proxy: {
            host: 'localhost',
-           port: '8080'
+           port: '3001'
        }
    });
 });

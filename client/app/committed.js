@@ -1,4 +1,4 @@
-var CommittedApp = require('./app'),
+var CommittedApp = require('app'),
     Parse = require('parse').Parse,
     User = require('./entities/user'),
     Project = require('./entities/project');

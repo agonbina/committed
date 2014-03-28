@@ -13,6 +13,7 @@ module.exports = {
 
     resolve: {
         alias: {
+            app: path.join(__dirname, 'app/app.js'),
             jquery: resolveBowerPath('/jquery/dist/jquery.js'),
             underscore: resolveBowerPath('/underscore/underscore.js'),
             backbone: resolveBowerPath('/backbone/backbone.js'),
@@ -22,17 +23,20 @@ module.exports = {
             'parse': path.join(__dirname, 'public/vendor/parse-1.2.17.js')
         }
     },
+
     module: {
         loaders: [
             { test: /\.hbs$/, loader: "handlebars-loader" }
         ]
     },
+
     plugins: [
         new webpack.ProvidePlugin({
             $: 'jquery',
             _: 'underscore',
             Backbone: 'backbone',
-            Marionette: 'backbone.marionette'
+            Marionette: 'backbone.marionette',
+            CommittedApp: 'app'
         })
     ]
 };

@@ -1,4 +1,4 @@
-var CommittedApp = require('../app'),
+var CommittedApp = require('app'),
     Parse = require('parse').Parse;
 
 CommittedApp.module('Entities', function (Entities, CommittedApp, Backbone, Marionette, $, _) {

@@ -15,6 +15,7 @@
     "handlebars-loader": "^0.1.5",
     "gulp": "^3.5.6",
     "gulp-compass": "^1.1.8",
-    "browser-sync": "^0.7.3"
+    "browser-sync": "^0.7.3",
+    "gulp-util": "^2.2.14"
   }
 }

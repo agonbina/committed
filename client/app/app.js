@@ -1,4 +1,4 @@
 var Marionette = require('backbone.marionette');
-var App = new Marionette.Application();
+var CommittedApp = new Marionette.Application();
 
-module.exports = App;
+module.exports = CommittedApp;

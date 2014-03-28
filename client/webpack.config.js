@@ -26,5 +26,13 @@ module.exports = {
         loaders: [
             { test: /\.hbs$/, loader: "handlebars-loader" }
         ]
-    }
+    },
+    plugins: [
+        new webpack.ProvidePlugin({
+            $: 'jquery',
+            _: 'underscore',
+            Backbone: 'backbone',
+            Marionette: 'backbone.marionette'
+        })
+    ]
 };

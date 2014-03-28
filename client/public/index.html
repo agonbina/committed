@@ -6,9 +6,24 @@
 </head>
 <body>
 
-<div id="main-region"></div>
+<div id="main-region" class="ui two column page grid">
+    <div class="column">
+        <div class="ui raised segment">content</div>
+    </div>
+    <div class="column">
+        <div class="ui raised segment">
+            More content, new
+        </div>
+    </div>
+</div>
 
 <!--<script src="vendor/semantic.js"></script>-->
 <script src="bundle.js"></script>
+
+<!-- Browser Sync -->
+<script src='//192.168.5.231:3000/socket.io/socket.io.js'></script>
+<script>var ___socket___ = io.connect('http://192.168.5.231:3000');</script>
+<script src='//192.168.5.231:3001/client/browser-sync-client.0.7.3.js'></script>
+
 </body>
 </html>

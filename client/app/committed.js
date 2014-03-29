@@ -1,8 +1,8 @@
 var CommittedApp = require('app'),
     Parse = require('parse').Parse,
     User = require('./entities/user'),
-    Project = require('./entities/project'),
-    ProjectsListView = require('./apps/projects/list/list_view');
+    Projects = require('./entities/projects'),
+    ProjectsListView = require('./apps/projects/list/projects_view');
 
 CommittedApp.addRegions({
     mainRegion: '#main-region'
@@ -13,18 +13,17 @@ CommittedApp.addInitializer(function () {
 });
 
 CommittedApp.on('initialize:after', function () {
-    var project = new Project();
-    project.save({
-        success: function (project) {
-            var projectsView = new ProjectsListView({
-                model: project
+    var projects = new Projects();
+    projects.fetch().then(function (projects) {
+            var projectsListView = new ProjectsListView({
+                collection: projects
             });
-            CommittedApp.mainRegion.show(projectsView);
-        },
-        error: function (project, err) {
-            console.log(err);
+
+            CommittedApp.mainRegion.show(projectsListView);
+        }, function (error) {
+            console.log(error);
         }
-    });
+    );
 });
 
 CommittedApp.start();

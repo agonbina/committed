@@ -49,7 +49,10 @@ gulp.task('browser-sync', function () {
 
 gulp.task('watch-sass', function () {
     gulp.watch(paths.all.sass, ['compass']);
-    gulp.watch(paths.client.app, ['webpack']);
+    gulp.watch([
+        paths.client.allScripts,
+        paths.all.handlebars
+    ], ['webpack']);
 });
 
 gulp.task('watch', ['watch-sass', 'browser-sync']);

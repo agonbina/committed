@@ -9,5 +9,11 @@ CommittedApp.module('Entities', function (Entities, CommittedApp, Backbone, Mari
         }
     });
 
+    var API = {
+        getProjectEntity: function (id) {
+
+        }
+    };
+
     module.exports = Entities.Project;
 });

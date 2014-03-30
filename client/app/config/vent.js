@@ -9,10 +9,10 @@ var _ = require('underscore');
  */
 
 var Handlers = {
-    'projects:list': function () {
+    /*'projects:list': function () {
         var Controller = require('../apps/projects/list/controller');
         Controller.listProjects();
-    }
+    }*/
 };
 
 module.exports = function (CommittedApp) {

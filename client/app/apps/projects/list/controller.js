@@ -5,6 +5,10 @@
 var CommittedApp = require('app'),
     ProjectsView = require('./projects_view');
 
+/**
+ * ProjectsApp.List controller
+ */
+
 CommittedApp.module('ProjectsApp.List', function (List, CommittedApp, Backbone, Marionette, $, _) {
     List.Controller = {
         listProjects: function () {

@@ -50,25 +50,9 @@
 	 */
 
 	var CommittedApp = __webpack_require__(1),
-	    Backbone = __webpack_require__(4),
-	    Parse = __webpack_require__(3).Parse,
+	    Backbone = __webpack_require__(5),
+	    Parse = __webpack_require__(4).Parse,
 	    User = __webpack_require__(2);
-
-	/**
-	 * App regions
-	 */
-
-	CommittedApp.addRegions({
-	    mainRegion: '#main-region'
-	});
-
-	/**
-	 * Initialize Parse
-	 */
-
-	CommittedApp.addInitializer(function () {
-	    Parse.initialize("BM7C5y6YaGzi31m1zoy2FiORwlqm7hPAeuj6Hrmz", "HytjMDhS0rOMTY0jY9Fi8J7x4fBGGim4ddrXMEkm");
-	});
 
 	/**
 	 * Helper: set history fragment
@@ -89,11 +73,37 @@
 	    return Backbone.history.fragment;
 	};
 
+	/**
+	 * App regions
+	 */
+
+	CommittedApp.addRegions({
+	    mainRegion: '#main-region'
+	});
+
+	/**
+	 * Initialize Parse
+	 */
+
+	CommittedApp.addInitializer(function () {
+	    Parse.initialize("BM7C5y6YaGzi31m1zoy2FiORwlqm7hPAeuj6Hrmz", "HytjMDhS0rOMTY0jY9Fi8J7x4fBGGim4ddrXMEkm");
+	});
+
+	/**
+	 * Start the sub-apps needed at runtime
+	 */
+
+	CommittedApp.addInitializer(function () {
+	    var ProjectsApp = __webpack_require__(3);
+	    ProjectsApp.start();
+	});
+
 	CommittedApp.on('initialize:after', function () {
 	    if (Backbone.history) {
 	        Backbone.history.start();
 
-	        if (CommittedApp.getCurrentRoute() === 'dashboard') {
+
+	        if (CommittedApp.getCurrentRoute() === '') {
 	            CommittedApp.trigger('projects:list');
 	        }
 	    }
@@ -108,14 +118,14 @@
 /* 1 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Marionette = __webpack_require__(7);
+	var Marionette = __webpack_require__(9);
 	var CommittedApp = new Marionette.Application();
 
 	// Configure the reqres handlers in one place
-	__webpack_require__(5)(CommittedApp.reqres);
+	__webpack_require__(6)(CommittedApp.reqres);
 
 	// Attach the global app events
-	__webpack_require__(6)(CommittedApp);
+	__webpack_require__(7)(CommittedApp);
 
 	module.exports = CommittedApp;
 
@@ -124,7 +134,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var CommittedApp = __webpack_require__(1),
-	    Parse = __webpack_require__(3).Parse;
+	    Parse = __webpack_require__(4).Parse;
 
 	CommittedApp.module('Entities', function (Entities, CommittedApp, Backbone, Marionette, $, _) {
 	    Entities.User = Parse.User;
@@ -136,6 +146,41 @@
 
 /***/ },
 /* 3 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Module dependencies
+	 */
+
+	var CommittedApp = __webpack_require__(1);
+
+	/**
+	 * ProjectsApp module
+	 */
+
+	CommittedApp.module('ProjectsApp', function (ProjectsApp, CommittedApp, Backbone, Marionette, $, _) {
+
+	    ProjectsApp.startWithParent = false;
+
+	    ProjectsApp.onBeforeStart = function () {
+	        __webpack_require__(8);
+	    };
+
+	    ProjectsApp.onStart = function () {
+	        console.log('starting ProjectsApp');
+	    };
+
+	    ProjectsApp.onStop = function () {
+	        console.log('stopping ProjectsApp');
+	    };
+
+	    module.exports = ProjectsApp;
+	});
+
+
+
+/***/ },
+/* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process, _) {/*!
@@ -175,8 +220,8 @@
 	            Parse.XMLHttpRequest = XMLHttpRequest;
 	        }
 
-	        Parse._ = __webpack_require__(11);
-	        Parse.$ = __webpack_require__(8);
+	        Parse._ = __webpack_require__(13);
+	        Parse.$ = __webpack_require__(10);
 
 	        exports.Parse = Parse;
 	    }
@@ -8034,10 +8079,10 @@
 	    };
 	}(this));
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(12), __webpack_require__(11)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(14), __webpack_require__(13)))
 
 /***/ },
-/* 4 */
+/* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;//     Backbone.js 1.1.2
@@ -8051,7 +8096,7 @@
 
 	  // Set up Backbone appropriately for the environment. Start with AMD.
 	  if (true) {
-	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(11), __webpack_require__(8), exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, $, exports) {
+	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(13), __webpack_require__(10), exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, $, exports) {
 	      // Export global even in AMD case in case this script is loaded with
 	      // others that may still expect a global Backbone.
 	      root.Backbone = factory(root, exports, _, $);
@@ -9651,7 +9696,7 @@
 
 
 /***/ },
-/* 5 */
+/* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -9660,13 +9705,13 @@
 
 	var Handlers = {
 	    getProjectEntity: function (id) {
-	        var Project = __webpack_require__(9),
+	        var Project = __webpack_require__(11),
 	            project = new Project();
 	        return project.fetch();
 	    },
 
 	    getProjectEntities: function () {
-	        var Projects = __webpack_require__(10),
+	        var Projects = __webpack_require__(12),
 	            projects = new Projects();
 	        return projects.fetch();
 	    }
@@ -9685,24 +9730,24 @@
 	};
 
 /***/ },
-/* 6 */
+/* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * Module dependencies
 	 */
 
-	var _ = __webpack_require__(11);
+	var _ = __webpack_require__(13);
 
 	/**
 	 * Handlers for all global events
 	 */
 
 	var Handlers = {
-	    'projects:list': function () {
-	        var Controller = __webpack_require__(13);
+	    /*'projects:list': function () {
+	        var Controller = require('../apps/projects/list/controller');
 	        Controller.listProjects();
-	    }
+	    }*/
 	};
 
 	module.exports = function (CommittedApp) {
@@ -9716,7 +9761,63 @@
 	};
 
 /***/ },
-/* 7 */
+/* 8 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Module dependencies
+	 */
+
+	var CommittedApp = __webpack_require__(1);
+
+	/**
+	 * ProjectsApp router
+	 */
+
+	CommittedApp.module('ProjectsApp', function (ProjectsApp, CommittedApp, Backbone, Marionette, $, _) {
+	    ProjectsApp.Router = Marionette.AppRouter.extend({
+	        appRoutes: {
+	            'projects': 'listProjects'
+	        }
+	    });
+
+	    /**
+	     * Route handlers
+	     */
+
+	    var API = {
+	        listProjects: function () {
+	            var ListController = __webpack_require__(15);
+	            ListController.listProjects();
+	        }
+	    };
+
+
+	    /**
+	     * Create a new instance of the Router before
+	     * ProjectsApp starts
+	     */
+
+	    ProjectsApp.addInitializer(function () {
+	        new ProjectsApp.Router({
+	            controller: API
+	        });
+	    });
+
+	    /**
+	     * Application wide events related to ProjectsApp
+	     */
+
+	    CommittedApp.on('projects:list', function () {
+	        CommittedApp.navigate('projects');
+	        API.listProjects();
+	    });
+
+	    module.exports = ProjectsApp.Router;
+	});
+
+/***/ },
+/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// MarionetteJS (Backbone.Marionette)
@@ -9741,10 +9842,10 @@
 	(function (root, factory) {
 	  if (true) {
 
-	    var underscore = __webpack_require__(11);
-	    var backbone = __webpack_require__(4);
-	    var wreqr = __webpack_require__(15);
-	    var babysitter = __webpack_require__(16);
+	    var underscore = __webpack_require__(13);
+	    var backbone = __webpack_require__(5);
+	    var wreqr = __webpack_require__(17);
+	    var babysitter = __webpack_require__(18);
 
 	    module.exports = factory(underscore, backbone, wreqr, babysitter);
 
@@ -11869,7 +11970,7 @@
 
 
 /***/ },
-/* 8 */
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -22212,11 +22313,19 @@
 
 
 /***/ },
-/* 9 */
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
+	/**
+	 * Module dependencies
+	 */
+
 	var CommittedApp = __webpack_require__(1),
-	    Parse = __webpack_require__(3).Parse;
+	    Parse = __webpack_require__(4).Parse;
+
+	/**
+	 * Project entity
+	 */
 
 	CommittedApp.module('Entities', function (Entities, CommittedApp, Backbone, Marionette, $, _) {
 	    Entities.Project = Parse.Object.extend({
@@ -22230,7 +22339,7 @@
 	});
 
 /***/ },
-/* 10 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -22238,8 +22347,8 @@
 	 */
 
 	var CommittedApp = __webpack_require__(1),
-	    Parse = __webpack_require__(3).Parse,
-	    Project = __webpack_require__(9);
+	    Parse = __webpack_require__(4).Parse,
+	    Project = __webpack_require__(11);
 
 	CommittedApp.module('Entities', function (Entities, CommittedApp, Backbone, Marionette, $, _) {
 	    Entities.Projects = Parse.Collection.extend({
@@ -22250,7 +22359,7 @@
 	});
 
 /***/ },
-/* 11 */
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	//     Underscore.js 1.4.4
@@ -23482,7 +23591,7 @@
 
 
 /***/ },
-/* 12 */
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// shim for using process in browser
@@ -23548,7 +23657,7 @@
 
 
 /***/ },
-/* 13 */
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -23556,7 +23665,11 @@
 	 */
 
 	var CommittedApp = __webpack_require__(1),
-	    ProjectsView = __webpack_require__(14);
+	    ProjectsView = __webpack_require__(16);
+
+	/**
+	 * ProjectsApp.List controller
+	 */
 
 	CommittedApp.module('ProjectsApp.List', function (List, CommittedApp, Backbone, Marionette, $, _) {
 	    List.Controller = {
@@ -23579,11 +23692,19 @@
 	});
 
 /***/ },
-/* 14 */
+/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
+	/**
+	 * Module dependencies
+	 */
+
 	var CommittedApp = __webpack_require__(1),
-	    ProjectView = __webpack_require__(17);
+	    ProjectView = __webpack_require__(19);
+
+	/**
+	 * List.Projects view module
+	 */
 
 	CommittedApp.module('ProjectsApp.List', function (List, CommittedApp, Backbone, Marionette, $, _) {
 	    List.Projects = Marionette.CollectionView.extend({
@@ -23594,14 +23715,14 @@
 	});
 
 /***/ },
-/* 15 */
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
 	(function (root, factory) {
 	  if (true) {
 
-	    var underscore = __webpack_require__(11);
-	    var backbone = __webpack_require__(4);
+	    var underscore = __webpack_require__(13);
+	    var backbone = __webpack_require__(5);
 
 	    module.exports = factory(underscore, backbone);
 
@@ -23877,7 +23998,7 @@
 
 
 /***/ },
-/* 16 */
+/* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// Backbone.BabySitter
@@ -23892,8 +24013,8 @@
 	(function (root, factory) {
 	  if (true) {
 
-	    var underscore = __webpack_require__(11);
-	    var backbone = __webpack_require__(4);
+	    var underscore = __webpack_require__(13);
+	    var backbone = __webpack_require__(5);
 
 	    module.exports = factory(underscore, backbone);
 
@@ -24063,11 +24184,19 @@
 
 
 /***/ },
-/* 17 */
+/* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
+	/**
+	 * Module dependencies
+	 */
+
 	var CommittedApp = __webpack_require__(1),
-	    projectTpl = __webpack_require__(18);
+	    projectTpl = __webpack_require__(20);
+
+	/**
+	 * List.Project view
+	 */
 
 	CommittedApp.module('ProjectsApp.List', function (List, CommittedApp, Backbone, Marionette, $, _) {
 	    List.Project = Marionette.ItemView.extend({
@@ -24079,10 +24208,10 @@
 	});
 
 /***/ },
-/* 18 */
+/* 20 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(19).default.template(function (Handlebars,depth0,helpers,partials,data) {
+	module.exports = __webpack_require__(21).default.template(function (Handlebars,depth0,helpers,partials,data) {
 	  this.compilerInfo = [4,'>= 1.0.0'];
 	helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 	  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression;
@@ -24097,28 +24226,28 @@
 	  });
 
 /***/ },
-/* 19 */
+/* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// Create a simple path alias to allow browserify to resolve
 	// the runtime on a supported path.
-	module.exports = __webpack_require__(20);
+	module.exports = __webpack_require__(22);
 
 
 /***/ },
-/* 20 */
+/* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	/*globals Handlebars: true */
-	var base = __webpack_require__(21);
+	var base = __webpack_require__(23);
 
 	// Each of these augment the Handlebars object. No need to setup here.
 	// (This is done to easily share code between commonjs and browse envs)
-	var SafeString = __webpack_require__(22)["default"];
-	var Exception = __webpack_require__(23)["default"];
-	var Utils = __webpack_require__(24);
-	var runtime = __webpack_require__(25);
+	var SafeString = __webpack_require__(24)["default"];
+	var Exception = __webpack_require__(25)["default"];
+	var Utils = __webpack_require__(26);
+	var runtime = __webpack_require__(27);
 
 	// For compatibility and usage outside of module systems, make the Handlebars object a namespace
 	var create = function() {
@@ -24143,12 +24272,12 @@
 	exports["default"] = Handlebars;
 
 /***/ },
-/* 21 */
+/* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var Utils = __webpack_require__(24);
-	var Exception = __webpack_require__(23)["default"];
+	var Utils = __webpack_require__(26);
+	var Exception = __webpack_require__(25)["default"];
 
 	var VERSION = "1.3.0";
 	exports.VERSION = VERSION;var COMPILER_REVISION = 4;
@@ -24328,7 +24457,7 @@
 	exports.createFrame = createFrame;
 
 /***/ },
-/* 22 */
+/* 24 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -24344,7 +24473,7 @@
 	exports["default"] = SafeString;
 
 /***/ },
-/* 23 */
+/* 25 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -24377,12 +24506,12 @@
 	exports["default"] = Exception;
 
 /***/ },
-/* 24 */
+/* 26 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	/*jshint -W004 */
-	var SafeString = __webpack_require__(22)["default"];
+	var SafeString = __webpack_require__(24)["default"];
 
 	var escape = {
 	  "&": "&amp;",
@@ -24458,14 +24587,14 @@
 	exports.isEmpty = isEmpty;
 
 /***/ },
-/* 25 */
+/* 27 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var Utils = __webpack_require__(24);
-	var Exception = __webpack_require__(23)["default"];
-	var COMPILER_REVISION = __webpack_require__(21).COMPILER_REVISION;
-	var REVISION_CHANGES = __webpack_require__(21).REVISION_CHANGES;
+	var Utils = __webpack_require__(26);
+	var Exception = __webpack_require__(25)["default"];
+	var COMPILER_REVISION = __webpack_require__(23).COMPILER_REVISION;
+	var REVISION_CHANGES = __webpack_require__(23).REVISION_CHANGES;
 
 	function checkRevision(compilerInfo) {
 	  var compilerRevision = compilerInfo && compilerInfo[0] || 1,

@@ -55,7 +55,6 @@ CommittedApp.on('initialize:after', function () {
     if (Backbone.history) {
         Backbone.history.start();
 
-
         if (CommittedApp.getCurrentRoute() === '') {
             CommittedApp.trigger('projects:list');
         }

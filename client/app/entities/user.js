@@ -2,11 +2,7 @@ var CommittedApp = require('app'),
     Parse = require('parse').Parse;
 
 CommittedApp.module('Entities', function (Entities, CommittedApp, Backbone, Marionette, $, _) {
-    Entities.User = Backbone.Model.extend({
-        defaults: {
-            username: 'agonbina'
-        }
-    });
+    Entities.User = Parse.User;
 
     module.exports = Entities.User;
 });

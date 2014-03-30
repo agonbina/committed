@@ -1,8 +1,10 @@
+/**
+ * Module dependencies
+ */
+
 var CommittedApp = require('app'),
-    Parse = require('parse').Parse,
-    User = require('./entities/user'),
-    Projects = require('./entities/projects'),
-    ProjectsListView = require('./apps/projects/list/projects_view');
+    Backbone = require('backbone'),
+    Parse = require('parse').Parse;
 
 CommittedApp.addRegions({
     mainRegion: '#main-region'
@@ -12,18 +14,25 @@ CommittedApp.addInitializer(function () {
     Parse.initialize("BM7C5y6YaGzi31m1zoy2FiORwlqm7hPAeuj6Hrmz", "HytjMDhS0rOMTY0jY9Fi8J7x4fBGGim4ddrXMEkm");
 });
 
-CommittedApp.on('initialize:after', function () {
-    var projects = new Projects();
-    projects.fetch().then(function (projects) {
-            var projectsListView = new ProjectsListView({
-                collection: projects
-            });
+CommittedApp.navigate = function (route, options) {
+    options || (options = {});
+    Backbone.history.navigate(route, options);
+};
 
-            CommittedApp.mainRegion.show(projectsListView);
-        }, function (error) {
-            console.log(error);
+CommittedApp.getCurrentRoute = function () {
+    return Backbone.history.fragment;
+};
+
+CommittedApp.on('initialize:after', function () {
+    if (Backbone.history) {
+        Backbone.history.start();
+
+        if (CommittedApp.getCurrentRoute() === 'dashboard') {
+            CommittedApp.trigger('projects:list');
         }
-    );
+    }
 });
 
 CommittedApp.start();
+
+

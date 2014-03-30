@@ -1,3 +1,7 @@
+/**
+ * Module dependencies
+ */
+
 var CommittedApp = require('app'),
     Parse = require('parse').Parse,
     Project = require('./project');

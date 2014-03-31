@@ -1,3 +1,5 @@
+var Parse = require('parse').Parse;
+
 /**
  * Handlers for all app events
  */
@@ -5,8 +7,8 @@
 var Handlers = {
     getProjectEntity: function (id) {
         var Project = require('./../entities/project'),
-            project = new Project();
-        return project.fetch();
+            query = new Parse.Query(Project);
+        return query.get(id);
     },
 
     getProjectEntities: function () {

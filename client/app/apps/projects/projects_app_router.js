@@ -11,7 +11,8 @@ var CommittedApp = require('app');
 CommittedApp.module('ProjectsApp', function (ProjectsApp, CommittedApp, Backbone, Marionette, $, _) {
     ProjectsApp.Router = Marionette.AppRouter.extend({
         appRoutes: {
-            'projects': 'listProjects'
+            'projects': 'listProjects',
+            'projects/:id': 'showProject'
         }
     });
 
@@ -23,6 +24,10 @@ CommittedApp.module('ProjectsApp', function (ProjectsApp, CommittedApp, Backbone
         listProjects: function () {
             var ListController = require('./list/controller');
             ListController.listProjects();
+        },
+        showProject: function (id) {
+            var ShowController = require('./show/controller');
+            ShowController.showProject(id);
         }
     };
 
@@ -40,6 +45,11 @@ CommittedApp.module('ProjectsApp', function (ProjectsApp, CommittedApp, Backbone
     /**
      * Application wide events related to ProjectsApp
      */
+
+    CommittedApp.on('project:show', function (id) {
+        CommittedApp.navigate('projects/' + id);
+        API.showProject(id);
+    });
 
     CommittedApp.on('projects:list', function () {
         CommittedApp.navigate('projects');

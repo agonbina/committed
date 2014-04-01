@@ -50,8 +50,8 @@
 	 */
 
 	var CommittedApp = __webpack_require__(1),
-	    Backbone = __webpack_require__(5),
-	    Parse = __webpack_require__(4).Parse,
+	    Backbone = __webpack_require__(6),
+	    Parse = __webpack_require__(5).Parse,
 	    User = __webpack_require__(2);
 
 	/**
@@ -94,7 +94,10 @@
 	 */
 
 	CommittedApp.addInitializer(function () {
-	    var ProjectsApp = __webpack_require__(3);
+	    var AuthenticationApp = __webpack_require__(3),
+	        ProjectsApp = __webpack_require__(4);
+
+	    AuthenticationApp.start();
 	    ProjectsApp.start();
 	});
 
@@ -117,17 +120,19 @@
 /* 1 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Marionette = __webpack_require__(10);
+	var Marionette = __webpack_require__(11);
 	var CommittedApp = new Marionette.Application();
 
 	// Configure the reqres handlers in one place
-	__webpack_require__(6)(CommittedApp.reqres);
+	__webpack_require__(7)(CommittedApp.reqres);
 
 	// Attach the global app events
-	__webpack_require__(7)(CommittedApp);
+	__webpack_require__(8)(CommittedApp);
 
 	// Load any configurations/extensions of Backbone and Marionette
-	__webpack_require__(8);
+	//require('./config/marionette/router');
+
+	__webpack_require__(12);
 
 	module.exports = CommittedApp;
 
@@ -136,7 +141,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var CommittedApp = __webpack_require__(1),
-	    Parse = __webpack_require__(4).Parse;
+	    Parse = __webpack_require__(5).Parse;
 
 	CommittedApp.module('Entities', function (Entities, CommittedApp, Backbone, Marionette, $, _) {
 	    Entities.User = Parse.User;
@@ -157,6 +162,39 @@
 	var CommittedApp = __webpack_require__(1);
 
 	/**
+	 * AuthApp module
+	 */
+
+	CommittedApp.module('AuthApp', function (AuthApp, CommittedApp, Backbone, Marionette, $, _) {
+
+	    AuthApp.startWithParent = false;
+
+	    AuthApp.onBeforeStart = function () {
+	        __webpack_require__(9);
+	    };
+
+	    AuthApp.onStart = function () {
+	        console.log('starting AuthApp');
+	    };
+
+	    AuthApp.onStop = function () {
+	        console.log('stopping AuthApp');
+	    };
+
+	    module.exports = AuthApp;
+	});
+
+/***/ },
+/* 4 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Module dependencies
+	 */
+
+	var CommittedApp = __webpack_require__(1);
+
+	/**
 	 * ProjectsApp module
 	 */
 
@@ -165,7 +203,7 @@
 	    ProjectsApp.startWithParent = false;
 
 	    ProjectsApp.onBeforeStart = function () {
-	        __webpack_require__(9);
+	        __webpack_require__(10);
 	    };
 
 	    ProjectsApp.onStart = function () {
@@ -182,7 +220,7 @@
 
 
 /***/ },
-/* 4 */
+/* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process, _) {/*!
@@ -222,8 +260,8 @@
 	            Parse.XMLHttpRequest = XMLHttpRequest;
 	        }
 
-	        Parse._ = __webpack_require__(14);
-	        Parse.$ = __webpack_require__(11);
+	        Parse._ = __webpack_require__(16);
+	        Parse.$ = __webpack_require__(13);
 
 	        exports.Parse = Parse;
 	    }
@@ -8081,10 +8119,10 @@
 	    };
 	}(this));
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(15), __webpack_require__(14)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(17), __webpack_require__(16)))
 
 /***/ },
-/* 5 */
+/* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;//     Backbone.js 1.1.2
@@ -8098,7 +8136,7 @@
 
 	  // Set up Backbone appropriately for the environment. Start with AMD.
 	  if (true) {
-	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(14), __webpack_require__(11), exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, $, exports) {
+	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(16), __webpack_require__(13), exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, $, exports) {
 	      // Export global even in AMD case in case this script is loaded with
 	      // others that may still expect a global Backbone.
 	      root.Backbone = factory(root, exports, _, $);
@@ -9698,10 +9736,10 @@
 
 
 /***/ },
-/* 6 */
+/* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Parse = __webpack_require__(4).Parse;
+	var Parse = __webpack_require__(5).Parse;
 
 	/**
 	 * Handlers for all app events
@@ -9709,13 +9747,13 @@
 
 	var Handlers = {
 	    getProjectEntity: function (id) {
-	        var Project = __webpack_require__(12),
+	        var Project = __webpack_require__(14),
 	            query = new Parse.Query(Project);
 	        return query.get(id);
 	    },
 
 	    getProjectEntities: function () {
-	        var Projects = __webpack_require__(13),
+	        var Projects = __webpack_require__(15),
 	            projects = new Projects();
 	        return projects.fetch();
 	    }
@@ -9734,14 +9772,14 @@
 	};
 
 /***/ },
-/* 7 */
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * Module dependencies
 	 */
 
-	var _ = __webpack_require__(14);
+	var _ = __webpack_require__(16);
 
 	/**
 	 * Handlers for all global events
@@ -9761,56 +9799,6 @@
 	};
 
 /***/ },
-/* 8 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Module dependencies
-	 */
-
-	var Marionette = __webpack_require__(10),
-	    AppRouter = Marionette.AppRouter,
-	    _ = __webpack_require__(14);
-
-	var originalExecute = AppRouter.prototype.execute;
-
-	// nop - no operation, a function that does nothing
-	var nop = function () { };
-
-	_.extend(AppRouter.prototype, {
-
-	    // Default before filter
-	    before: nop,
-
-	    // Default after filter
-	    after: nop,
-
-	    execute: function (callback, args) {
-	        var router = this;
-
-	        var wrappedCallback = _.bind(function () {
-	            // If before === function -> Run it for all routes
-	            // If before === object -> Get middleware for this route
-	                // If middleware === function, run it for this route
-	                // If middleware === array, run each middleware serially
-
-	            // Run the callback specified for this route if all
-	            // before middleware completes successfully
-	            callback.apply(this);
-
-	            // Repeat same for after as before
-
-	        }, router);
-
-	        console.log(router.appRoutes);
-
-	        return originalExecute.call(router, wrappedCallback, args);
-	    }
-	});
-
-	module.exports = AppRouter;
-
-/***/ },
 /* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -9819,6 +9807,55 @@
 	 */
 
 	var CommittedApp = __webpack_require__(1);
+
+
+	CommittedApp.module('AuthApp', function (AuthApp, CommittedApp, Backbone, Marionette, $, _) {
+	    AuthApp.Router = Marionette.AppRouter.extend({
+	        appRoutes: {
+	            'login': 'showLogin',
+	            'signup': 'showSignup'
+	        }
+	    });
+
+	    var API = {
+	        showLogin: function () {
+	            console.log('showing login ...');
+	        },
+
+	        showSignup: function () {
+	            console.log('showing signup ...');
+	        }
+	    };
+
+	    AuthApp.addInitializer(function () {
+	        var authRouter = new AuthApp.Router({
+	            controller: API
+	        });
+	    });
+
+	    CommittedApp.on('login:show', function () {
+	        CommittedApp.navigate('login');
+	        API.showLogin();
+	    });
+
+	    CommittedApp.on('signup:show', function () {
+	        CommittedApp.navigate('signup');
+	        API.showSignup();
+	    });
+
+	    module.exports = AuthApp.Router;
+	});
+
+/***/ },
+/* 10 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Module dependencies
+	 */
+
+	var CommittedApp = __webpack_require__(1),
+	    User = __webpack_require__(5).Parse.User;
 
 	/**
 	 * ProjectsApp router
@@ -9829,6 +9866,15 @@
 	        appRoutes: {
 	            'projects': 'listProjects',
 	            'projects/:id': 'showProject'
+	        },
+
+	        before: {
+	            'projects/:id': function () {
+	                if(!User.current()) {
+	                    console.log('You are not logged in ...');
+	                    return false;
+	                }
+	            }
 	        }
 	    });
 
@@ -9838,11 +9884,11 @@
 
 	    var API = {
 	        listProjects: function () {
-	            var ListController = __webpack_require__(16);
+	            var ListController = __webpack_require__(18);
 	            ListController.listProjects();
 	        },
 	        showProject: function (id) {
-	            var ShowController = __webpack_require__(17);
+	            var ShowController = __webpack_require__(19);
 	            ShowController.showProject(id);
 	        }
 	    };
@@ -9876,7 +9922,7 @@
 	});
 
 /***/ },
-/* 10 */
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// MarionetteJS (Backbone.Marionette)
@@ -9901,10 +9947,10 @@
 	(function (root, factory) {
 	  if (true) {
 
-	    var underscore = __webpack_require__(14);
-	    var backbone = __webpack_require__(5);
-	    var wreqr = __webpack_require__(22);
-	    var babysitter = __webpack_require__(21);
+	    var underscore = __webpack_require__(16);
+	    var backbone = __webpack_require__(6);
+	    var wreqr = __webpack_require__(23);
+	    var babysitter = __webpack_require__(24);
 
 	    module.exports = factory(underscore, backbone, wreqr, babysitter);
 
@@ -12029,7 +12075,134 @@
 
 
 /***/ },
-/* 11 */
+/* 12 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(_, Backbone) {/*! backbone.routefilter - v0.2.0 - 2013-02-16
+	* https://github.com/boazsender/backbone.routefilter
+	* Copyright (c) 2013 Boaz Sender; Licensed MIT */
+
+	(function(Backbone, _) {
+
+	  // Save a reference to the original route method to be called
+	  // after we pave it over.
+	  var originalRoute = Backbone.Router.prototype.route;
+
+	  // Create a reusable no operation func for the case where a before
+	  // or after filter is not set. Backbone or Underscore should have
+	  // a global one of these in my opinion.
+	  var nop = function(){};
+
+	  // Extend the router prototype with a default before function,
+	  // a default after function, and a pave over of _bindRoutes.
+	  _.extend(Backbone.Router.prototype, {
+
+	    // Add default before filter.
+	    before: nop,
+
+	    // Add default after filter.
+	    after: nop,
+
+	    // Pave over Backbone.Router.prototype.route, the public method used
+	    // for adding routes to a router instance on the fly, and the
+	    // method which backbone uses internally for binding routes to handlers
+	    // on the Backbone.history singleton once it's instantiated.
+	    route: function(route, name, callback) {
+
+	      // If there is no callback present for this route, then set it to
+	      // be the name that was set in the routes property of the constructor,
+	      // or the name arguement of the route method invocation. This is what
+	      // Backbone.Router.route already does. We need to do it again,
+	      // because we are about to wrap the callback in a function that calls
+	      // the before and after filters as well as the original callback that
+	      // was passed in.
+	      if( !callback ){
+	        callback = this[ name ];
+	      }
+
+	      // Create a new callback to replace the original callback that calls
+	      // the before and after filters as well as the original callback
+	      // internally.
+	      var wrappedCallback = _.bind( function() {
+
+	        // Call the before filter and if it returns false, run the
+	        // route's original callback, and after filter. This allows
+	        // the user to return false from within the before filter
+	        // to prevent the original route callback and after
+	        // filter from running.
+	        var callbackArgs = [ route, _.toArray(arguments) ];
+	        var beforeCallback;
+
+	        if ( _.isFunction(this.before) ) {
+
+	          // If the before filter is just a single function, then call
+	          // it with the arguments.
+	          beforeCallback = this.before;
+	        } else if ( typeof this.before[route] !== "undefined" ) {
+
+	          // otherwise, find the appropriate callback for the route name
+	          // and call that.
+	          beforeCallback = this.before[route];
+	        } else {
+
+	          // otherwise, if we have a hash of routes, but no before callback
+	          // for this route, just use a nop function.
+	          beforeCallback = nop;
+	        }
+
+	        // If the before callback fails during its execusion (by returning)
+	        // false, then do not proceed with the route triggering.
+	        if ( beforeCallback.apply(this, callbackArgs) === false ) {
+	          return;
+	        }
+
+	        // If the callback exists, then call it. This means that the before
+	        // and after filters will be called whether or not an actual
+	        // callback function is supplied to handle a given route.
+	        if( callback ) {
+	          callback.apply( this, arguments );
+	        }
+
+	        var afterCallback;
+	        if ( _.isFunction(this.after) ) {
+
+	          // If the after filter is a single funciton, then call it with
+	          // the proper arguments.
+	          afterCallback = this.after;
+
+	        } else if ( typeof this.after[route] !== "undefined" ) {
+
+	          // otherwise if we have a hash of routes, call the appropriate
+	          // callback based on the route name.
+	          afterCallback = this.after[route];
+
+	        } else {
+
+	          // otherwise, if we have a has of routes but no after callback
+	          // for this route, just use the nop function.
+	          afterCallback = nop;
+	        }
+
+	        // Call the after filter.
+	        afterCallback.apply( this, callbackArgs );
+
+	      }, this);
+
+	      // Call our original route, replacing the callback that was originally
+	      // passed in when Backbone.Router.route was invoked with our wrapped
+	      // callback that calls the before and after callbacks as well as the
+	      // original callback.
+	      return originalRoute.call( this, route, name, wrappedCallback );
+	    }
+
+	  });
+
+	}(Backbone, _));
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(16), __webpack_require__(6)))
+
+/***/ },
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -22372,7 +22545,7 @@
 
 
 /***/ },
-/* 12 */
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -22380,7 +22553,7 @@
 	 */
 
 	var CommittedApp = __webpack_require__(1),
-	    Parse = __webpack_require__(4).Parse;
+	    Parse = __webpack_require__(5).Parse;
 
 	/**
 	 * Project entity
@@ -22398,7 +22571,7 @@
 	});
 
 /***/ },
-/* 13 */
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -22406,8 +22579,8 @@
 	 */
 
 	var CommittedApp = __webpack_require__(1),
-	    Parse = __webpack_require__(4).Parse,
-	    Project = __webpack_require__(12);
+	    Parse = __webpack_require__(5).Parse,
+	    Project = __webpack_require__(14);
 
 	CommittedApp.module('Entities', function (Entities, CommittedApp, Backbone, Marionette, $, _) {
 	    Entities.Projects = Parse.Collection.extend({
@@ -22418,7 +22591,7 @@
 	});
 
 /***/ },
-/* 14 */
+/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
 	//     Underscore.js 1.4.4
@@ -23650,7 +23823,7 @@
 
 
 /***/ },
-/* 15 */
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// shim for using process in browser
@@ -23716,7 +23889,7 @@
 
 
 /***/ },
-/* 16 */
+/* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -23724,8 +23897,8 @@
 	 */
 
 	var CommittedApp = __webpack_require__(1),
-	    ProjectsView = __webpack_require__(18),
-	    LoadingView = __webpack_require__(20);
+	    ProjectsView = __webpack_require__(20),
+	    LoadingView = __webpack_require__(22);
 
 	/**
 	 * ProjectsApp.List controller
@@ -23756,7 +23929,7 @@
 	});
 
 /***/ },
-/* 17 */
+/* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -23764,8 +23937,8 @@
 	 */
 
 	var CommittedApp = __webpack_require__(1),
-	    ProjectView = __webpack_require__(19),
-	    LoadingView = __webpack_require__(20);
+	    ProjectView = __webpack_require__(21),
+	    LoadingView = __webpack_require__(22);
 
 	/**
 	 * Show controller
@@ -23796,7 +23969,7 @@
 	});
 
 /***/ },
-/* 18 */
+/* 20 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -23804,7 +23977,7 @@
 	 */
 
 	var CommittedApp = __webpack_require__(1),
-	    ProjectView = __webpack_require__(23);
+	    ProjectView = __webpack_require__(25);
 
 	/**
 	 * List.Projects view module
@@ -23820,7 +23993,7 @@
 	});
 
 /***/ },
-/* 19 */
+/* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -23828,7 +24001,7 @@
 	 */
 
 	var CommittedApp = __webpack_require__(1),
-	    ProjectViewTpl = __webpack_require__(24);
+	    ProjectViewTpl = __webpack_require__(26);
 
 	/**
 	 * Show.Project view
@@ -23844,7 +24017,7 @@
 	});
 
 /***/ },
-/* 20 */
+/* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -23852,7 +24025,7 @@
 	 */
 
 	var CommittedApp = __webpack_require__(1),
-	    loadingViewTpl = __webpack_require__(25);
+	    loadingViewTpl = __webpack_require__(27);
 
 	CommittedApp.module('Common.Views', function (Views, CommittedApp, Backbone, Marionette, $, _) {
 	    Views.Loading = Marionette.ItemView.extend({
@@ -23874,200 +24047,14 @@
 	});
 
 /***/ },
-/* 21 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// Backbone.BabySitter
-	// -------------------
-	// v0.1.0
-	//
-	// Copyright (c)2014 Derick Bailey, Muted Solutions, LLC.
-	// Distributed under MIT license
-	//
-	// http://github.com/marionettejs/backbone.babysitter
-
-	(function (root, factory) {
-	  if (true) {
-
-	    var underscore = __webpack_require__(14);
-	    var backbone = __webpack_require__(5);
-
-	    module.exports = factory(underscore, backbone);
-
-	  } else if (typeof define === 'function' && define.amd) {
-
-	    define(['underscore', 'backbone'], factory);
-
-	  } 
-	}(this, function (_, Backbone) {
-	  "option strict";
-
-	  // Backbone.ChildViewContainer
-	// ---------------------------
-	//
-	// Provide a container to store, retrieve and
-	// shut down child views.
-
-	Backbone.ChildViewContainer = (function(Backbone, _){
-	  
-	  // Container Constructor
-	  // ---------------------
-
-	  var Container = function(views){
-	    this._views = {};
-	    this._indexByModel = {};
-	    this._indexByCustom = {};
-	    this._updateLength();
-
-	    _.each(views, this.add, this);
-	  };
-
-	  // Container Methods
-	  // -----------------
-
-	  _.extend(Container.prototype, {
-
-	    // Add a view to this container. Stores the view
-	    // by `cid` and makes it searchable by the model
-	    // cid (and model itself). Optionally specify
-	    // a custom key to store an retrieve the view.
-	    add: function(view, customIndex){
-	      var viewCid = view.cid;
-
-	      // store the view
-	      this._views[viewCid] = view;
-
-	      // index it by model
-	      if (view.model){
-	        this._indexByModel[view.model.cid] = viewCid;
-	      }
-
-	      // index by custom
-	      if (customIndex){
-	        this._indexByCustom[customIndex] = viewCid;
-	      }
-
-	      this._updateLength();
-	      return this;
-	    },
-
-	    // Find a view by the model that was attached to
-	    // it. Uses the model's `cid` to find it.
-	    findByModel: function(model){
-	      return this.findByModelCid(model.cid);
-	    },
-
-	    // Find a view by the `cid` of the model that was attached to
-	    // it. Uses the model's `cid` to find the view `cid` and
-	    // retrieve the view using it.
-	    findByModelCid: function(modelCid){
-	      var viewCid = this._indexByModel[modelCid];
-	      return this.findByCid(viewCid);
-	    },
-
-	    // Find a view by a custom indexer.
-	    findByCustom: function(index){
-	      var viewCid = this._indexByCustom[index];
-	      return this.findByCid(viewCid);
-	    },
-
-	    // Find by index. This is not guaranteed to be a
-	    // stable index.
-	    findByIndex: function(index){
-	      return _.values(this._views)[index];
-	    },
-
-	    // retrieve a view by its `cid` directly
-	    findByCid: function(cid){
-	      return this._views[cid];
-	    },
-
-	    // Remove a view
-	    remove: function(view){
-	      var viewCid = view.cid;
-
-	      // delete model index
-	      if (view.model){
-	        delete this._indexByModel[view.model.cid];
-	      }
-
-	      // delete custom index
-	      _.any(this._indexByCustom, function(cid, key) {
-	        if (cid === viewCid) {
-	          delete this._indexByCustom[key];
-	          return true;
-	        }
-	      }, this);
-
-	      // remove the view from the container
-	      delete this._views[viewCid];
-
-	      // update the length
-	      this._updateLength();
-	      return this;
-	    },
-
-	    // Call a method on every view in the container,
-	    // passing parameters to the call method one at a
-	    // time, like `function.call`.
-	    call: function(method){
-	      this.apply(method, _.tail(arguments));
-	    },
-
-	    // Apply a method on every view in the container,
-	    // passing parameters to the call method one at a
-	    // time, like `function.apply`.
-	    apply: function(method, args){
-	      _.each(this._views, function(view){
-	        if (_.isFunction(view[method])){
-	          view[method].apply(view, args || []);
-	        }
-	      });
-	    },
-
-	    // Update the `.length` attribute on this container
-	    _updateLength: function(){
-	      this.length = _.size(this._views);
-	    }
-	  });
-
-	  // Borrowing this code from Backbone.Collection:
-	  // http://backbonejs.org/docs/backbone.html#section-106
-	  //
-	  // Mix in methods from Underscore, for iteration, and other
-	  // collection related features.
-	  var methods = ['forEach', 'each', 'map', 'find', 'detect', 'filter', 
-	    'select', 'reject', 'every', 'all', 'some', 'any', 'include', 
-	    'contains', 'invoke', 'toArray', 'first', 'initial', 'rest', 
-	    'last', 'without', 'isEmpty', 'pluck'];
-
-	  _.each(methods, function(method) {
-	    Container.prototype[method] = function() {
-	      var views = _.values(this._views);
-	      var args = [views].concat(_.toArray(arguments));
-	      return _[method].apply(_, args);
-	    };
-	  });
-
-	  // return the public API
-	  return Container;
-	})(Backbone, _);
-
-	  return Backbone.ChildViewContainer; 
-
-	}));
-
-
-
-/***/ },
-/* 22 */
+/* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
 	(function (root, factory) {
 	  if (true) {
 
-	    var underscore = __webpack_require__(14);
-	    var backbone = __webpack_require__(5);
+	    var underscore = __webpack_require__(16);
+	    var backbone = __webpack_require__(6);
 
 	    module.exports = factory(underscore, backbone);
 
@@ -24343,7 +24330,193 @@
 
 
 /***/ },
-/* 23 */
+/* 24 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// Backbone.BabySitter
+	// -------------------
+	// v0.1.0
+	//
+	// Copyright (c)2014 Derick Bailey, Muted Solutions, LLC.
+	// Distributed under MIT license
+	//
+	// http://github.com/marionettejs/backbone.babysitter
+
+	(function (root, factory) {
+	  if (true) {
+
+	    var underscore = __webpack_require__(16);
+	    var backbone = __webpack_require__(6);
+
+	    module.exports = factory(underscore, backbone);
+
+	  } else if (typeof define === 'function' && define.amd) {
+
+	    define(['underscore', 'backbone'], factory);
+
+	  } 
+	}(this, function (_, Backbone) {
+	  "option strict";
+
+	  // Backbone.ChildViewContainer
+	// ---------------------------
+	//
+	// Provide a container to store, retrieve and
+	// shut down child views.
+
+	Backbone.ChildViewContainer = (function(Backbone, _){
+	  
+	  // Container Constructor
+	  // ---------------------
+
+	  var Container = function(views){
+	    this._views = {};
+	    this._indexByModel = {};
+	    this._indexByCustom = {};
+	    this._updateLength();
+
+	    _.each(views, this.add, this);
+	  };
+
+	  // Container Methods
+	  // -----------------
+
+	  _.extend(Container.prototype, {
+
+	    // Add a view to this container. Stores the view
+	    // by `cid` and makes it searchable by the model
+	    // cid (and model itself). Optionally specify
+	    // a custom key to store an retrieve the view.
+	    add: function(view, customIndex){
+	      var viewCid = view.cid;
+
+	      // store the view
+	      this._views[viewCid] = view;
+
+	      // index it by model
+	      if (view.model){
+	        this._indexByModel[view.model.cid] = viewCid;
+	      }
+
+	      // index by custom
+	      if (customIndex){
+	        this._indexByCustom[customIndex] = viewCid;
+	      }
+
+	      this._updateLength();
+	      return this;
+	    },
+
+	    // Find a view by the model that was attached to
+	    // it. Uses the model's `cid` to find it.
+	    findByModel: function(model){
+	      return this.findByModelCid(model.cid);
+	    },
+
+	    // Find a view by the `cid` of the model that was attached to
+	    // it. Uses the model's `cid` to find the view `cid` and
+	    // retrieve the view using it.
+	    findByModelCid: function(modelCid){
+	      var viewCid = this._indexByModel[modelCid];
+	      return this.findByCid(viewCid);
+	    },
+
+	    // Find a view by a custom indexer.
+	    findByCustom: function(index){
+	      var viewCid = this._indexByCustom[index];
+	      return this.findByCid(viewCid);
+	    },
+
+	    // Find by index. This is not guaranteed to be a
+	    // stable index.
+	    findByIndex: function(index){
+	      return _.values(this._views)[index];
+	    },
+
+	    // retrieve a view by its `cid` directly
+	    findByCid: function(cid){
+	      return this._views[cid];
+	    },
+
+	    // Remove a view
+	    remove: function(view){
+	      var viewCid = view.cid;
+
+	      // delete model index
+	      if (view.model){
+	        delete this._indexByModel[view.model.cid];
+	      }
+
+	      // delete custom index
+	      _.any(this._indexByCustom, function(cid, key) {
+	        if (cid === viewCid) {
+	          delete this._indexByCustom[key];
+	          return true;
+	        }
+	      }, this);
+
+	      // remove the view from the container
+	      delete this._views[viewCid];
+
+	      // update the length
+	      this._updateLength();
+	      return this;
+	    },
+
+	    // Call a method on every view in the container,
+	    // passing parameters to the call method one at a
+	    // time, like `function.call`.
+	    call: function(method){
+	      this.apply(method, _.tail(arguments));
+	    },
+
+	    // Apply a method on every view in the container,
+	    // passing parameters to the call method one at a
+	    // time, like `function.apply`.
+	    apply: function(method, args){
+	      _.each(this._views, function(view){
+	        if (_.isFunction(view[method])){
+	          view[method].apply(view, args || []);
+	        }
+	      });
+	    },
+
+	    // Update the `.length` attribute on this container
+	    _updateLength: function(){
+	      this.length = _.size(this._views);
+	    }
+	  });
+
+	  // Borrowing this code from Backbone.Collection:
+	  // http://backbonejs.org/docs/backbone.html#section-106
+	  //
+	  // Mix in methods from Underscore, for iteration, and other
+	  // collection related features.
+	  var methods = ['forEach', 'each', 'map', 'find', 'detect', 'filter', 
+	    'select', 'reject', 'every', 'all', 'some', 'any', 'include', 
+	    'contains', 'invoke', 'toArray', 'first', 'initial', 'rest', 
+	    'last', 'without', 'isEmpty', 'pluck'];
+
+	  _.each(methods, function(method) {
+	    Container.prototype[method] = function() {
+	      var views = _.values(this._views);
+	      var args = [views].concat(_.toArray(arguments));
+	      return _[method].apply(_, args);
+	    };
+	  });
+
+	  // return the public API
+	  return Container;
+	})(Backbone, _);
+
+	  return Backbone.ChildViewContainer; 
+
+	}));
+
+
+
+/***/ },
+/* 25 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -24351,7 +24524,7 @@
 	 */
 
 	var CommittedApp = __webpack_require__(1),
-	    projectTpl = __webpack_require__(26);
+	    projectTpl = __webpack_require__(28);
 
 	/**
 	 * List.Project view
@@ -24367,10 +24540,10 @@
 	});
 
 /***/ },
-/* 24 */
+/* 26 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(27).default.template(function (Handlebars,depth0,helpers,partials,data) {
+	module.exports = __webpack_require__(29).default.template(function (Handlebars,depth0,helpers,partials,data) {
 	  this.compilerInfo = [4,'>= 1.0.0'];
 	helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 	  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression;
@@ -24385,10 +24558,10 @@
 	  });
 
 /***/ },
-/* 25 */
+/* 27 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(27).default.template(function (Handlebars,depth0,helpers,partials,data) {
+	module.exports = __webpack_require__(29).default.template(function (Handlebars,depth0,helpers,partials,data) {
 	  this.compilerInfo = [4,'>= 1.0.0'];
 	helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 	  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression;
@@ -24403,10 +24576,10 @@
 	  });
 
 /***/ },
-/* 26 */
+/* 28 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(27).default.template(function (Handlebars,depth0,helpers,partials,data) {
+	module.exports = __webpack_require__(29).default.template(function (Handlebars,depth0,helpers,partials,data) {
 	  this.compilerInfo = [4,'>= 1.0.0'];
 	helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 	  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression;
@@ -24421,28 +24594,28 @@
 	  });
 
 /***/ },
-/* 27 */
+/* 29 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// Create a simple path alias to allow browserify to resolve
 	// the runtime on a supported path.
-	module.exports = __webpack_require__(28);
+	module.exports = __webpack_require__(30);
 
 
 /***/ },
-/* 28 */
+/* 30 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	/*globals Handlebars: true */
-	var base = __webpack_require__(29);
+	var base = __webpack_require__(31);
 
 	// Each of these augment the Handlebars object. No need to setup here.
 	// (This is done to easily share code between commonjs and browse envs)
-	var SafeString = __webpack_require__(30)["default"];
-	var Exception = __webpack_require__(31)["default"];
-	var Utils = __webpack_require__(32);
-	var runtime = __webpack_require__(33);
+	var SafeString = __webpack_require__(32)["default"];
+	var Exception = __webpack_require__(33)["default"];
+	var Utils = __webpack_require__(34);
+	var runtime = __webpack_require__(35);
 
 	// For compatibility and usage outside of module systems, make the Handlebars object a namespace
 	var create = function() {
@@ -24467,12 +24640,12 @@
 	exports["default"] = Handlebars;
 
 /***/ },
-/* 29 */
+/* 31 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var Utils = __webpack_require__(32);
-	var Exception = __webpack_require__(31)["default"];
+	var Utils = __webpack_require__(34);
+	var Exception = __webpack_require__(33)["default"];
 
 	var VERSION = "1.3.0";
 	exports.VERSION = VERSION;var COMPILER_REVISION = 4;
@@ -24652,7 +24825,7 @@
 	exports.createFrame = createFrame;
 
 /***/ },
-/* 30 */
+/* 32 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -24668,7 +24841,7 @@
 	exports["default"] = SafeString;
 
 /***/ },
-/* 31 */
+/* 33 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -24701,12 +24874,12 @@
 	exports["default"] = Exception;
 
 /***/ },
-/* 32 */
+/* 34 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	/*jshint -W004 */
-	var SafeString = __webpack_require__(30)["default"];
+	var SafeString = __webpack_require__(32)["default"];
 
 	var escape = {
 	  "&": "&amp;",
@@ -24782,14 +24955,14 @@
 	exports.isEmpty = isEmpty;
 
 /***/ },
-/* 33 */
+/* 35 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var Utils = __webpack_require__(32);
-	var Exception = __webpack_require__(31)["default"];
-	var COMPILER_REVISION = __webpack_require__(29).COMPILER_REVISION;
-	var REVISION_CHANGES = __webpack_require__(29).REVISION_CHANGES;
+	var Utils = __webpack_require__(34);
+	var Exception = __webpack_require__(33)["default"];
+	var COMPILER_REVISION = __webpack_require__(31).COMPILER_REVISION;
+	var REVISION_CHANGES = __webpack_require__(31).REVISION_CHANGES;
 
 	function checkRevision(compilerInfo) {
 	  var compilerRevision = compilerInfo && compilerInfo[0] || 1,

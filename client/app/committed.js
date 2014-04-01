@@ -47,7 +47,10 @@ CommittedApp.addInitializer(function () {
  */
 
 CommittedApp.addInitializer(function () {
-    var ProjectsApp = require('./apps/projects/projects_app');
+    var AuthenticationApp = require('./apps/authentication/auth_app'),
+        ProjectsApp = require('./apps/projects/projects_app');
+
+    AuthenticationApp.start();
     ProjectsApp.start();
 });
 

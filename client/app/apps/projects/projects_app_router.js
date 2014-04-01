@@ -2,7 +2,8 @@
  * Module dependencies
  */
 
-var CommittedApp = require('app');
+var CommittedApp = require('app'),
+    User = require('parse').Parse.User;
 
 /**
  * ProjectsApp router
@@ -13,6 +14,15 @@ CommittedApp.module('ProjectsApp', function (ProjectsApp, CommittedApp, Backbone
         appRoutes: {
             'projects': 'listProjects',
             'projects/:id': 'showProject'
+        },
+
+        before: {
+            'projects/:id': function () {
+                if(!User.current()) {
+                    console.log('You are not logged in ...');
+                    return false;
+                }
+            }
         }
     });
 

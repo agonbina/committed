@@ -7,4 +7,6 @@ require('./config/reqres')(CommittedApp.reqres);
 // Attach the global app events
 require('./config/vent')(CommittedApp);
 
+require('backbone.routefilter');
+
 module.exports = CommittedApp;

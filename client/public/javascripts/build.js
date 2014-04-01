@@ -117,7 +117,7 @@
 /* 1 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Marionette = __webpack_require__(9);
+	var Marionette = __webpack_require__(10);
 	var CommittedApp = new Marionette.Application();
 
 	// Configure the reqres handlers in one place
@@ -125,6 +125,8 @@
 
 	// Attach the global app events
 	__webpack_require__(7)(CommittedApp);
+
+	__webpack_require__(9);
 
 	module.exports = CommittedApp;
 
@@ -219,8 +221,8 @@
 	            Parse.XMLHttpRequest = XMLHttpRequest;
 	        }
 
-	        Parse._ = __webpack_require__(13);
-	        Parse.$ = __webpack_require__(10);
+	        Parse._ = __webpack_require__(14);
+	        Parse.$ = __webpack_require__(11);
 
 	        exports.Parse = Parse;
 	    }
@@ -8078,7 +8080,7 @@
 	    };
 	}(this));
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(14), __webpack_require__(13)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(15), __webpack_require__(14)))
 
 /***/ },
 /* 5 */
@@ -8095,7 +8097,7 @@
 
 	  // Set up Backbone appropriately for the environment. Start with AMD.
 	  if (true) {
-	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(13), __webpack_require__(10), exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, $, exports) {
+	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(14), __webpack_require__(11), exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, $, exports) {
 	      // Export global even in AMD case in case this script is loaded with
 	      // others that may still expect a global Backbone.
 	      root.Backbone = factory(root, exports, _, $);
@@ -9706,13 +9708,13 @@
 
 	var Handlers = {
 	    getProjectEntity: function (id) {
-	        var Project = __webpack_require__(11),
+	        var Project = __webpack_require__(12),
 	            query = new Parse.Query(Project);
 	        return query.get(id);
 	    },
 
 	    getProjectEntities: function () {
-	        var Projects = __webpack_require__(12),
+	        var Projects = __webpack_require__(13),
 	            projects = new Projects();
 	        return projects.fetch();
 	    }
@@ -9738,7 +9740,7 @@
 	 * Module dependencies
 	 */
 
-	var _ = __webpack_require__(13);
+	var _ = __webpack_require__(14);
 
 	/**
 	 * Handlers for all global events
@@ -9776,6 +9778,19 @@
 	        appRoutes: {
 	            'projects': 'listProjects',
 	            'projects/:id': 'showProject'
+	        },
+
+	        before: {
+	            'projects': 'logSomething',
+	            'projects/:id': 'logId'
+	        },
+
+	        logSomething: function (route) {
+	            console.log('logging something ...', route);
+	        },
+	        logId: function (route, args, next) {
+	            console.log(route, args);
+	            next();
 	        }
 	    });
 
@@ -9785,11 +9800,11 @@
 
 	    var API = {
 	        listProjects: function () {
-	            var ListController = __webpack_require__(15);
+	            var ListController = __webpack_require__(16);
 	            ListController.listProjects();
 	        },
 	        showProject: function (id) {
-	            var ShowController = __webpack_require__(16);
+	            var ShowController = __webpack_require__(17);
 	            ShowController.showProject(id);
 	        }
 	    };
@@ -9826,6 +9841,146 @@
 /* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
+	 * Backbone.Route filter
+	 *
+	 * Adds support for sync/async Backbone routes filters
+	 *
+	 * @author Maksim Horbachevsky
+	 */
+
+	(function(factory) {
+	  if (true) {
+	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(5), __webpack_require__(14)], __WEBPACK_AMD_DEFINE_RESULT__ = (factory.apply(null, __WEBPACK_AMD_DEFINE_ARRAY__)), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	  } else if (typeof exports === 'object') {
+	    module.exports = factory(require('backbone'), require('underscore'));
+	  } else {
+	    factory(window.Backbone, window._);
+	  }
+	})(function(Backbone, _) {
+
+	  var extend = Backbone.Router.extend;
+
+	  Backbone.Router.extend = function() {
+	    var child = extend.apply(this, arguments),
+	      childProto = child.prototype,
+	      parentProto = this.prototype;
+
+	    _.each(['before', 'after'], function(filter) {
+	      _.defaults(childProto[filter], parentProto[filter]);
+	    });
+
+	    return child;
+	  };
+
+	  _.extend(Backbone.Router.prototype, {
+
+	    /**
+	     * Override default route fn to call before/after filters
+	     *
+	     * @param {String} route
+	     * @param {String} name
+	     * @param {Function} [callback]
+	     * @return {*}
+	     */
+	    route: function(route, name, callback) {
+	      if (!_.isRegExp(route)) route = this._routeToRegExp(route);
+
+	      if (_.isFunction(name)) {
+	        callback = name;
+	        name = '';
+	      }
+
+	      if (!callback) callback = this[name];
+	      var router = this;
+
+	      Backbone.history.route(route, function(fragment) {
+	        var args = router._extractParameters(route, fragment);
+
+	        runFilters(router, router.before, fragment, args, function() {
+	          if (callback) {
+	            callback.apply(router, args);
+	          }
+
+	          router.trigger.apply(router, ['route:' + name].concat(args));
+	          router.trigger('route', name, args);
+	          Backbone.history.trigger('route', router, name, args);
+
+	          runFilters(router, router.after, fragment, args, function() {
+	          });
+	        });
+	      });
+
+	      return this;
+	    }
+	  });
+
+	  /**
+	   * Running all filters that matches current fragment
+	   *
+	   * @param router {Router} router instance reference
+	   * @param filters {Object} all available filters
+	   * @param fragment {String} current fragment
+	   * @param args {Array} fragment arguments
+	   * @param callback {Function}
+	   */
+	  function runFilters(router, filters, fragment, args, callback) {
+	    var chain = _.filter(filters, function(callback, filter) {
+	      filter = _.isRegExp(filter) ? filter : router._routeToRegExp(filter);
+	      return filter.test(fragment);
+	    });
+
+	    run(chain, router, fragment, args, callback);
+	  }
+
+	  /**
+	   * Recursive function to run through filters chain supporting both async calls via `next` or regular
+	   * return-value based chain
+	   *
+	   * @param chain {Array} filter calls chain
+	   * @param router {Router} router instance reference
+	   * @param fragment {String} current fragment
+	   * @param args {Array} fragment arguments
+	   * @param callback {Function}
+	   */
+	  function run(chain, router, fragment, args, callback) {
+
+	    // When filters chain is finished - calling `done` callback
+	    if (!chain.length) {
+	      callback.call(router);
+	      return;
+	    }
+
+	    var current = chain[0],
+	      tail = _.tail(chain),
+	      next = function() {
+	        run(tail, router, fragment, args, callback);
+	      };
+
+	    if (_.isString(current)) {
+	      current = router[current];
+	    }
+
+	    if (current.length === 3) {
+	      // Filter expects `next` for async - ignoring return value
+	      // and waiting for `next` to be called
+	      current.apply(router, [fragment, args, next]);
+	    } else {
+	      // Using regular filter with `false` return value that stops
+	      // filters execution
+	      if (current.apply(router, [fragment, args]) !== false) {
+	        next();
+	      }
+	    }
+	  }
+
+	});
+
+
+/***/ },
+/* 10 */
+/***/ function(module, exports, __webpack_require__) {
+
 	// MarionetteJS (Backbone.Marionette)
 	// ----------------------------------
 	// v1.6.4
@@ -9848,10 +10003,10 @@
 	(function (root, factory) {
 	  if (true) {
 
-	    var underscore = __webpack_require__(13);
+	    var underscore = __webpack_require__(14);
 	    var backbone = __webpack_require__(5);
-	    var wreqr = __webpack_require__(19);
-	    var babysitter = __webpack_require__(20);
+	    var wreqr = __webpack_require__(21);
+	    var babysitter = __webpack_require__(22);
 
 	    module.exports = factory(underscore, backbone, wreqr, babysitter);
 
@@ -11976,7 +12131,7 @@
 
 
 /***/ },
-/* 10 */
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -22319,7 +22474,7 @@
 
 
 /***/ },
-/* 11 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -22345,7 +22500,7 @@
 	});
 
 /***/ },
-/* 12 */
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -22354,7 +22509,7 @@
 
 	var CommittedApp = __webpack_require__(1),
 	    Parse = __webpack_require__(4).Parse,
-	    Project = __webpack_require__(11);
+	    Project = __webpack_require__(12);
 
 	CommittedApp.module('Entities', function (Entities, CommittedApp, Backbone, Marionette, $, _) {
 	    Entities.Projects = Parse.Collection.extend({
@@ -22365,7 +22520,7 @@
 	});
 
 /***/ },
-/* 13 */
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
 	//     Underscore.js 1.4.4
@@ -23597,7 +23752,7 @@
 
 
 /***/ },
-/* 14 */
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// shim for using process in browser
@@ -23663,7 +23818,7 @@
 
 
 /***/ },
-/* 15 */
+/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -23671,7 +23826,8 @@
 	 */
 
 	var CommittedApp = __webpack_require__(1),
-	    ProjectsView = __webpack_require__(17);
+	    ProjectsView = __webpack_require__(18),
+	    LoadingView = __webpack_require__(20);
 
 	/**
 	 * ProjectsApp.List controller
@@ -23681,13 +23837,17 @@
 	    List.Controller = {
 	        listProjects: function () {
 	            var fetchProjects = CommittedApp.request('project:entities');
+	            var loadingView = new LoadingView();
+	            CommittedApp.mainRegion.show(loadingView);
 
 	            fetchProjects.then(function (projects) {
 	                var projectsListView = new ProjectsView({
 	                    collection: projects
 	                });
 
-	                CommittedApp.mainRegion.show(projectsListView);
+	                setTimeout(function () {
+	                    CommittedApp.mainRegion.show(projectsListView);
+	                }, 2000);
 	            }, function (error) {
 	                console.log(error);
 	            });
@@ -23695,41 +23855,6 @@
 	    };
 
 	    module.exports = List.Controller;
-	});
-
-/***/ },
-/* 16 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Module dependencies
-	 */
-
-	var CommittedApp = __webpack_require__(1),
-	    ProjectView = __webpack_require__(18);
-
-	/**
-	 * Show controller
-	 */
-
-	CommittedApp.module('ProjectsApp.Show', function (Show, CommittedApp, Backbone, Marionette, $, _) {
-	    Show.Controller = {
-	        showProject: function (id) {
-	            var fetchProject = CommittedApp.request('project:entity', id);
-
-	            fetchProject.then(function (project) {
-	                var projectView = new ProjectView({
-	                    model: project
-	                });
-
-	                CommittedApp.mainRegion.show(projectView);
-	            }, function (error) {
-	                console.log(error);
-	            });
-	        }
-	    };
-
-	    module.exports = Show.Controller;
 	});
 
 /***/ },
@@ -23741,18 +23866,35 @@
 	 */
 
 	var CommittedApp = __webpack_require__(1),
-	    ProjectView = __webpack_require__(21);
+	    ProjectView = __webpack_require__(19),
+	    LoadingView = __webpack_require__(20);
 
 	/**
-	 * List.Projects view module
+	 * Show controller
 	 */
 
-	CommittedApp.module('ProjectsApp.List', function (List, CommittedApp, Backbone, Marionette, $, _) {
-	    List.Projects = Marionette.CollectionView.extend({
-	        itemView: ProjectView
-	    });
+	CommittedApp.module('ProjectsApp.Show', function (Show, CommittedApp, Backbone, Marionette, $, _) {
+	    Show.Controller = {
+	        showProject: function (id) {
+	            var loadingView = new LoadingView();
+	            CommittedApp.mainRegion.show(loadingView);
 
-	    module.exports = List.Projects;
+	            var fetchProject = CommittedApp.request('project:entity', id);
+
+	            fetchProject.then(function (project) {
+	                var projectView = new ProjectView({
+	                    model: project
+	                });
+	                setTimeout(function () {
+	                    CommittedApp.mainRegion.show(projectView);
+	                }, 2000);
+	            }, function (error) {
+	                console.log(error);
+	            });
+	        }
+	    };
+
+	    module.exports = Show.Controller;
 	});
 
 /***/ },
@@ -23764,7 +23906,31 @@
 	 */
 
 	var CommittedApp = __webpack_require__(1),
-	    ProjectViewTpl = __webpack_require__(22);
+	    ProjectView = __webpack_require__(23);
+
+	/**
+	 * List.Projects view module
+	 */
+
+	CommittedApp.module('ProjectsApp.List', function (List, CommittedApp, Backbone, Marionette, $, _) {
+	    List.Projects = Marionette.CollectionView.extend({
+	        className: 'ui horizontal list',
+	        itemView: ProjectView
+	    });
+
+	    module.exports = List.Projects;
+	});
+
+/***/ },
+/* 19 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Module dependencies
+	 */
+
+	var CommittedApp = __webpack_require__(1),
+	    ProjectViewTpl = __webpack_require__(24);
 
 	/**
 	 * Show.Project view
@@ -23780,13 +23946,43 @@
 	});
 
 /***/ },
-/* 19 */
+/* 20 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Module dependencies
+	 */
+
+	var CommittedApp = __webpack_require__(1),
+	    loadingViewTpl = __webpack_require__(25);
+
+	CommittedApp.module('Common.Views', function (Views, CommittedApp, Backbone, Marionette, $, _) {
+	    Views.Loading = Marionette.ItemView.extend({
+	        template: loadingViewTpl,
+
+	        initialize: function(options){
+	            options = options || {};
+	            this.message = options.message || "Loading";
+	        },
+
+	        serializeData: function(){
+	            return {
+	                message: this.message
+	            }
+	        }
+	    });
+
+	    module.exports = Views.Loading;
+	});
+
+/***/ },
+/* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
 	(function (root, factory) {
 	  if (true) {
 
-	    var underscore = __webpack_require__(13);
+	    var underscore = __webpack_require__(14);
 	    var backbone = __webpack_require__(5);
 
 	    module.exports = factory(underscore, backbone);
@@ -24063,7 +24259,7 @@
 
 
 /***/ },
-/* 20 */
+/* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// Backbone.BabySitter
@@ -24078,7 +24274,7 @@
 	(function (root, factory) {
 	  if (true) {
 
-	    var underscore = __webpack_require__(13);
+	    var underscore = __webpack_require__(14);
 	    var backbone = __webpack_require__(5);
 
 	    module.exports = factory(underscore, backbone);
@@ -24249,7 +24445,7 @@
 
 
 /***/ },
-/* 21 */
+/* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -24257,7 +24453,7 @@
 	 */
 
 	var CommittedApp = __webpack_require__(1),
-	    projectTpl = __webpack_require__(23);
+	    projectTpl = __webpack_require__(26);
 
 	/**
 	 * List.Project view
@@ -24265,7 +24461,7 @@
 
 	CommittedApp.module('ProjectsApp.List', function (List, CommittedApp, Backbone, Marionette, $, _) {
 	    List.Project = Marionette.ItemView.extend({
-	        className: 'ui raised segment',
+	        className: 'item',
 	        template: projectTpl
 	    });
 
@@ -24273,64 +24469,82 @@
 	});
 
 /***/ },
-/* 22 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = __webpack_require__(24).default.template(function (Handlebars,depth0,helpers,partials,data) {
-	  this.compilerInfo = [4,'>= 1.0.0'];
-	helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-	  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression;
-
-
-	  buffer += "<h2>Project name: ";
-	  if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-	  else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-	  buffer += escapeExpression(stack1)
-	    + "</h2>";
-	  return buffer;
-	  });
-
-/***/ },
-/* 23 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = __webpack_require__(24).default.template(function (Handlebars,depth0,helpers,partials,data) {
-	  this.compilerInfo = [4,'>= 1.0.0'];
-	helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-	  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression;
-
-
-	  buffer += "<h2>Project name: ";
-	  if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-	  else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-	  buffer += escapeExpression(stack1)
-	    + "</h2>";
-	  return buffer;
-	  });
-
-/***/ },
 /* 24 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// Create a simple path alias to allow browserify to resolve
-	// the runtime on a supported path.
-	module.exports = __webpack_require__(25);
+	module.exports = __webpack_require__(27).default.template(function (Handlebars,depth0,helpers,partials,data) {
+	  this.compilerInfo = [4,'>= 1.0.0'];
+	helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+	  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression;
 
+
+	  buffer += "<h2>Project name: ";
+	  if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+	  else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+	  buffer += escapeExpression(stack1)
+	    + "</h2>";
+	  return buffer;
+	  });
 
 /***/ },
 /* 25 */
 /***/ function(module, exports, __webpack_require__) {
 
+	module.exports = __webpack_require__(27).default.template(function (Handlebars,depth0,helpers,partials,data) {
+	  this.compilerInfo = [4,'>= 1.0.0'];
+	helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+	  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression;
+
+
+	  buffer += "<div class=\"ui active large inline text loader\">\n    ";
+	  if (helper = helpers.message) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+	  else { helper = (depth0 && depth0.message); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+	  buffer += escapeExpression(stack1)
+	    + "\n</div>";
+	  return buffer;
+	  });
+
+/***/ },
+/* 26 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__(27).default.template(function (Handlebars,depth0,helpers,partials,data) {
+	  this.compilerInfo = [4,'>= 1.0.0'];
+	helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+	  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression;
+
+
+	  buffer += "<div class=\"ui raised segment\">\n    <h2>Project name: ";
+	  if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+	  else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+	  buffer += escapeExpression(stack1)
+	    + "</h2>\n</div>";
+	  return buffer;
+	  });
+
+/***/ },
+/* 27 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// Create a simple path alias to allow browserify to resolve
+	// the runtime on a supported path.
+	module.exports = __webpack_require__(28);
+
+
+/***/ },
+/* 28 */
+/***/ function(module, exports, __webpack_require__) {
+
 	"use strict";
 	/*globals Handlebars: true */
-	var base = __webpack_require__(26);
+	var base = __webpack_require__(29);
 
 	// Each of these augment the Handlebars object. No need to setup here.
 	// (This is done to easily share code between commonjs and browse envs)
-	var SafeString = __webpack_require__(27)["default"];
-	var Exception = __webpack_require__(28)["default"];
-	var Utils = __webpack_require__(29);
-	var runtime = __webpack_require__(30);
+	var SafeString = __webpack_require__(30)["default"];
+	var Exception = __webpack_require__(31)["default"];
+	var Utils = __webpack_require__(32);
+	var runtime = __webpack_require__(33);
 
 	// For compatibility and usage outside of module systems, make the Handlebars object a namespace
 	var create = function() {
@@ -24355,12 +24569,12 @@
 	exports["default"] = Handlebars;
 
 /***/ },
-/* 26 */
+/* 29 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var Utils = __webpack_require__(29);
-	var Exception = __webpack_require__(28)["default"];
+	var Utils = __webpack_require__(32);
+	var Exception = __webpack_require__(31)["default"];
 
 	var VERSION = "1.3.0";
 	exports.VERSION = VERSION;var COMPILER_REVISION = 4;
@@ -24540,7 +24754,7 @@
 	exports.createFrame = createFrame;
 
 /***/ },
-/* 27 */
+/* 30 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -24556,7 +24770,7 @@
 	exports["default"] = SafeString;
 
 /***/ },
-/* 28 */
+/* 31 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -24589,12 +24803,12 @@
 	exports["default"] = Exception;
 
 /***/ },
-/* 29 */
+/* 32 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	/*jshint -W004 */
-	var SafeString = __webpack_require__(27)["default"];
+	var SafeString = __webpack_require__(30)["default"];
 
 	var escape = {
 	  "&": "&amp;",
@@ -24670,14 +24884,14 @@
 	exports.isEmpty = isEmpty;
 
 /***/ },
-/* 30 */
+/* 33 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var Utils = __webpack_require__(29);
-	var Exception = __webpack_require__(28)["default"];
-	var COMPILER_REVISION = __webpack_require__(26).COMPILER_REVISION;
-	var REVISION_CHANGES = __webpack_require__(26).REVISION_CHANGES;
+	var Utils = __webpack_require__(32);
+	var Exception = __webpack_require__(31)["default"];
+	var COMPILER_REVISION = __webpack_require__(29).COMPILER_REVISION;
+	var REVISION_CHANGES = __webpack_require__(29).REVISION_CHANGES;
 
 	function checkRevision(compilerInfo) {
 	  var compilerRevision = compilerInfo && compilerInfo[0] || 1,

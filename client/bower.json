@@ -15,6 +15,7 @@
   ],
   "dependencies": {
     "backbone.marionette": "~1.6.4",
-    "underscore": "~1.4.4"
+    "underscore": "~1.4.4",
+    "backbone-route-filter": "~0.1.1"
   }
 }

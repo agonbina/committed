@@ -13,6 +13,19 @@ CommittedApp.module('ProjectsApp', function (ProjectsApp, CommittedApp, Backbone
         appRoutes: {
             'projects': 'listProjects',
             'projects/:id': 'showProject'
+        },
+
+        before: {
+            'projects': 'logSomething',
+            'projects/:id': 'logId'
+        },
+
+        logSomething: function (route) {
+            console.log('logging something ...', route);
+        },
+        logId: function (route, args, next) {
+            console.log(route, args);
+            next();
         }
     });
 
@@ -22,11 +35,11 @@ CommittedApp.module('ProjectsApp', function (ProjectsApp, CommittedApp, Backbone
 
     var API = {
         listProjects: function () {
-            var ListController = require('./list/controller');
+            var ListController = require('./list/list_controller');
             ListController.listProjects();
         },
         showProject: function (id) {
-            var ShowController = require('./show/controller');
+            var ShowController = require('./show/show_controller');
             ShowController.showProject(id);
         }
     };

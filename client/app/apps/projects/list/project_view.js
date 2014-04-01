@@ -11,7 +11,7 @@ var CommittedApp = require('app'),
 
 CommittedApp.module('ProjectsApp.List', function (List, CommittedApp, Backbone, Marionette, $, _) {
     List.Project = Marionette.ItemView.extend({
-        className: 'ui raised segment',
+        className: 'item',
         template: projectTpl
     });
 

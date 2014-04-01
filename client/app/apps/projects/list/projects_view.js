@@ -11,6 +11,7 @@ var CommittedApp = require('app'),
 
 CommittedApp.module('ProjectsApp.List', function (List, CommittedApp, Backbone, Marionette, $, _) {
     List.Projects = Marionette.CollectionView.extend({
+        className: 'ui horizontal list',
         itemView: ProjectView
     });
 

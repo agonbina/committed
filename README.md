@@ -4,7 +4,7 @@ committed
 Structure
 ========
 
--CommittedApp (Main Application)
+* CommittedApp (Main Application)
     - Authenticate
     - ProjectsApp
         - Router

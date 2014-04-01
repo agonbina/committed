@@ -126,7 +126,8 @@
 	// Attach the global app events
 	__webpack_require__(7)(CommittedApp);
 
-	__webpack_require__(9);
+	// Load any configurations/extensions of Backbone and Marionette
+	__webpack_require__(8);
 
 	module.exports = CommittedApp;
 
@@ -164,7 +165,7 @@
 	    ProjectsApp.startWithParent = false;
 
 	    ProjectsApp.onBeforeStart = function () {
-	        __webpack_require__(8);
+	        __webpack_require__(9);
 	    };
 
 	    ProjectsApp.onStart = function () {
@@ -9767,6 +9768,56 @@
 	 * Module dependencies
 	 */
 
+	var Marionette = __webpack_require__(10),
+	    AppRouter = Marionette.AppRouter,
+	    _ = __webpack_require__(14);
+
+	var originalExecute = AppRouter.prototype.execute;
+
+	// nop - no operation, a function that does nothing
+	var nop = function () { };
+
+	_.extend(AppRouter.prototype, {
+
+	    // Default before filter
+	    before: nop,
+
+	    // Default after filter
+	    after: nop,
+
+	    execute: function (callback, args) {
+	        var router = this;
+
+	        var wrappedCallback = _.bind(function () {
+	            // If before === function -> Run it for all routes
+	            // If before === object -> Get middleware for this route
+	                // If middleware === function, run it for this route
+	                // If middleware === array, run each middleware serially
+
+	            // Run the callback specified for this route if all
+	            // before middleware completes successfully
+	            callback.apply(this);
+
+	            // Repeat same for after as before
+
+	        }, router);
+
+	        console.log(router.appRoutes);
+
+	        return originalExecute.call(router, wrappedCallback, args);
+	    }
+	});
+
+	module.exports = AppRouter;
+
+/***/ },
+/* 9 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Module dependencies
+	 */
+
 	var CommittedApp = __webpack_require__(1);
 
 	/**
@@ -9778,19 +9829,6 @@
 	        appRoutes: {
 	            'projects': 'listProjects',
 	            'projects/:id': 'showProject'
-	        },
-
-	        before: {
-	            'projects': 'logSomething',
-	            'projects/:id': 'logId'
-	        },
-
-	        logSomething: function (route) {
-	            console.log('logging something ...', route);
-	        },
-	        logId: function (route, args, next) {
-	            console.log(route, args);
-	            next();
 	        }
 	    });
 
@@ -9815,7 +9853,7 @@
 	     */
 
 	    ProjectsApp.addInitializer(function () {
-	        new ProjectsApp.Router({
+	        var projectsAppRouter = new ProjectsApp.Router({
 	            controller: API
 	        });
 	    });
@@ -9836,146 +9874,6 @@
 
 	    module.exports = ProjectsApp.Router;
 	});
-
-/***/ },
-/* 9 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/**
-	 * Backbone.Route filter
-	 *
-	 * Adds support for sync/async Backbone routes filters
-	 *
-	 * @author Maksim Horbachevsky
-	 */
-
-	(function(factory) {
-	  if (true) {
-	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(5), __webpack_require__(14)], __WEBPACK_AMD_DEFINE_RESULT__ = (factory.apply(null, __WEBPACK_AMD_DEFINE_ARRAY__)), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	  } else if (typeof exports === 'object') {
-	    module.exports = factory(require('backbone'), require('underscore'));
-	  } else {
-	    factory(window.Backbone, window._);
-	  }
-	})(function(Backbone, _) {
-
-	  var extend = Backbone.Router.extend;
-
-	  Backbone.Router.extend = function() {
-	    var child = extend.apply(this, arguments),
-	      childProto = child.prototype,
-	      parentProto = this.prototype;
-
-	    _.each(['before', 'after'], function(filter) {
-	      _.defaults(childProto[filter], parentProto[filter]);
-	    });
-
-	    return child;
-	  };
-
-	  _.extend(Backbone.Router.prototype, {
-
-	    /**
-	     * Override default route fn to call before/after filters
-	     *
-	     * @param {String} route
-	     * @param {String} name
-	     * @param {Function} [callback]
-	     * @return {*}
-	     */
-	    route: function(route, name, callback) {
-	      if (!_.isRegExp(route)) route = this._routeToRegExp(route);
-
-	      if (_.isFunction(name)) {
-	        callback = name;
-	        name = '';
-	      }
-
-	      if (!callback) callback = this[name];
-	      var router = this;
-
-	      Backbone.history.route(route, function(fragment) {
-	        var args = router._extractParameters(route, fragment);
-
-	        runFilters(router, router.before, fragment, args, function() {
-	          if (callback) {
-	            callback.apply(router, args);
-	          }
-
-	          router.trigger.apply(router, ['route:' + name].concat(args));
-	          router.trigger('route', name, args);
-	          Backbone.history.trigger('route', router, name, args);
-
-	          runFilters(router, router.after, fragment, args, function() {
-	          });
-	        });
-	      });
-
-	      return this;
-	    }
-	  });
-
-	  /**
-	   * Running all filters that matches current fragment
-	   *
-	   * @param router {Router} router instance reference
-	   * @param filters {Object} all available filters
-	   * @param fragment {String} current fragment
-	   * @param args {Array} fragment arguments
-	   * @param callback {Function}
-	   */
-	  function runFilters(router, filters, fragment, args, callback) {
-	    var chain = _.filter(filters, function(callback, filter) {
-	      filter = _.isRegExp(filter) ? filter : router._routeToRegExp(filter);
-	      return filter.test(fragment);
-	    });
-
-	    run(chain, router, fragment, args, callback);
-	  }
-
-	  /**
-	   * Recursive function to run through filters chain supporting both async calls via `next` or regular
-	   * return-value based chain
-	   *
-	   * @param chain {Array} filter calls chain
-	   * @param router {Router} router instance reference
-	   * @param fragment {String} current fragment
-	   * @param args {Array} fragment arguments
-	   * @param callback {Function}
-	   */
-	  function run(chain, router, fragment, args, callback) {
-
-	    // When filters chain is finished - calling `done` callback
-	    if (!chain.length) {
-	      callback.call(router);
-	      return;
-	    }
-
-	    var current = chain[0],
-	      tail = _.tail(chain),
-	      next = function() {
-	        run(tail, router, fragment, args, callback);
-	      };
-
-	    if (_.isString(current)) {
-	      current = router[current];
-	    }
-
-	    if (current.length === 3) {
-	      // Filter expects `next` for async - ignoring return value
-	      // and waiting for `next` to be called
-	      current.apply(router, [fragment, args, next]);
-	    } else {
-	      // Using regular filter with `false` return value that stops
-	      // filters execution
-	      if (current.apply(router, [fragment, args]) !== false) {
-	        next();
-	      }
-	    }
-	  }
-
-	});
-
 
 /***/ },
 /* 10 */
@@ -10005,8 +9903,8 @@
 
 	    var underscore = __webpack_require__(14);
 	    var backbone = __webpack_require__(5);
-	    var wreqr = __webpack_require__(21);
-	    var babysitter = __webpack_require__(22);
+	    var wreqr = __webpack_require__(22);
+	    var babysitter = __webpack_require__(21);
 
 	    module.exports = factory(underscore, backbone, wreqr, babysitter);
 
@@ -23979,6 +23877,192 @@
 /* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
+	// Backbone.BabySitter
+	// -------------------
+	// v0.1.0
+	//
+	// Copyright (c)2014 Derick Bailey, Muted Solutions, LLC.
+	// Distributed under MIT license
+	//
+	// http://github.com/marionettejs/backbone.babysitter
+
+	(function (root, factory) {
+	  if (true) {
+
+	    var underscore = __webpack_require__(14);
+	    var backbone = __webpack_require__(5);
+
+	    module.exports = factory(underscore, backbone);
+
+	  } else if (typeof define === 'function' && define.amd) {
+
+	    define(['underscore', 'backbone'], factory);
+
+	  } 
+	}(this, function (_, Backbone) {
+	  "option strict";
+
+	  // Backbone.ChildViewContainer
+	// ---------------------------
+	//
+	// Provide a container to store, retrieve and
+	// shut down child views.
+
+	Backbone.ChildViewContainer = (function(Backbone, _){
+	  
+	  // Container Constructor
+	  // ---------------------
+
+	  var Container = function(views){
+	    this._views = {};
+	    this._indexByModel = {};
+	    this._indexByCustom = {};
+	    this._updateLength();
+
+	    _.each(views, this.add, this);
+	  };
+
+	  // Container Methods
+	  // -----------------
+
+	  _.extend(Container.prototype, {
+
+	    // Add a view to this container. Stores the view
+	    // by `cid` and makes it searchable by the model
+	    // cid (and model itself). Optionally specify
+	    // a custom key to store an retrieve the view.
+	    add: function(view, customIndex){
+	      var viewCid = view.cid;
+
+	      // store the view
+	      this._views[viewCid] = view;
+
+	      // index it by model
+	      if (view.model){
+	        this._indexByModel[view.model.cid] = viewCid;
+	      }
+
+	      // index by custom
+	      if (customIndex){
+	        this._indexByCustom[customIndex] = viewCid;
+	      }
+
+	      this._updateLength();
+	      return this;
+	    },
+
+	    // Find a view by the model that was attached to
+	    // it. Uses the model's `cid` to find it.
+	    findByModel: function(model){
+	      return this.findByModelCid(model.cid);
+	    },
+
+	    // Find a view by the `cid` of the model that was attached to
+	    // it. Uses the model's `cid` to find the view `cid` and
+	    // retrieve the view using it.
+	    findByModelCid: function(modelCid){
+	      var viewCid = this._indexByModel[modelCid];
+	      return this.findByCid(viewCid);
+	    },
+
+	    // Find a view by a custom indexer.
+	    findByCustom: function(index){
+	      var viewCid = this._indexByCustom[index];
+	      return this.findByCid(viewCid);
+	    },
+
+	    // Find by index. This is not guaranteed to be a
+	    // stable index.
+	    findByIndex: function(index){
+	      return _.values(this._views)[index];
+	    },
+
+	    // retrieve a view by its `cid` directly
+	    findByCid: function(cid){
+	      return this._views[cid];
+	    },
+
+	    // Remove a view
+	    remove: function(view){
+	      var viewCid = view.cid;
+
+	      // delete model index
+	      if (view.model){
+	        delete this._indexByModel[view.model.cid];
+	      }
+
+	      // delete custom index
+	      _.any(this._indexByCustom, function(cid, key) {
+	        if (cid === viewCid) {
+	          delete this._indexByCustom[key];
+	          return true;
+	        }
+	      }, this);
+
+	      // remove the view from the container
+	      delete this._views[viewCid];
+
+	      // update the length
+	      this._updateLength();
+	      return this;
+	    },
+
+	    // Call a method on every view in the container,
+	    // passing parameters to the call method one at a
+	    // time, like `function.call`.
+	    call: function(method){
+	      this.apply(method, _.tail(arguments));
+	    },
+
+	    // Apply a method on every view in the container,
+	    // passing parameters to the call method one at a
+	    // time, like `function.apply`.
+	    apply: function(method, args){
+	      _.each(this._views, function(view){
+	        if (_.isFunction(view[method])){
+	          view[method].apply(view, args || []);
+	        }
+	      });
+	    },
+
+	    // Update the `.length` attribute on this container
+	    _updateLength: function(){
+	      this.length = _.size(this._views);
+	    }
+	  });
+
+	  // Borrowing this code from Backbone.Collection:
+	  // http://backbonejs.org/docs/backbone.html#section-106
+	  //
+	  // Mix in methods from Underscore, for iteration, and other
+	  // collection related features.
+	  var methods = ['forEach', 'each', 'map', 'find', 'detect', 'filter', 
+	    'select', 'reject', 'every', 'all', 'some', 'any', 'include', 
+	    'contains', 'invoke', 'toArray', 'first', 'initial', 'rest', 
+	    'last', 'without', 'isEmpty', 'pluck'];
+
+	  _.each(methods, function(method) {
+	    Container.prototype[method] = function() {
+	      var views = _.values(this._views);
+	      var args = [views].concat(_.toArray(arguments));
+	      return _[method].apply(_, args);
+	    };
+	  });
+
+	  // return the public API
+	  return Container;
+	})(Backbone, _);
+
+	  return Backbone.ChildViewContainer; 
+
+	}));
+
+
+
+/***/ },
+/* 22 */
+/***/ function(module, exports, __webpack_require__) {
+
 	(function (root, factory) {
 	  if (true) {
 
@@ -24253,192 +24337,6 @@
 	})(Backbone, Backbone.Marionette, _);
 
 	  return Backbone.Wreqr; 
-
-	}));
-
-
-
-/***/ },
-/* 22 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// Backbone.BabySitter
-	// -------------------
-	// v0.1.0
-	//
-	// Copyright (c)2014 Derick Bailey, Muted Solutions, LLC.
-	// Distributed under MIT license
-	//
-	// http://github.com/marionettejs/backbone.babysitter
-
-	(function (root, factory) {
-	  if (true) {
-
-	    var underscore = __webpack_require__(14);
-	    var backbone = __webpack_require__(5);
-
-	    module.exports = factory(underscore, backbone);
-
-	  } else if (typeof define === 'function' && define.amd) {
-
-	    define(['underscore', 'backbone'], factory);
-
-	  } 
-	}(this, function (_, Backbone) {
-	  "option strict";
-
-	  // Backbone.ChildViewContainer
-	// ---------------------------
-	//
-	// Provide a container to store, retrieve and
-	// shut down child views.
-
-	Backbone.ChildViewContainer = (function(Backbone, _){
-	  
-	  // Container Constructor
-	  // ---------------------
-
-	  var Container = function(views){
-	    this._views = {};
-	    this._indexByModel = {};
-	    this._indexByCustom = {};
-	    this._updateLength();
-
-	    _.each(views, this.add, this);
-	  };
-
-	  // Container Methods
-	  // -----------------
-
-	  _.extend(Container.prototype, {
-
-	    // Add a view to this container. Stores the view
-	    // by `cid` and makes it searchable by the model
-	    // cid (and model itself). Optionally specify
-	    // a custom key to store an retrieve the view.
-	    add: function(view, customIndex){
-	      var viewCid = view.cid;
-
-	      // store the view
-	      this._views[viewCid] = view;
-
-	      // index it by model
-	      if (view.model){
-	        this._indexByModel[view.model.cid] = viewCid;
-	      }
-
-	      // index by custom
-	      if (customIndex){
-	        this._indexByCustom[customIndex] = viewCid;
-	      }
-
-	      this._updateLength();
-	      return this;
-	    },
-
-	    // Find a view by the model that was attached to
-	    // it. Uses the model's `cid` to find it.
-	    findByModel: function(model){
-	      return this.findByModelCid(model.cid);
-	    },
-
-	    // Find a view by the `cid` of the model that was attached to
-	    // it. Uses the model's `cid` to find the view `cid` and
-	    // retrieve the view using it.
-	    findByModelCid: function(modelCid){
-	      var viewCid = this._indexByModel[modelCid];
-	      return this.findByCid(viewCid);
-	    },
-
-	    // Find a view by a custom indexer.
-	    findByCustom: function(index){
-	      var viewCid = this._indexByCustom[index];
-	      return this.findByCid(viewCid);
-	    },
-
-	    // Find by index. This is not guaranteed to be a
-	    // stable index.
-	    findByIndex: function(index){
-	      return _.values(this._views)[index];
-	    },
-
-	    // retrieve a view by its `cid` directly
-	    findByCid: function(cid){
-	      return this._views[cid];
-	    },
-
-	    // Remove a view
-	    remove: function(view){
-	      var viewCid = view.cid;
-
-	      // delete model index
-	      if (view.model){
-	        delete this._indexByModel[view.model.cid];
-	      }
-
-	      // delete custom index
-	      _.any(this._indexByCustom, function(cid, key) {
-	        if (cid === viewCid) {
-	          delete this._indexByCustom[key];
-	          return true;
-	        }
-	      }, this);
-
-	      // remove the view from the container
-	      delete this._views[viewCid];
-
-	      // update the length
-	      this._updateLength();
-	      return this;
-	    },
-
-	    // Call a method on every view in the container,
-	    // passing parameters to the call method one at a
-	    // time, like `function.call`.
-	    call: function(method){
-	      this.apply(method, _.tail(arguments));
-	    },
-
-	    // Apply a method on every view in the container,
-	    // passing parameters to the call method one at a
-	    // time, like `function.apply`.
-	    apply: function(method, args){
-	      _.each(this._views, function(view){
-	        if (_.isFunction(view[method])){
-	          view[method].apply(view, args || []);
-	        }
-	      });
-	    },
-
-	    // Update the `.length` attribute on this container
-	    _updateLength: function(){
-	      this.length = _.size(this._views);
-	    }
-	  });
-
-	  // Borrowing this code from Backbone.Collection:
-	  // http://backbonejs.org/docs/backbone.html#section-106
-	  //
-	  // Mix in methods from Underscore, for iteration, and other
-	  // collection related features.
-	  var methods = ['forEach', 'each', 'map', 'find', 'detect', 'filter', 
-	    'select', 'reject', 'every', 'all', 'some', 'any', 'include', 
-	    'contains', 'invoke', 'toArray', 'first', 'initial', 'rest', 
-	    'last', 'without', 'isEmpty', 'pluck'];
-
-	  _.each(methods, function(method) {
-	    Container.prototype[method] = function() {
-	      var views = _.values(this._views);
-	      var args = [views].concat(_.toArray(arguments));
-	      return _[method].apply(_, args);
-	    };
-	  });
-
-	  // return the public API
-	  return Container;
-	})(Backbone, _);
-
-	  return Backbone.ChildViewContainer; 
 
 	}));
 

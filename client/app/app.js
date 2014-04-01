@@ -7,6 +7,7 @@ require('./config/reqres')(CommittedApp.reqres);
 // Attach the global app events
 require('./config/vent')(CommittedApp);
 
-require('backbone.routefilter');
+// Load any configurations/extensions of Backbone and Marionette
+require('./config/marionette/router');
 
 module.exports = CommittedApp;

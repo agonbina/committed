@@ -13,19 +13,6 @@ CommittedApp.module('ProjectsApp', function (ProjectsApp, CommittedApp, Backbone
         appRoutes: {
             'projects': 'listProjects',
             'projects/:id': 'showProject'
-        },
-
-        before: {
-            'projects': 'logSomething',
-            'projects/:id': 'logId'
-        },
-
-        logSomething: function (route) {
-            console.log('logging something ...', route);
-        },
-        logId: function (route, args, next) {
-            console.log(route, args);
-            next();
         }
     });
 
@@ -50,7 +37,7 @@ CommittedApp.module('ProjectsApp', function (ProjectsApp, CommittedApp, Backbone
      */
 
     ProjectsApp.addInitializer(function () {
-        new ProjectsApp.Router({
+        var projectsAppRouter = new ProjectsApp.Router({
             controller: API
         });
     });

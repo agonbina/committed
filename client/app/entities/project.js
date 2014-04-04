@@ -2,18 +2,38 @@
  * Module dependencies
  */
 
-var CommittedApp = require('app'),
-    Parse = require('parse').Parse;
+var Parse = require('parse').Parse;
 
 /**
  * Project entity
  */
 
 CommittedApp.module('Entities', function (Entities, CommittedApp, Backbone, Marionette, $, _) {
-    Entities.Project = Parse.Object.extend({
+    var Project = Entities.Project = Parse.Object.extend({
         className: 'Project',
         defaults: {
             name: 'Un-named project'
+        }
+    });
+
+    /**
+     * App Handlers for the Project entity
+     */
+
+    var API = {
+        getProjectEntity: function (projectId) {
+            var project = new Project({ id: projectId });
+            return project.fetch();
+        }
+    };
+
+    CommittedApp.reqres.setHandlers({
+        'project:entity': function (id) {
+            return API.getProjectEntity(id);
+        },
+
+        'project:entity:new': function () {
+            return new Project();
         }
     });
 

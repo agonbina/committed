@@ -43,6 +43,25 @@ CommittedApp.addInitializer(function () {
 });
 
 /**
+ * Load all entities, mainly to register the global entity handlers
+ */
+
+CommittedApp.addInitializer(function () {
+    var entities = [
+            'user',
+            'project',
+            'projects'
+        ],
+        entitiesPath = './entities/',
+        loadEntity = function (entity) {
+            console.log(entitiesPath + entity);
+            require(entitiesPath + entity);
+        };
+
+    _(entities).each(loadEntity);
+});
+
+/**
  * Start the sub-apps needed at runtime
  */
 

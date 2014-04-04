@@ -19,8 +19,6 @@ CommittedApp.module('AuthApp.Show', function (Show, CommittedApp, Backbone, Mari
         },
 
         ui: {
-            'emailField': 'input#js-email',
-            'passwordField': 'input#js-password',
             'submitBtn': '.button.js-submit'
         },
 

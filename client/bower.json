@@ -16,6 +16,9 @@
   "dependencies": {
     "backbone.marionette": "~1.6.4",
     "underscore": "~1.4.4",
-    "backbone.routeFilter": "~0.2.0"
+    "backbone.routeFilter": "~0.2.0",
+    "backbone": "https://github.com/thedersen/backbone.validation",
+    "backbone.validation": "~0.7.1",
+    "backbone.syphon": "~0.4.1"
   }
 }

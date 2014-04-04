@@ -16,6 +16,10 @@ CommittedApp.module('ProjectsApp', function (ProjectsApp, CommittedApp, Backbone
             'projects/:id': 'showProject'
         },
 
+        /**
+         * Middleware for the routes
+         */
+
         before: {
             'projects/:id': function () {
                 if(!User.current()) {

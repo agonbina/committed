@@ -1,4 +1,5 @@
 var Marionette = require('backbone.marionette');
+var Backbone = require('backbone');
 var CommittedApp = new Marionette.Application();
 
 // Configure the reqres handlers in one place
@@ -11,5 +12,8 @@ require('./config/vent')(CommittedApp);
 //require('./config/marionette/router');
 
 require('backbone.routefilter');
+require('backbone.syphon');
+require('backbone.validation');
+_.extend(Backbone.Model.prototype, Backbone.Validation.mixin);
 
 module.exports = CommittedApp;

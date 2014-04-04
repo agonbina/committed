@@ -15,7 +15,8 @@ CommittedApp.module('AuthApp', function (AuthApp, CommittedApp, Backbone, Marion
 
     var API = {
         showLogin: function () {
-            console.log('showing login ...');
+            var ShowController = require('./show/show_controller');
+            ShowController.showLogin();
         },
 
         showSignup: function () {

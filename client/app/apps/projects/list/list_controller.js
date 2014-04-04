@@ -4,7 +4,7 @@
 
 var CommittedApp = require('app'),
     ProjectsView = require('./projects_view'),
-    LoadingView = require('../../../common/views');
+    LoadingView = require('../../../common/views/loading_view');
 
 /**
  * ProjectsApp.List controller

@@ -7,8 +7,24 @@ var CommittedApp = require('app'),
     Project = require('./project');
 
 CommittedApp.module('Entities', function (Entities, CommittedApp, Backbone, Marionette, $, _) {
-    Entities.Projects = Parse.Collection.extend({
+
+    /**
+     * Projects collection
+     */
+
+    var Projects = Entities.Projects = Parse.Collection.extend({
         model: Project
+    });
+
+    var API = {
+        getProjectsEntities: function () {
+            var projects = new Projects();
+            return projects.fetch();
+        }
+    };
+
+    CommittedApp.reqres.setHandlers({
+        'project:entities': API.getProjectsEntities
     });
 
     module.exports = Entities.Projects;

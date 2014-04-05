@@ -45,19 +45,18 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(_) {/**
+	/**
 	 * Module dependencies
 	 */
-
-	var CommittedApp = __webpack_require__(1),
-	    Backbone = __webpack_require__(7),
-	    Parse = __webpack_require__(6).Parse,
-	    User = __webpack_require__(3);
+	var Backbone = __webpack_require__(8),
+	    _ = __webpack_require__(9),
+	    Parse = __webpack_require__(7).Parse,
+	    CommittedApp = __webpack_require__(1);
 
 	/**
 	 * Helper: set history fragment
-	 * @param route
-	 * @param options
+	 * @param route ,
+	 * @param options ,options you would normally pass to history.navigate
 	 */
 
 	CommittedApp.navigate = function (route, options) {
@@ -90,22 +89,13 @@
 	});
 
 	/**
-	 * Load all entities, mainly to register the global entity handlers
+	 * Load all entities, to register the global entity handlers
 	 */
 
 	CommittedApp.addInitializer(function () {
-	    var entities = [
-	            'user',
-	            'project',
-	            'projects'
-	        ],
-	        entitiesPath = './entities/',
-	        loadEntity = function (entity) {
-	            console.log(entitiesPath + entity);
-	            __webpack_require__(2)(entitiesPath + entity);
-	        };
-
-	    _(entities).each(loadEntity);
+	    __webpack_require__(2);
+	    __webpack_require__(3);
+	    __webpack_require__(4);
 	});
 
 	/**
@@ -113,8 +103,8 @@
 	 */
 
 	CommittedApp.addInitializer(function () {
-	    var AuthenticationApp = __webpack_require__(4),
-	        ProjectsApp = __webpack_require__(5);
+	    var AuthenticationApp = __webpack_require__(5),
+	        ProjectsApp = __webpack_require__(6);
 
 	    AuthenticationApp.start();
 	    ProjectsApp.start();
@@ -133,102 +123,86 @@
 	CommittedApp.start();
 
 
-	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(8)))
+
 
 /***/ },
 /* 1 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(_) {var Marionette = __webpack_require__(13);
-	var Backbone = __webpack_require__(7);
+	/* WEBPACK VAR INJECTION */(function(_) {var Marionette = __webpack_require__(14);
+	var Backbone = __webpack_require__(8);
 	var CommittedApp = new Marionette.Application();
 
 	// Configure the reqres handlers in one place
-	__webpack_require__(9)(CommittedApp.reqres);
+	__webpack_require__(10)(CommittedApp.reqres);
 
 	// Attach the global app events
-	__webpack_require__(10)(CommittedApp);
+	__webpack_require__(11)(CommittedApp);
 
 	// Load any configurations/extensions of Backbone and Marionette
 	//require('./config/marionette/router');
 
-	__webpack_require__(14);
+	__webpack_require__(16);
+	__webpack_require__(18);
 	__webpack_require__(17);
-	__webpack_require__(15);
 	_.extend(Backbone.Model.prototype, Backbone.Validation.mixin);
 
 	module.exports = CommittedApp;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(8)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9)))
 
 /***/ },
 /* 2 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var map = {
-		"./app": 1,
-		"./app.js": 1,
-		"./apps/authentication/auth_app": 4,
-		"./apps/authentication/auth_app.js": 4,
-		"./apps/authentication/auth_app_router": 11,
-		"./apps/authentication/auth_app_router.js": 11,
-		"./apps/authentication/common/views/form_view": 31,
-		"./apps/authentication/common/views/form_view.js": 31,
-		"./apps/authentication/common/views/templates/form_view.hbs": 37,
-		"./apps/authentication/show/login_view": 21,
-		"./apps/authentication/show/login_view.js": 21,
-		"./apps/authentication/show/show_controller": 22,
-		"./apps/authentication/show/show_controller.js": 22,
-		"./apps/authentication/show/signup_view": 23,
-		"./apps/authentication/show/signup_view.js": 23,
-		"./apps/authentication/show/templates/login_view.hbs": 33,
-		"./apps/authentication/show/templates/signup_view.hbs": 34,
-		"./apps/projects/common/views": 24,
-		"./apps/projects/common/views.js": 24,
-		"./apps/projects/list/list_controller": 25,
-		"./apps/projects/list/list_controller.js": 25,
-		"./apps/projects/list/project_view": 26,
-		"./apps/projects/list/project_view.js": 26,
-		"./apps/projects/list/projects_view": 27,
-		"./apps/projects/list/projects_view.js": 27,
-		"./apps/projects/list/templates/project_view.hbs": 35,
-		"./apps/projects/projects_app": 5,
-		"./apps/projects/projects_app.js": 5,
-		"./apps/projects/projects_app_router": 12,
-		"./apps/projects/projects_app_router.js": 12,
-		"./apps/projects/show/project_view": 28,
-		"./apps/projects/show/project_view.js": 28,
-		"./apps/projects/show/show_controller": 29,
-		"./apps/projects/show/show_controller.js": 29,
-		"./apps/projects/show/templates/project_view.hbs": 36,
-		"./common/views/loading_view": 32,
-		"./common/views/loading_view.js": 32,
-		"./common/views/templates/loading_view.hbs": 38,
-		"./config/marionette/router": 30,
-		"./config/marionette/router.js": 30,
-		"./config/reqres": 9,
-		"./config/reqres.js": 9,
-		"./config/vent": 10,
-		"./config/vent.js": 10,
-		"./entities/project": 19,
-		"./entities/project.js": 19,
-		"./entities/projects": 20,
-		"./entities/projects.js": 20,
-		"./entities/user": 3,
-		"./entities/user.js": 3
-	};
-	function webpackContext(req) {
-		return __webpack_require__(webpackContextResolve(req));
-	};
-	function webpackContextResolve(req) {
-		return map[req] || (function() { throw new Error("Cannot find module '" + req + "'.") }());
-	};
-	webpackContext.keys = function webpackContextKeys() {
-		return Object.keys(map);
-	};
-	webpackContext.resolve = webpackContextResolve;
-	module.exports = webpackContext;
+	/**
+	 * Module dependencies
+	 */
 
+	var Parse = __webpack_require__(7).Parse,
+	    CommittedApp = __webpack_require__(1);
+
+	CommittedApp.module('Entities', function (Entities, CommittedApp, Backbone, Marionette, $, _) {
+
+	    /**
+	     * User Entity
+	     */
+
+	    var User = Entities.User = Parse.User.extend({
+	        validation: {
+	            email: {
+	                required: true,
+	                pattern: 'email',
+	                msg: 'No e-mail, no fun :)'
+	            },
+	            password: {
+	                required: true,
+	                msg: 'Come on, no password? :('
+	            }
+	        }
+	    });
+
+	    /**
+	     * App Handlers for the User entity
+	     */
+
+	    var API = {
+	        getUserEntity: function (userId) {
+	            var user = new User({id: userId});
+	            return user.fetch();
+	        },
+
+	        getNewUserEntity: function () {
+	            return new User();
+	        }
+	    };
+
+	    CommittedApp.reqres.setHandlers({
+	        'user:entity': API.getUserEntity,
+	        'user:entity:new': API.getNewUserEntity
+	    });
+
+	    module.exports = Entities.User;
+	});
 
 /***/ },
 /* 3 */
@@ -238,54 +212,84 @@
 	 * Module dependencies
 	 */
 
-	var Parse = __webpack_require__(6).Parse;
+	var Parse = __webpack_require__(7).Parse,
+	    CommittedApp = __webpack_require__(1);
 
-	/**
-	 * User Entity
-	 */
+	CommittedApp.module('Entities', function (Entities, CommittedApp, Backbone, Marionette, $, _) {
 
-	var User = Parse.User.extend({
-	    validation: {
-	        email: {
-	            required: true,
-	            pattern: 'email',
-	            msg: 'No e-mail, no fun :)'
-	        },
-	        password: {
-	            required: true,
-	            msg: 'Come on, no password? :('
-	        }
-	    }
-	});
+	    /**
+	     * Project entity
+	     */
 
-	/**
-	 * App Handlers for the User entity
-	 */
-
-	var API = {
-	    getUserEntity: function (userId) {
-	        var user = new User({id: userId});
-	        return user.fetch();
-	    }
-	};
-
-	module.exports = function (CommittedApp) {
-
-	    CommittedApp.reqres.setHandlers({
-	        'user:entity': function () {
-	            return API.getUserEntity();
-	        },
-
-	        'user:entity:new': function () {
-	            return new User();
+	    var Project = Entities.Project = Parse.Object.extend({
+	        className: 'Project',
+	        defaults: {
+	            name: 'Un-named project'
 	        }
 	    });
 
-	    return User;
-	};
+	    /**
+	     * App Handlers for the Project entity
+	     */
+
+	    var API = {
+	        getProjectEntity: function (projectId) {
+	            var project = new Project({ id: projectId });
+	            return project.fetch();
+	        }
+	    };
+
+	    CommittedApp.reqres.setHandlers({
+	        'project:entity': function (id) {
+	            return API.getProjectEntity(id);
+	        },
+
+	        'project:entity:new': function () {
+	            return new Project();
+	        }
+	    });
+
+	    module.exports = Entities.Project;
+	});
 
 /***/ },
 /* 4 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Module dependencies
+	 */
+
+	var CommittedApp = __webpack_require__(1),
+	    Parse = __webpack_require__(7).Parse,
+	    Project = __webpack_require__(3);
+
+	CommittedApp.module('Entities', function (Entities, CommittedApp, Backbone, Marionette, $, _) {
+
+	    /**
+	     * Projects collection
+	     */
+
+	    var Projects = Entities.Projects = Parse.Collection.extend({
+	        model: Project
+	    });
+
+	    var API = {
+	        getProjectsEntities: function () {
+	            var projects = new Projects();
+	            return projects.fetch();
+	        }
+	    };
+
+	    CommittedApp.reqres.setHandlers({
+	        'project:entities': API.getProjectsEntities
+	    });
+
+	    module.exports = Entities.Projects;
+	});
+
+/***/ },
+/* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -303,7 +307,7 @@
 	    AuthApp.startWithParent = false;
 
 	    AuthApp.onBeforeStart = function () {
-	        __webpack_require__(11);
+	        __webpack_require__(13);
 	    };
 
 	    AuthApp.onStart = function () {
@@ -318,7 +322,7 @@
 	});
 
 /***/ },
-/* 5 */
+/* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -353,7 +357,7 @@
 
 
 /***/ },
-/* 6 */
+/* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process, _) {/*!
@@ -393,8 +397,8 @@
 	            Parse.XMLHttpRequest = XMLHttpRequest;
 	        }
 
-	        Parse._ = __webpack_require__(8);
-	        Parse.$ = __webpack_require__(16);
+	        Parse._ = __webpack_require__(9);
+	        Parse.$ = __webpack_require__(15);
 
 	        exports.Parse = Parse;
 	    }
@@ -8252,10 +8256,10 @@
 	    };
 	}(this));
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(18), __webpack_require__(8)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(19), __webpack_require__(9)))
 
 /***/ },
-/* 7 */
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;//     Backbone.js 1.1.2
@@ -8269,7 +8273,7 @@
 
 	  // Set up Backbone appropriately for the environment. Start with AMD.
 	  if (true) {
-	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(8), __webpack_require__(16), exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, $, exports) {
+	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(9), __webpack_require__(15), exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, $, exports) {
 	      // Export global even in AMD case in case this script is loaded with
 	      // others that may still expect a global Backbone.
 	      root.Backbone = factory(root, exports, _, $);
@@ -9869,7 +9873,7 @@
 
 
 /***/ },
-/* 8 */
+/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 	//     Underscore.js 1.4.4
@@ -11101,10 +11105,10 @@
 
 
 /***/ },
-/* 9 */
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Parse = __webpack_require__(6).Parse;
+	var Parse = __webpack_require__(7).Parse;
 
 	/**
 	 * Handlers for global app events
@@ -11125,14 +11129,14 @@
 	};
 
 /***/ },
-/* 10 */
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * Module dependencies
 	 */
 
-	var _ = __webpack_require__(8);
+	var _ = __webpack_require__(9);
 
 	/**
 	 * Handlers for all global events
@@ -11152,7 +11156,86 @@
 	};
 
 /***/ },
-/* 11 */
+/* 12 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Module dependencies
+	 */
+
+	var CommittedApp = __webpack_require__(1),
+	    User = __webpack_require__(7).Parse.User;
+
+	/**
+	 * ProjectsApp router
+	 */
+
+	CommittedApp.module('ProjectsApp', function (ProjectsApp, CommittedApp, Backbone, Marionette, $, _) {
+	    ProjectsApp.Router = Marionette.AppRouter.extend({
+	        appRoutes: {
+	            'projects': 'listProjects',
+	            'projects/:id': 'showProject'
+	        },
+
+	        /**
+	         * Middleware for the routes
+	         */
+
+	        before: {
+	            'projects/:id': function () {
+	                if(!User.current()) {
+	                    console.log('You are not logged in ...');
+	                    return false;
+	                }
+	            }
+	        }
+	    });
+
+	    /**
+	     * Route handlers
+	     */
+
+	    var API = {
+	        listProjects: function () {
+	            var ListController = __webpack_require__(20);
+	            ListController.listProjects();
+	        },
+	        showProject: function (id) {
+	            var ShowController = __webpack_require__(21);
+	            ShowController.showProject(id);
+	        }
+	    };
+
+	    /**
+	     * Create a new instance of the Router before
+	     * ProjectsApp starts
+	     */
+
+	    ProjectsApp.addInitializer(function () {
+	        var projectsAppRouter = new ProjectsApp.Router({
+	            controller: API
+	        });
+	    });
+
+	    /**
+	     * Application wide events related to ProjectsApp
+	     */
+
+	    CommittedApp.on('project:show', function (id) {
+	        CommittedApp.navigate('projects/' + id);
+	        API.showProject(id);
+	    });
+
+	    CommittedApp.on('projects:list', function () {
+	        CommittedApp.navigate('projects');
+	        API.listProjects();
+	    });
+
+	    module.exports = ProjectsApp.Router;
+	});
+
+/***/ },
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -11201,86 +11284,7 @@
 	});
 
 /***/ },
-/* 12 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Module dependencies
-	 */
-
-	var CommittedApp = __webpack_require__(1),
-	    User = __webpack_require__(6).Parse.User;
-
-	/**
-	 * ProjectsApp router
-	 */
-
-	CommittedApp.module('ProjectsApp', function (ProjectsApp, CommittedApp, Backbone, Marionette, $, _) {
-	    ProjectsApp.Router = Marionette.AppRouter.extend({
-	        appRoutes: {
-	            'projects': 'listProjects',
-	            'projects/:id': 'showProject'
-	        },
-
-	        /**
-	         * Middleware for the routes
-	         */
-
-	        before: {
-	            'projects/:id': function () {
-	                if(!User.current()) {
-	                    console.log('You are not logged in ...');
-	                    return false;
-	                }
-	            }
-	        }
-	    });
-
-	    /**
-	     * Route handlers
-	     */
-
-	    var API = {
-	        listProjects: function () {
-	            var ListController = __webpack_require__(25);
-	            ListController.listProjects();
-	        },
-	        showProject: function (id) {
-	            var ShowController = __webpack_require__(29);
-	            ShowController.showProject(id);
-	        }
-	    };
-
-	    /**
-	     * Create a new instance of the Router before
-	     * ProjectsApp starts
-	     */
-
-	    ProjectsApp.addInitializer(function () {
-	        var projectsAppRouter = new ProjectsApp.Router({
-	            controller: API
-	        });
-	    });
-
-	    /**
-	     * Application wide events related to ProjectsApp
-	     */
-
-	    CommittedApp.on('project:show', function (id) {
-	        CommittedApp.navigate('projects/' + id);
-	        API.showProject(id);
-	    });
-
-	    CommittedApp.on('projects:list', function () {
-	        CommittedApp.navigate('projects');
-	        API.listProjects();
-	    });
-
-	    module.exports = ProjectsApp.Router;
-	});
-
-/***/ },
-/* 13 */
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// MarionetteJS (Backbone.Marionette)
@@ -11305,10 +11309,10 @@
 	(function (root, factory) {
 	  if (true) {
 
-	    var underscore = __webpack_require__(8);
-	    var backbone = __webpack_require__(7);
-	    var wreqr = __webpack_require__(40);
-	    var babysitter = __webpack_require__(39);
+	    var underscore = __webpack_require__(9);
+	    var backbone = __webpack_require__(8);
+	    var wreqr = __webpack_require__(27);
+	    var babysitter = __webpack_require__(28);
 
 	    module.exports = factory(underscore, backbone, wreqr, babysitter);
 
@@ -13433,749 +13437,7 @@
 
 
 /***/ },
-/* 14 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(_, Backbone) {/*! backbone.routefilter - v0.2.0 - 2013-02-16
-	* https://github.com/boazsender/backbone.routefilter
-	* Copyright (c) 2013 Boaz Sender; Licensed MIT */
-
-	(function(Backbone, _) {
-
-	  // Save a reference to the original route method to be called
-	  // after we pave it over.
-	  var originalRoute = Backbone.Router.prototype.route;
-
-	  // Create a reusable no operation func for the case where a before
-	  // or after filter is not set. Backbone or Underscore should have
-	  // a global one of these in my opinion.
-	  var nop = function(){};
-
-	  // Extend the router prototype with a default before function,
-	  // a default after function, and a pave over of _bindRoutes.
-	  _.extend(Backbone.Router.prototype, {
-
-	    // Add default before filter.
-	    before: nop,
-
-	    // Add default after filter.
-	    after: nop,
-
-	    // Pave over Backbone.Router.prototype.route, the public method used
-	    // for adding routes to a router instance on the fly, and the
-	    // method which backbone uses internally for binding routes to handlers
-	    // on the Backbone.history singleton once it's instantiated.
-	    route: function(route, name, callback) {
-
-	      // If there is no callback present for this route, then set it to
-	      // be the name that was set in the routes property of the constructor,
-	      // or the name arguement of the route method invocation. This is what
-	      // Backbone.Router.route already does. We need to do it again,
-	      // because we are about to wrap the callback in a function that calls
-	      // the before and after filters as well as the original callback that
-	      // was passed in.
-	      if( !callback ){
-	        callback = this[ name ];
-	      }
-
-	      // Create a new callback to replace the original callback that calls
-	      // the before and after filters as well as the original callback
-	      // internally.
-	      var wrappedCallback = _.bind( function() {
-
-	        // Call the before filter and if it returns false, run the
-	        // route's original callback, and after filter. This allows
-	        // the user to return false from within the before filter
-	        // to prevent the original route callback and after
-	        // filter from running.
-	        var callbackArgs = [ route, _.toArray(arguments) ];
-	        var beforeCallback;
-
-	        if ( _.isFunction(this.before) ) {
-
-	          // If the before filter is just a single function, then call
-	          // it with the arguments.
-	          beforeCallback = this.before;
-	        } else if ( typeof this.before[route] !== "undefined" ) {
-
-	          // otherwise, find the appropriate callback for the route name
-	          // and call that.
-	          beforeCallback = this.before[route];
-	        } else {
-
-	          // otherwise, if we have a hash of routes, but no before callback
-	          // for this route, just use a nop function.
-	          beforeCallback = nop;
-	        }
-
-	        // If the before callback fails during its execusion (by returning)
-	        // false, then do not proceed with the route triggering.
-	        if ( beforeCallback.apply(this, callbackArgs) === false ) {
-	          return;
-	        }
-
-	        // If the callback exists, then call it. This means that the before
-	        // and after filters will be called whether or not an actual
-	        // callback function is supplied to handle a given route.
-	        if( callback ) {
-	          callback.apply( this, arguments );
-	        }
-
-	        var afterCallback;
-	        if ( _.isFunction(this.after) ) {
-
-	          // If the after filter is a single funciton, then call it with
-	          // the proper arguments.
-	          afterCallback = this.after;
-
-	        } else if ( typeof this.after[route] !== "undefined" ) {
-
-	          // otherwise if we have a hash of routes, call the appropriate
-	          // callback based on the route name.
-	          afterCallback = this.after[route];
-
-	        } else {
-
-	          // otherwise, if we have a has of routes but no after callback
-	          // for this route, just use the nop function.
-	          afterCallback = nop;
-	        }
-
-	        // Call the after filter.
-	        afterCallback.apply( this, callbackArgs );
-
-	      }, this);
-
-	      // Call our original route, replacing the callback that was originally
-	      // passed in when Backbone.Router.route was invoked with our wrapped
-	      // callback that calls the before and after callbacks as well as the
-	      // original callback.
-	      return originalRoute.call( this, route, name, wrappedCallback );
-	    }
-
-	  });
-
-	}(Backbone, _));
-	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(8), __webpack_require__(7)))
-
-/***/ },
 /* 15 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// Backbone.Validation v0.7.1
-	//
-	// Copyright (c) 2011-2012 Thomas Pedersen
-	// Distributed under MIT License
-	//
-	// Documentation and full license available at:
-	// http://thedersen.com/projects/backbone-validation
-	(function (factory) {
-	  if (true) {
-	    module.exports = factory(__webpack_require__(7), __webpack_require__(8));
-	  } else if (typeof define === 'function' && define.amd) {
-	    define(['backbone', 'underscore'], factory);
-	  }
-	}(function (Backbone, _) {
-	  Backbone.Validation = (function(_){
-	    'use strict';
-	  
-	    // Default options
-	    // ---------------
-	  
-	    var defaultOptions = {
-	      forceUpdate: false,
-	      selector: 'name',
-	      labelFormatter: 'sentenceCase',
-	      valid: Function.prototype,
-	      invalid: Function.prototype
-	    };
-	  
-	  
-	    // Helper functions
-	    // ----------------
-	  
-	    // Formatting functions used for formatting error messages
-	    var formatFunctions = {
-	      // Uses the configured label formatter to format the attribute name
-	      // to make it more readable for the user
-	      formatLabel: function(attrName, model) {
-	        return defaultLabelFormatters[defaultOptions.labelFormatter](attrName, model);
-	      },
-	  
-	      // Replaces nummeric placeholders like {0} in a string with arguments
-	      // passed to the function
-	      format: function() {
-	        var args = Array.prototype.slice.call(arguments),
-	            text = args.shift();
-	        return text.replace(/\{(\d+)\}/g, function(match, number) {
-	          return typeof args[number] !== 'undefined' ? args[number] : match;
-	        });
-	      }
-	    };
-	  
-	    // Flattens an object
-	    // eg:
-	    //
-	    //     var o = {
-	    //       address: {
-	    //         street: 'Street',
-	    //         zip: 1234
-	    //       }
-	    //     };
-	    //
-	    // becomes:
-	    //
-	    //     var o = {
-	    //       'address.street': 'Street',
-	    //       'address.zip': 1234
-	    //     };
-	    var flatten = function (obj, into, prefix) {
-	      into = into || {};
-	      prefix = prefix || '';
-	  
-	      _.each(obj, function(val, key) {
-	        if(obj.hasOwnProperty(key)) {
-	          if (val && typeof val === 'object' && !(val instanceof Date || val instanceof RegExp)) {
-	            flatten(val, into, prefix + key + '.');
-	          }
-	          else {
-	            into[prefix + key] = val;
-	          }
-	        }
-	      });
-	  
-	      return into;
-	    };
-	  
-	    // Validation
-	    // ----------
-	  
-	    var Validation = (function(){
-	  
-	      // Returns an object with undefined properties for all
-	      // attributes on the model that has defined one or more
-	      // validation rules.
-	      var getValidatedAttrs = function(model) {
-	        return _.reduce(_.keys(model.validation || {}), function(memo, key) {
-	          memo[key] = void 0;
-	          return memo;
-	        }, {});
-	      };
-	  
-	      // Looks on the model for validations for a specified
-	      // attribute. Returns an array of any validators defined,
-	      // or an empty array if none is defined.
-	      var getValidators = function(model, attr) {
-	        var attrValidationSet = model.validation ? model.validation[attr] || {} : {};
-	  
-	        // If the validator is a function or a string, wrap it in a function validator
-	        if (_.isFunction(attrValidationSet) || _.isString(attrValidationSet)) {
-	          attrValidationSet = {
-	            fn: attrValidationSet
-	          };
-	        }
-	  
-	        // Stick the validator object into an array
-	        if(!_.isArray(attrValidationSet)) {
-	          attrValidationSet = [attrValidationSet];
-	        }
-	  
-	        // Reduces the array of validators into a new array with objects
-	        // with a validation method to call, the value to validate against
-	        // and the specified error message, if any
-	        return _.reduce(attrValidationSet, function(memo, attrValidation) {
-	          _.each(_.without(_.keys(attrValidation), 'msg'), function(validator) {
-	            memo.push({
-	              fn: defaultValidators[validator],
-	              val: attrValidation[validator],
-	              msg: attrValidation.msg
-	            });
-	          });
-	          return memo;
-	        }, []);
-	      };
-	  
-	      // Validates an attribute against all validators defined
-	      // for that attribute. If one or more errors are found,
-	      // the first error message is returned.
-	      // If the attribute is valid, an empty string is returned.
-	      var validateAttr = function(model, attr, value, computed) {
-	        // Reduces the array of validators to an error message by
-	        // applying all the validators and returning the first error
-	        // message, if any.
-	        return _.reduce(getValidators(model, attr), function(memo, validator){
-	          // Pass the format functions plus the default
-	          // validators as the context to the validator
-	          var ctx = _.extend({}, formatFunctions, defaultValidators),
-	              result = validator.fn.call(ctx, value, attr, validator.val, model, computed);
-	  
-	          if(result === false || memo === false) {
-	            return false;
-	          }
-	          if (result && !memo) {
-	            return validator.msg || result;
-	          }
-	          return memo;
-	        }, '');
-	      };
-	  
-	      // Loops through the model's attributes and validates them all.
-	      // Returns and object containing names of invalid attributes
-	      // as well as error messages.
-	      var validateModel = function(model, attrs) {
-	        var error,
-	            invalidAttrs = {},
-	            isValid = true,
-	            computed = _.clone(attrs),
-	            flattened = flatten(attrs);
-	  
-	        _.each(flattened, function(val, attr) {
-	          error = validateAttr(model, attr, val, computed);
-	          if (error) {
-	            invalidAttrs[attr] = error;
-	            isValid = false;
-	          }
-	        });
-	  
-	        return {
-	          invalidAttrs: invalidAttrs,
-	          isValid: isValid
-	        };
-	      };
-	  
-	      // Contains the methods that are mixed in on the model when binding
-	      var mixin = function(view, options) {
-	        return {
-	  
-	          // Check whether or not a value passes validation
-	          // without updating the model
-	          preValidate: function(attr, value) {
-	            return validateAttr(this, attr, value, _.extend({}, this.attributes));
-	          },
-	  
-	          // Check to see if an attribute, an array of attributes or the
-	          // entire model is valid. Passing true will force a validation
-	          // of the model.
-	          isValid: function(option) {
-	            var flattened = flatten(this.attributes);
-	  
-	            if(_.isString(option)){
-	              return !validateAttr(this, option, flattened[option], _.extend({}, this.attributes));
-	            }
-	            if(_.isArray(option)){
-	              return _.reduce(option, function(memo, attr) {
-	                return memo && !validateAttr(this, attr, flattened[attr], _.extend({}, this.attributes));
-	              }, true, this);
-	            }
-	            if(option === true) {
-	              this.validate();
-	            }
-	            return this.validation ? this._isValid : true;
-	          },
-	  
-	          // This is called by Backbone when it needs to perform validation.
-	          // You can call it manually without any parameters to validate the
-	          // entire model.
-	          validate: function(attrs, setOptions){
-	            var model = this,
-	                validateAll = !attrs,
-	                opt = _.extend({}, options, setOptions),
-	                validatedAttrs = getValidatedAttrs(model),
-	                allAttrs = _.extend({}, validatedAttrs, model.attributes, attrs),
-	                changedAttrs = flatten(attrs || allAttrs),
-	  
-	                result = validateModel(model, allAttrs);
-	  
-	            model._isValid = result.isValid;
-	  
-	            // After validation is performed, loop through all changed attributes
-	            // and call the valid callbacks so the view is updated.
-	            _.each(validatedAttrs, function(val, attr){
-	              var invalid = result.invalidAttrs.hasOwnProperty(attr);
-	              if(!invalid){
-	                opt.valid(view, attr, opt.selector);
-	              }
-	            });
-	  
-	            // After validation is performed, loop through all changed attributes
-	            // and call the invalid callback so the view is updated.
-	            _.each(validatedAttrs, function(val, attr){
-	              var invalid = result.invalidAttrs.hasOwnProperty(attr),
-	                  changed = changedAttrs.hasOwnProperty(attr);
-	  
-	              if(invalid && (changed || validateAll)){
-	                opt.invalid(view, attr, result.invalidAttrs[attr], opt.selector);
-	              }
-	            });
-	  
-	            // Trigger validated events.
-	            // Need to defer this so the model is actually updated before
-	            // the event is triggered.
-	            _.defer(function() {
-	              model.trigger('validated', model._isValid, model, result.invalidAttrs);
-	              model.trigger('validated:' + (model._isValid ? 'valid' : 'invalid'), model, result.invalidAttrs);
-	            });
-	  
-	            // Return any error messages to Backbone, unless the forceUpdate flag is set.
-	            // Then we do not return anything and fools Backbone to believe the validation was
-	            // a success. That way Backbone will update the model regardless.
-	            if (!opt.forceUpdate && _.intersection(_.keys(result.invalidAttrs), _.keys(changedAttrs)).length > 0) {
-	              return result.invalidAttrs;
-	            }
-	          }
-	        };
-	      };
-	  
-	      // Helper to mix in validation on a model
-	      var bindModel = function(view, model, options) {
-	        _.extend(model, mixin(view, options));
-	      };
-	  
-	      // Removes the methods added to a model
-	      var unbindModel = function(model) {
-	        delete model.validate;
-	        delete model.preValidate;
-	        delete model.isValid;
-	      };
-	  
-	      // Mix in validation on a model whenever a model is
-	      // added to a collection
-	      var collectionAdd = function(model) {
-	        bindModel(this.view, model, this.options);
-	      };
-	  
-	      // Remove validation from a model whenever a model is
-	      // removed from a collection
-	      var collectionRemove = function(model) {
-	        unbindModel(model);
-	      };
-	  
-	      // Returns the public methods on Backbone.Validation
-	      return {
-	  
-	        // Current version of the library
-	        version: '0.7.1',
-	  
-	        // Called to configure the default options
-	        configure: function(options) {
-	          _.extend(defaultOptions, options);
-	        },
-	  
-	        // Hooks up validation on a view with a model
-	        // or collection
-	        bind: function(view, options) {
-	          var model = view.model,
-	              collection = view.collection;
-	  
-	          options = _.extend({}, defaultOptions, defaultCallbacks, options);
-	  
-	          if(typeof model === 'undefined' && typeof collection === 'undefined'){
-	            throw 'Before you execute the binding your view must have a model or a collection.\n' +
-	                  'See http://thedersen.com/projects/backbone-validation/#using-form-model-validation for more information.';
-	          }
-	  
-	          if(model) {
-	            bindModel(view, model, options);
-	          }
-	          else if(collection) {
-	            collection.each(function(model){
-	              bindModel(view, model, options);
-	            });
-	            collection.bind('add', collectionAdd, {view: view, options: options});
-	            collection.bind('remove', collectionRemove);
-	          }
-	        },
-	  
-	        // Removes validation from a view with a model
-	        // or collection
-	        unbind: function(view) {
-	          var model = view.model,
-	              collection = view.collection;
-	  
-	          if(model) {
-	            unbindModel(view.model);
-	          }
-	          if(collection) {
-	            collection.each(function(model){
-	              unbindModel(model);
-	            });
-	            collection.unbind('add', collectionAdd);
-	            collection.unbind('remove', collectionRemove);
-	          }
-	        },
-	  
-	        // Used to extend the Backbone.Model.prototype
-	        // with validation
-	        mixin: mixin(null, defaultOptions)
-	      };
-	    }());
-	  
-	  
-	    // Callbacks
-	    // ---------
-	  
-	    var defaultCallbacks = Validation.callbacks = {
-	  
-	      // Gets called when a previously invalid field in the
-	      // view becomes valid. Removes any error message.
-	      // Should be overridden with custom functionality.
-	      valid: function(view, attr, selector) {
-	        view.$('[' + selector + '~="' + attr + '"]')
-	            .removeClass('invalid')
-	            .removeAttr('data-error');
-	      },
-	  
-	      // Gets called when a field in the view becomes invalid.
-	      // Adds a error message.
-	      // Should be overridden with custom functionality.
-	      invalid: function(view, attr, error, selector) {
-	        view.$('[' + selector + '~="' + attr + '"]')
-	            .addClass('invalid')
-	            .attr('data-error', error);
-	      }
-	    };
-	  
-	  
-	    // Patterns
-	    // --------
-	  
-	    var defaultPatterns = Validation.patterns = {
-	      // Matches any digit(s) (i.e. 0-9)
-	      digits: /^\d+$/,
-	  
-	      // Matched any number (e.g. 100.000)
-	      number: /^-?(?:\d+|\d{1,3}(?:,\d{3})+)(?:\.\d+)?$/,
-	  
-	      // Matches a valid email address (e.g. mail@example.com)
-	      email: /^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))$/i,
-	  
-	      // Mathes any valid url (e.g. http://www.xample.com)
-	      url: /^(https?|ftp):\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(\#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i
-	    };
-	  
-	  
-	    // Error messages
-	    // --------------
-	  
-	    // Error message for the build in validators.
-	    // {x} gets swapped out with arguments form the validator.
-	    var defaultMessages = Validation.messages = {
-	      required: '{0} is required',
-	      acceptance: '{0} must be accepted',
-	      min: '{0} must be greater than or equal to {1}',
-	      max: '{0} must be less than or equal to {1}',
-	      range: '{0} must be between {1} and {2}',
-	      length: '{0} must be {1} characters',
-	      minLength: '{0} must be at least {1} characters',
-	      maxLength: '{0} must be at most {1} characters',
-	      rangeLength: '{0} must be between {1} and {2} characters',
-	      oneOf: '{0} must be one of: {1}',
-	      equalTo: '{0} must be the same as {1}',
-	      pattern: '{0} must be a valid {1}'
-	    };
-	  
-	    // Label formatters
-	    // ----------------
-	  
-	    // Label formatters are used to convert the attribute name
-	    // to a more human friendly label when using the built in
-	    // error messages.
-	    // Configure which one to use with a call to
-	    //
-	    //     Backbone.Validation.configure({
-	    //       labelFormatter: 'label'
-	    //     });
-	    var defaultLabelFormatters = Validation.labelFormatters = {
-	  
-	      // Returns the attribute name with applying any formatting
-	      none: function(attrName) {
-	        return attrName;
-	      },
-	  
-	      // Converts attributeName or attribute_name to Attribute name
-	      sentenceCase: function(attrName) {
-	        return attrName.replace(/(?:^\w|[A-Z]|\b\w)/g, function(match, index) {
-	          return index === 0 ? match.toUpperCase() : ' ' + match.toLowerCase();
-	        }).replace('_', ' ');
-	      },
-	  
-	      // Looks for a label configured on the model and returns it
-	      //
-	      //      var Model = Backbone.Model.extend({
-	      //        validation: {
-	      //          someAttribute: {
-	      //            required: true
-	      //          }
-	      //        },
-	      //
-	      //        labels: {
-	      //          someAttribute: 'Custom label'
-	      //        }
-	      //      });
-	      label: function(attrName, model) {
-	        return (model.labels && model.labels[attrName]) || defaultLabelFormatters.sentenceCase(attrName, model);
-	      }
-	    };
-	  
-	  
-	    // Built in validators
-	    // -------------------
-	  
-	    var defaultValidators = Validation.validators = (function(){
-	      // Use native trim when defined
-	      var trim = String.prototype.trim ?
-	        function(text) {
-	          return text === null ? '' : String.prototype.trim.call(text);
-	        } :
-	        function(text) {
-	          var trimLeft = /^\s+/,
-	              trimRight = /\s+$/;
-	  
-	          return text === null ? '' : text.toString().replace(trimLeft, '').replace(trimRight, '');
-	        };
-	  
-	      // Determines whether or not a value is a number
-	      var isNumber = function(value){
-	        return _.isNumber(value) || (_.isString(value) && value.match(defaultPatterns.number));
-	      };
-	  
-	      // Determines whether or not not a value is empty
-	      var hasValue = function(value) {
-	        return !(_.isNull(value) || _.isUndefined(value) || (_.isString(value) && trim(value) === ''));
-	      };
-	  
-	      return {
-	        // Function validator
-	        // Lets you implement a custom function used for validation
-	        fn: function(value, attr, fn, model, computed) {
-	          if(_.isString(fn)){
-	            fn = model[fn];
-	          }
-	          return fn.call(model, value, attr, computed);
-	        },
-	  
-	        // Required validator
-	        // Validates if the attribute is required or not
-	        required: function(value, attr, required, model, computed) {
-	          var isRequired = _.isFunction(required) ? required.call(model, value, attr, computed) : required;
-	          if(!isRequired && !hasValue(value)) {
-	            return false; // overrides all other validators
-	          }
-	          if (isRequired && !hasValue(value)) {
-	            return this.format(defaultMessages.required, this.formatLabel(attr, model));
-	          }
-	        },
-	  
-	        // Acceptance validator
-	        // Validates that something has to be accepted, e.g. terms of use
-	        // `true` or 'true' are valid
-	        acceptance: function(value, attr, accept, model) {
-	          if(value !== 'true' && (!_.isBoolean(value) || value === false)) {
-	            return this.format(defaultMessages.acceptance, this.formatLabel(attr, model));
-	          }
-	        },
-	  
-	        // Min validator
-	        // Validates that the value has to be a number and equal to or greater than
-	        // the min value specified
-	        min: function(value, attr, minValue, model) {
-	          if (!isNumber(value) || value < minValue) {
-	            return this.format(defaultMessages.min, this.formatLabel(attr, model), minValue);
-	          }
-	        },
-	  
-	        // Max validator
-	        // Validates that the value has to be a number and equal to or less than
-	        // the max value specified
-	        max: function(value, attr, maxValue, model) {
-	          if (!isNumber(value) || value > maxValue) {
-	            return this.format(defaultMessages.max, this.formatLabel(attr, model), maxValue);
-	          }
-	        },
-	  
-	        // Range validator
-	        // Validates that the value has to be a number and equal to or between
-	        // the two numbers specified
-	        range: function(value, attr, range, model) {
-	          if(!isNumber(value) || value < range[0] || value > range[1]) {
-	            return this.format(defaultMessages.range, this.formatLabel(attr, model), range[0], range[1]);
-	          }
-	        },
-	  
-	        // Length validator
-	        // Validates that the value has to be a string with length equal to
-	        // the length value specified
-	        length: function(value, attr, length, model) {
-	          if (!hasValue(value) || trim(value).length !== length) {
-	            return this.format(defaultMessages.length, this.formatLabel(attr, model), length);
-	          }
-	        },
-	  
-	        // Min length validator
-	        // Validates that the value has to be a string with length equal to or greater than
-	        // the min length value specified
-	        minLength: function(value, attr, minLength, model) {
-	          if (!hasValue(value) || trim(value).length < minLength) {
-	            return this.format(defaultMessages.minLength, this.formatLabel(attr, model), minLength);
-	          }
-	        },
-	  
-	        // Max length validator
-	        // Validates that the value has to be a string with length equal to or less than
-	        // the max length value specified
-	        maxLength: function(value, attr, maxLength, model) {
-	          if (!hasValue(value) || trim(value).length > maxLength) {
-	            return this.format(defaultMessages.maxLength, this.formatLabel(attr, model), maxLength);
-	          }
-	        },
-	  
-	        // Range length validator
-	        // Validates that the value has to be a string and equal to or between
-	        // the two numbers specified
-	        rangeLength: function(value, attr, range, model) {
-	          if(!hasValue(value) || trim(value).length < range[0] || trim(value).length > range[1]) {
-	            return this.format(defaultMessages.rangeLength, this.formatLabel(attr, model), range[0], range[1]);
-	          }
-	        },
-	  
-	        // One of validator
-	        // Validates that the value has to be equal to one of the elements in
-	        // the specified array. Case sensitive matching
-	        oneOf: function(value, attr, values, model) {
-	          if(!_.include(values, value)){
-	            return this.format(defaultMessages.oneOf, this.formatLabel(attr, model), values.join(', '));
-	          }
-	        },
-	  
-	        // Equal to validator
-	        // Validates that the value has to be equal to the value of the attribute
-	        // with the name specified
-	        equalTo: function(value, attr, equalTo, model, computed) {
-	          if(value !== computed[equalTo]) {
-	            return this.format(defaultMessages.equalTo, this.formatLabel(attr, model), this.formatLabel(equalTo, model));
-	          }
-	        },
-	  
-	        // Pattern validator
-	        // Validates that the value has to match the pattern specified.
-	        // Can be a regular expression or the name of one of the built in patterns
-	        pattern: function(value, attr, pattern, model) {
-	          if (!hasValue(value) || !value.toString().match(defaultPatterns[pattern] || pattern)) {
-	            return this.format(defaultMessages.pattern, this.formatLabel(attr, model), pattern);
-	          }
-	        }
-	      };
-	    }());
-	  
-	    return Validation;
-	  }(_));
-	  
-	  return Backbone.Validation;
-	}));
-
-/***/ },
-/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -24518,7 +23780,749 @@
 
 
 /***/ },
+/* 16 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(_, Backbone) {/*! backbone.routefilter - v0.2.0 - 2013-02-16
+	* https://github.com/boazsender/backbone.routefilter
+	* Copyright (c) 2013 Boaz Sender; Licensed MIT */
+
+	(function(Backbone, _) {
+
+	  // Save a reference to the original route method to be called
+	  // after we pave it over.
+	  var originalRoute = Backbone.Router.prototype.route;
+
+	  // Create a reusable no operation func for the case where a before
+	  // or after filter is not set. Backbone or Underscore should have
+	  // a global one of these in my opinion.
+	  var nop = function(){};
+
+	  // Extend the router prototype with a default before function,
+	  // a default after function, and a pave over of _bindRoutes.
+	  _.extend(Backbone.Router.prototype, {
+
+	    // Add default before filter.
+	    before: nop,
+
+	    // Add default after filter.
+	    after: nop,
+
+	    // Pave over Backbone.Router.prototype.route, the public method used
+	    // for adding routes to a router instance on the fly, and the
+	    // method which backbone uses internally for binding routes to handlers
+	    // on the Backbone.history singleton once it's instantiated.
+	    route: function(route, name, callback) {
+
+	      // If there is no callback present for this route, then set it to
+	      // be the name that was set in the routes property of the constructor,
+	      // or the name arguement of the route method invocation. This is what
+	      // Backbone.Router.route already does. We need to do it again,
+	      // because we are about to wrap the callback in a function that calls
+	      // the before and after filters as well as the original callback that
+	      // was passed in.
+	      if( !callback ){
+	        callback = this[ name ];
+	      }
+
+	      // Create a new callback to replace the original callback that calls
+	      // the before and after filters as well as the original callback
+	      // internally.
+	      var wrappedCallback = _.bind( function() {
+
+	        // Call the before filter and if it returns false, run the
+	        // route's original callback, and after filter. This allows
+	        // the user to return false from within the before filter
+	        // to prevent the original route callback and after
+	        // filter from running.
+	        var callbackArgs = [ route, _.toArray(arguments) ];
+	        var beforeCallback;
+
+	        if ( _.isFunction(this.before) ) {
+
+	          // If the before filter is just a single function, then call
+	          // it with the arguments.
+	          beforeCallback = this.before;
+	        } else if ( typeof this.before[route] !== "undefined" ) {
+
+	          // otherwise, find the appropriate callback for the route name
+	          // and call that.
+	          beforeCallback = this.before[route];
+	        } else {
+
+	          // otherwise, if we have a hash of routes, but no before callback
+	          // for this route, just use a nop function.
+	          beforeCallback = nop;
+	        }
+
+	        // If the before callback fails during its execusion (by returning)
+	        // false, then do not proceed with the route triggering.
+	        if ( beforeCallback.apply(this, callbackArgs) === false ) {
+	          return;
+	        }
+
+	        // If the callback exists, then call it. This means that the before
+	        // and after filters will be called whether or not an actual
+	        // callback function is supplied to handle a given route.
+	        if( callback ) {
+	          callback.apply( this, arguments );
+	        }
+
+	        var afterCallback;
+	        if ( _.isFunction(this.after) ) {
+
+	          // If the after filter is a single funciton, then call it with
+	          // the proper arguments.
+	          afterCallback = this.after;
+
+	        } else if ( typeof this.after[route] !== "undefined" ) {
+
+	          // otherwise if we have a hash of routes, call the appropriate
+	          // callback based on the route name.
+	          afterCallback = this.after[route];
+
+	        } else {
+
+	          // otherwise, if we have a has of routes but no after callback
+	          // for this route, just use the nop function.
+	          afterCallback = nop;
+	        }
+
+	        // Call the after filter.
+	        afterCallback.apply( this, callbackArgs );
+
+	      }, this);
+
+	      // Call our original route, replacing the callback that was originally
+	      // passed in when Backbone.Router.route was invoked with our wrapped
+	      // callback that calls the before and after callbacks as well as the
+	      // original callback.
+	      return originalRoute.call( this, route, name, wrappedCallback );
+	    }
+
+	  });
+
+	}(Backbone, _));
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9), __webpack_require__(8)))
+
+/***/ },
 /* 17 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// Backbone.Validation v0.7.1
+	//
+	// Copyright (c) 2011-2012 Thomas Pedersen
+	// Distributed under MIT License
+	//
+	// Documentation and full license available at:
+	// http://thedersen.com/projects/backbone-validation
+	(function (factory) {
+	  if (true) {
+	    module.exports = factory(__webpack_require__(8), __webpack_require__(9));
+	  } else if (typeof define === 'function' && define.amd) {
+	    define(['backbone', 'underscore'], factory);
+	  }
+	}(function (Backbone, _) {
+	  Backbone.Validation = (function(_){
+	    'use strict';
+	  
+	    // Default options
+	    // ---------------
+	  
+	    var defaultOptions = {
+	      forceUpdate: false,
+	      selector: 'name',
+	      labelFormatter: 'sentenceCase',
+	      valid: Function.prototype,
+	      invalid: Function.prototype
+	    };
+	  
+	  
+	    // Helper functions
+	    // ----------------
+	  
+	    // Formatting functions used for formatting error messages
+	    var formatFunctions = {
+	      // Uses the configured label formatter to format the attribute name
+	      // to make it more readable for the user
+	      formatLabel: function(attrName, model) {
+	        return defaultLabelFormatters[defaultOptions.labelFormatter](attrName, model);
+	      },
+	  
+	      // Replaces nummeric placeholders like {0} in a string with arguments
+	      // passed to the function
+	      format: function() {
+	        var args = Array.prototype.slice.call(arguments),
+	            text = args.shift();
+	        return text.replace(/\{(\d+)\}/g, function(match, number) {
+	          return typeof args[number] !== 'undefined' ? args[number] : match;
+	        });
+	      }
+	    };
+	  
+	    // Flattens an object
+	    // eg:
+	    //
+	    //     var o = {
+	    //       address: {
+	    //         street: 'Street',
+	    //         zip: 1234
+	    //       }
+	    //     };
+	    //
+	    // becomes:
+	    //
+	    //     var o = {
+	    //       'address.street': 'Street',
+	    //       'address.zip': 1234
+	    //     };
+	    var flatten = function (obj, into, prefix) {
+	      into = into || {};
+	      prefix = prefix || '';
+	  
+	      _.each(obj, function(val, key) {
+	        if(obj.hasOwnProperty(key)) {
+	          if (val && typeof val === 'object' && !(val instanceof Date || val instanceof RegExp)) {
+	            flatten(val, into, prefix + key + '.');
+	          }
+	          else {
+	            into[prefix + key] = val;
+	          }
+	        }
+	      });
+	  
+	      return into;
+	    };
+	  
+	    // Validation
+	    // ----------
+	  
+	    var Validation = (function(){
+	  
+	      // Returns an object with undefined properties for all
+	      // attributes on the model that has defined one or more
+	      // validation rules.
+	      var getValidatedAttrs = function(model) {
+	        return _.reduce(_.keys(model.validation || {}), function(memo, key) {
+	          memo[key] = void 0;
+	          return memo;
+	        }, {});
+	      };
+	  
+	      // Looks on the model for validations for a specified
+	      // attribute. Returns an array of any validators defined,
+	      // or an empty array if none is defined.
+	      var getValidators = function(model, attr) {
+	        var attrValidationSet = model.validation ? model.validation[attr] || {} : {};
+	  
+	        // If the validator is a function or a string, wrap it in a function validator
+	        if (_.isFunction(attrValidationSet) || _.isString(attrValidationSet)) {
+	          attrValidationSet = {
+	            fn: attrValidationSet
+	          };
+	        }
+	  
+	        // Stick the validator object into an array
+	        if(!_.isArray(attrValidationSet)) {
+	          attrValidationSet = [attrValidationSet];
+	        }
+	  
+	        // Reduces the array of validators into a new array with objects
+	        // with a validation method to call, the value to validate against
+	        // and the specified error message, if any
+	        return _.reduce(attrValidationSet, function(memo, attrValidation) {
+	          _.each(_.without(_.keys(attrValidation), 'msg'), function(validator) {
+	            memo.push({
+	              fn: defaultValidators[validator],
+	              val: attrValidation[validator],
+	              msg: attrValidation.msg
+	            });
+	          });
+	          return memo;
+	        }, []);
+	      };
+	  
+	      // Validates an attribute against all validators defined
+	      // for that attribute. If one or more errors are found,
+	      // the first error message is returned.
+	      // If the attribute is valid, an empty string is returned.
+	      var validateAttr = function(model, attr, value, computed) {
+	        // Reduces the array of validators to an error message by
+	        // applying all the validators and returning the first error
+	        // message, if any.
+	        return _.reduce(getValidators(model, attr), function(memo, validator){
+	          // Pass the format functions plus the default
+	          // validators as the context to the validator
+	          var ctx = _.extend({}, formatFunctions, defaultValidators),
+	              result = validator.fn.call(ctx, value, attr, validator.val, model, computed);
+	  
+	          if(result === false || memo === false) {
+	            return false;
+	          }
+	          if (result && !memo) {
+	            return validator.msg || result;
+	          }
+	          return memo;
+	        }, '');
+	      };
+	  
+	      // Loops through the model's attributes and validates them all.
+	      // Returns and object containing names of invalid attributes
+	      // as well as error messages.
+	      var validateModel = function(model, attrs) {
+	        var error,
+	            invalidAttrs = {},
+	            isValid = true,
+	            computed = _.clone(attrs),
+	            flattened = flatten(attrs);
+	  
+	        _.each(flattened, function(val, attr) {
+	          error = validateAttr(model, attr, val, computed);
+	          if (error) {
+	            invalidAttrs[attr] = error;
+	            isValid = false;
+	          }
+	        });
+	  
+	        return {
+	          invalidAttrs: invalidAttrs,
+	          isValid: isValid
+	        };
+	      };
+	  
+	      // Contains the methods that are mixed in on the model when binding
+	      var mixin = function(view, options) {
+	        return {
+	  
+	          // Check whether or not a value passes validation
+	          // without updating the model
+	          preValidate: function(attr, value) {
+	            return validateAttr(this, attr, value, _.extend({}, this.attributes));
+	          },
+	  
+	          // Check to see if an attribute, an array of attributes or the
+	          // entire model is valid. Passing true will force a validation
+	          // of the model.
+	          isValid: function(option) {
+	            var flattened = flatten(this.attributes);
+	  
+	            if(_.isString(option)){
+	              return !validateAttr(this, option, flattened[option], _.extend({}, this.attributes));
+	            }
+	            if(_.isArray(option)){
+	              return _.reduce(option, function(memo, attr) {
+	                return memo && !validateAttr(this, attr, flattened[attr], _.extend({}, this.attributes));
+	              }, true, this);
+	            }
+	            if(option === true) {
+	              this.validate();
+	            }
+	            return this.validation ? this._isValid : true;
+	          },
+	  
+	          // This is called by Backbone when it needs to perform validation.
+	          // You can call it manually without any parameters to validate the
+	          // entire model.
+	          validate: function(attrs, setOptions){
+	            var model = this,
+	                validateAll = !attrs,
+	                opt = _.extend({}, options, setOptions),
+	                validatedAttrs = getValidatedAttrs(model),
+	                allAttrs = _.extend({}, validatedAttrs, model.attributes, attrs),
+	                changedAttrs = flatten(attrs || allAttrs),
+	  
+	                result = validateModel(model, allAttrs);
+	  
+	            model._isValid = result.isValid;
+	  
+	            // After validation is performed, loop through all changed attributes
+	            // and call the valid callbacks so the view is updated.
+	            _.each(validatedAttrs, function(val, attr){
+	              var invalid = result.invalidAttrs.hasOwnProperty(attr);
+	              if(!invalid){
+	                opt.valid(view, attr, opt.selector);
+	              }
+	            });
+	  
+	            // After validation is performed, loop through all changed attributes
+	            // and call the invalid callback so the view is updated.
+	            _.each(validatedAttrs, function(val, attr){
+	              var invalid = result.invalidAttrs.hasOwnProperty(attr),
+	                  changed = changedAttrs.hasOwnProperty(attr);
+	  
+	              if(invalid && (changed || validateAll)){
+	                opt.invalid(view, attr, result.invalidAttrs[attr], opt.selector);
+	              }
+	            });
+	  
+	            // Trigger validated events.
+	            // Need to defer this so the model is actually updated before
+	            // the event is triggered.
+	            _.defer(function() {
+	              model.trigger('validated', model._isValid, model, result.invalidAttrs);
+	              model.trigger('validated:' + (model._isValid ? 'valid' : 'invalid'), model, result.invalidAttrs);
+	            });
+	  
+	            // Return any error messages to Backbone, unless the forceUpdate flag is set.
+	            // Then we do not return anything and fools Backbone to believe the validation was
+	            // a success. That way Backbone will update the model regardless.
+	            if (!opt.forceUpdate && _.intersection(_.keys(result.invalidAttrs), _.keys(changedAttrs)).length > 0) {
+	              return result.invalidAttrs;
+	            }
+	          }
+	        };
+	      };
+	  
+	      // Helper to mix in validation on a model
+	      var bindModel = function(view, model, options) {
+	        _.extend(model, mixin(view, options));
+	      };
+	  
+	      // Removes the methods added to a model
+	      var unbindModel = function(model) {
+	        delete model.validate;
+	        delete model.preValidate;
+	        delete model.isValid;
+	      };
+	  
+	      // Mix in validation on a model whenever a model is
+	      // added to a collection
+	      var collectionAdd = function(model) {
+	        bindModel(this.view, model, this.options);
+	      };
+	  
+	      // Remove validation from a model whenever a model is
+	      // removed from a collection
+	      var collectionRemove = function(model) {
+	        unbindModel(model);
+	      };
+	  
+	      // Returns the public methods on Backbone.Validation
+	      return {
+	  
+	        // Current version of the library
+	        version: '0.7.1',
+	  
+	        // Called to configure the default options
+	        configure: function(options) {
+	          _.extend(defaultOptions, options);
+	        },
+	  
+	        // Hooks up validation on a view with a model
+	        // or collection
+	        bind: function(view, options) {
+	          var model = view.model,
+	              collection = view.collection;
+	  
+	          options = _.extend({}, defaultOptions, defaultCallbacks, options);
+	  
+	          if(typeof model === 'undefined' && typeof collection === 'undefined'){
+	            throw 'Before you execute the binding your view must have a model or a collection.\n' +
+	                  'See http://thedersen.com/projects/backbone-validation/#using-form-model-validation for more information.';
+	          }
+	  
+	          if(model) {
+	            bindModel(view, model, options);
+	          }
+	          else if(collection) {
+	            collection.each(function(model){
+	              bindModel(view, model, options);
+	            });
+	            collection.bind('add', collectionAdd, {view: view, options: options});
+	            collection.bind('remove', collectionRemove);
+	          }
+	        },
+	  
+	        // Removes validation from a view with a model
+	        // or collection
+	        unbind: function(view) {
+	          var model = view.model,
+	              collection = view.collection;
+	  
+	          if(model) {
+	            unbindModel(view.model);
+	          }
+	          if(collection) {
+	            collection.each(function(model){
+	              unbindModel(model);
+	            });
+	            collection.unbind('add', collectionAdd);
+	            collection.unbind('remove', collectionRemove);
+	          }
+	        },
+	  
+	        // Used to extend the Backbone.Model.prototype
+	        // with validation
+	        mixin: mixin(null, defaultOptions)
+	      };
+	    }());
+	  
+	  
+	    // Callbacks
+	    // ---------
+	  
+	    var defaultCallbacks = Validation.callbacks = {
+	  
+	      // Gets called when a previously invalid field in the
+	      // view becomes valid. Removes any error message.
+	      // Should be overridden with custom functionality.
+	      valid: function(view, attr, selector) {
+	        view.$('[' + selector + '~="' + attr + '"]')
+	            .removeClass('invalid')
+	            .removeAttr('data-error');
+	      },
+	  
+	      // Gets called when a field in the view becomes invalid.
+	      // Adds a error message.
+	      // Should be overridden with custom functionality.
+	      invalid: function(view, attr, error, selector) {
+	        view.$('[' + selector + '~="' + attr + '"]')
+	            .addClass('invalid')
+	            .attr('data-error', error);
+	      }
+	    };
+	  
+	  
+	    // Patterns
+	    // --------
+	  
+	    var defaultPatterns = Validation.patterns = {
+	      // Matches any digit(s) (i.e. 0-9)
+	      digits: /^\d+$/,
+	  
+	      // Matched any number (e.g. 100.000)
+	      number: /^-?(?:\d+|\d{1,3}(?:,\d{3})+)(?:\.\d+)?$/,
+	  
+	      // Matches a valid email address (e.g. mail@example.com)
+	      email: /^((([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+(\.([a-z]|\d|[!#\$%&'\*\+\-\/=\?\^_`{\|}~]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])+)*)|((\x22)((((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(([\x01-\x08\x0b\x0c\x0e-\x1f\x7f]|\x21|[\x23-\x5b]|[\x5d-\x7e]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(\\([\x01-\x09\x0b\x0c\x0d-\x7f]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))))*(((\x20|\x09)*(\x0d\x0a))?(\x20|\x09)+)?(\x22)))@((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))$/i,
+	  
+	      // Mathes any valid url (e.g. http://www.xample.com)
+	      url: /^(https?|ftp):\/\/(((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:)*@)?(((\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5])\.(\d|[1-9]\d|1\d\d|2[0-4]\d|25[0-5]))|((([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|\d|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.)+(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])*([a-z]|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])))\.?)(:\d*)?)(\/((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)+(\/(([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)*)*)?)?(\?((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|[\uE000-\uF8FF]|\/|\?)*)?(\#((([a-z]|\d|-|\.|_|~|[\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])|(%[\da-f]{2})|[!\$&'\(\)\*\+,;=]|:|@)|\/|\?)*)?$/i
+	    };
+	  
+	  
+	    // Error messages
+	    // --------------
+	  
+	    // Error message for the build in validators.
+	    // {x} gets swapped out with arguments form the validator.
+	    var defaultMessages = Validation.messages = {
+	      required: '{0} is required',
+	      acceptance: '{0} must be accepted',
+	      min: '{0} must be greater than or equal to {1}',
+	      max: '{0} must be less than or equal to {1}',
+	      range: '{0} must be between {1} and {2}',
+	      length: '{0} must be {1} characters',
+	      minLength: '{0} must be at least {1} characters',
+	      maxLength: '{0} must be at most {1} characters',
+	      rangeLength: '{0} must be between {1} and {2} characters',
+	      oneOf: '{0} must be one of: {1}',
+	      equalTo: '{0} must be the same as {1}',
+	      pattern: '{0} must be a valid {1}'
+	    };
+	  
+	    // Label formatters
+	    // ----------------
+	  
+	    // Label formatters are used to convert the attribute name
+	    // to a more human friendly label when using the built in
+	    // error messages.
+	    // Configure which one to use with a call to
+	    //
+	    //     Backbone.Validation.configure({
+	    //       labelFormatter: 'label'
+	    //     });
+	    var defaultLabelFormatters = Validation.labelFormatters = {
+	  
+	      // Returns the attribute name with applying any formatting
+	      none: function(attrName) {
+	        return attrName;
+	      },
+	  
+	      // Converts attributeName or attribute_name to Attribute name
+	      sentenceCase: function(attrName) {
+	        return attrName.replace(/(?:^\w|[A-Z]|\b\w)/g, function(match, index) {
+	          return index === 0 ? match.toUpperCase() : ' ' + match.toLowerCase();
+	        }).replace('_', ' ');
+	      },
+	  
+	      // Looks for a label configured on the model and returns it
+	      //
+	      //      var Model = Backbone.Model.extend({
+	      //        validation: {
+	      //          someAttribute: {
+	      //            required: true
+	      //          }
+	      //        },
+	      //
+	      //        labels: {
+	      //          someAttribute: 'Custom label'
+	      //        }
+	      //      });
+	      label: function(attrName, model) {
+	        return (model.labels && model.labels[attrName]) || defaultLabelFormatters.sentenceCase(attrName, model);
+	      }
+	    };
+	  
+	  
+	    // Built in validators
+	    // -------------------
+	  
+	    var defaultValidators = Validation.validators = (function(){
+	      // Use native trim when defined
+	      var trim = String.prototype.trim ?
+	        function(text) {
+	          return text === null ? '' : String.prototype.trim.call(text);
+	        } :
+	        function(text) {
+	          var trimLeft = /^\s+/,
+	              trimRight = /\s+$/;
+	  
+	          return text === null ? '' : text.toString().replace(trimLeft, '').replace(trimRight, '');
+	        };
+	  
+	      // Determines whether or not a value is a number
+	      var isNumber = function(value){
+	        return _.isNumber(value) || (_.isString(value) && value.match(defaultPatterns.number));
+	      };
+	  
+	      // Determines whether or not not a value is empty
+	      var hasValue = function(value) {
+	        return !(_.isNull(value) || _.isUndefined(value) || (_.isString(value) && trim(value) === ''));
+	      };
+	  
+	      return {
+	        // Function validator
+	        // Lets you implement a custom function used for validation
+	        fn: function(value, attr, fn, model, computed) {
+	          if(_.isString(fn)){
+	            fn = model[fn];
+	          }
+	          return fn.call(model, value, attr, computed);
+	        },
+	  
+	        // Required validator
+	        // Validates if the attribute is required or not
+	        required: function(value, attr, required, model, computed) {
+	          var isRequired = _.isFunction(required) ? required.call(model, value, attr, computed) : required;
+	          if(!isRequired && !hasValue(value)) {
+	            return false; // overrides all other validators
+	          }
+	          if (isRequired && !hasValue(value)) {
+	            return this.format(defaultMessages.required, this.formatLabel(attr, model));
+	          }
+	        },
+	  
+	        // Acceptance validator
+	        // Validates that something has to be accepted, e.g. terms of use
+	        // `true` or 'true' are valid
+	        acceptance: function(value, attr, accept, model) {
+	          if(value !== 'true' && (!_.isBoolean(value) || value === false)) {
+	            return this.format(defaultMessages.acceptance, this.formatLabel(attr, model));
+	          }
+	        },
+	  
+	        // Min validator
+	        // Validates that the value has to be a number and equal to or greater than
+	        // the min value specified
+	        min: function(value, attr, minValue, model) {
+	          if (!isNumber(value) || value < minValue) {
+	            return this.format(defaultMessages.min, this.formatLabel(attr, model), minValue);
+	          }
+	        },
+	  
+	        // Max validator
+	        // Validates that the value has to be a number and equal to or less than
+	        // the max value specified
+	        max: function(value, attr, maxValue, model) {
+	          if (!isNumber(value) || value > maxValue) {
+	            return this.format(defaultMessages.max, this.formatLabel(attr, model), maxValue);
+	          }
+	        },
+	  
+	        // Range validator
+	        // Validates that the value has to be a number and equal to or between
+	        // the two numbers specified
+	        range: function(value, attr, range, model) {
+	          if(!isNumber(value) || value < range[0] || value > range[1]) {
+	            return this.format(defaultMessages.range, this.formatLabel(attr, model), range[0], range[1]);
+	          }
+	        },
+	  
+	        // Length validator
+	        // Validates that the value has to be a string with length equal to
+	        // the length value specified
+	        length: function(value, attr, length, model) {
+	          if (!hasValue(value) || trim(value).length !== length) {
+	            return this.format(defaultMessages.length, this.formatLabel(attr, model), length);
+	          }
+	        },
+	  
+	        // Min length validator
+	        // Validates that the value has to be a string with length equal to or greater than
+	        // the min length value specified
+	        minLength: function(value, attr, minLength, model) {
+	          if (!hasValue(value) || trim(value).length < minLength) {
+	            return this.format(defaultMessages.minLength, this.formatLabel(attr, model), minLength);
+	          }
+	        },
+	  
+	        // Max length validator
+	        // Validates that the value has to be a string with length equal to or less than
+	        // the max length value specified
+	        maxLength: function(value, attr, maxLength, model) {
+	          if (!hasValue(value) || trim(value).length > maxLength) {
+	            return this.format(defaultMessages.maxLength, this.formatLabel(attr, model), maxLength);
+	          }
+	        },
+	  
+	        // Range length validator
+	        // Validates that the value has to be a string and equal to or between
+	        // the two numbers specified
+	        rangeLength: function(value, attr, range, model) {
+	          if(!hasValue(value) || trim(value).length < range[0] || trim(value).length > range[1]) {
+	            return this.format(defaultMessages.rangeLength, this.formatLabel(attr, model), range[0], range[1]);
+	          }
+	        },
+	  
+	        // One of validator
+	        // Validates that the value has to be equal to one of the elements in
+	        // the specified array. Case sensitive matching
+	        oneOf: function(value, attr, values, model) {
+	          if(!_.include(values, value)){
+	            return this.format(defaultMessages.oneOf, this.formatLabel(attr, model), values.join(', '));
+	          }
+	        },
+	  
+	        // Equal to validator
+	        // Validates that the value has to be equal to the value of the attribute
+	        // with the name specified
+	        equalTo: function(value, attr, equalTo, model, computed) {
+	          if(value !== computed[equalTo]) {
+	            return this.format(defaultMessages.equalTo, this.formatLabel(attr, model), this.formatLabel(equalTo, model));
+	          }
+	        },
+	  
+	        // Pattern validator
+	        // Validates that the value has to match the pattern specified.
+	        // Can be a regular expression or the name of one of the built in patterns
+	        pattern: function(value, attr, pattern, model) {
+	          if (!hasValue(value) || !value.toString().match(defaultPatterns[pattern] || pattern)) {
+	            return this.format(defaultMessages.pattern, this.formatLabel(attr, model), pattern);
+	          }
+	        }
+	      };
+	    }());
+	  
+	    return Validation;
+	  }(_));
+	  
+	  return Backbone.Validation;
+	}));
+
+/***/ },
+/* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// Backbone.Syphon, v0.4.1
@@ -24528,7 +24532,7 @@
 	(function (root, factory) {
 	    if (true) {
 	        // AMD. Register as an anonymous module.
-	        !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(8), __webpack_require__(16), __webpack_require__(7)], __WEBPACK_AMD_DEFINE_RESULT__ = (factory.apply(null, __WEBPACK_AMD_DEFINE_ARRAY__)), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	        !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(9), __webpack_require__(15), __webpack_require__(8)], __WEBPACK_AMD_DEFINE_RESULT__ = (factory.apply(null, __WEBPACK_AMD_DEFINE_ARRAY__)), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	    }
 	}(this, function (_, jQuery, Backbone) {
 	  Backbone.Syphon = (function(Backbone, $, _){
@@ -25002,7 +25006,7 @@
 	}));
 
 /***/ },
-/* 18 */
+/* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// shim for using process in browser
@@ -25068,70 +25072,43 @@
 
 
 /***/ },
-/* 19 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(CommittedApp) {/**
-	 * Module dependencies
-	 */
-
-	var Parse = __webpack_require__(6).Parse;
-
-	/**
-	 * Project entity
-	 */
-
-	CommittedApp.module('Entities', function (Entities, CommittedApp, Backbone, Marionette, $, _) {
-	    var Project = Entities.Project = Parse.Object.extend({
-	        className: 'Project',
-	        defaults: {
-	            name: 'Un-named project'
-	        }
-	    });
-
-	    /**
-	     * App Handlers for the Project entity
-	     */
-
-	    var API = {
-	        getProjectEntity: function (projectId) {
-	            var project = new Project({ id: projectId });
-	            return project.fetch();
-	        }
-	    };
-
-	    CommittedApp.reqres.setHandlers({
-	        'project:entity': function (id) {
-	            return API.getProjectEntity(id);
-	        },
-
-	        'project:entity:new': function () {
-	            return new Project();
-	        }
-	    });
-
-	    module.exports = Entities.Project;
-	});
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
-
-/***/ },
 /* 20 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
-	 * Module dependencies
+	 *  Module dependencies
 	 */
 
 	var CommittedApp = __webpack_require__(1),
-	    Parse = __webpack_require__(6).Parse,
-	    Project = __webpack_require__(19);
+	    ProjectsView = __webpack_require__(24),
+	    LoadingView = __webpack_require__(26);
 
-	CommittedApp.module('Entities', function (Entities, CommittedApp, Backbone, Marionette, $, _) {
-	    Entities.Projects = Parse.Collection.extend({
-	        model: Project
-	    });
+	/**
+	 * ProjectsApp.List controller
+	 */
 
-	    module.exports = Entities.Projects;
+	CommittedApp.module('ProjectsApp.List', function (List, CommittedApp, Backbone, Marionette, $, _) {
+	    List.Controller = {
+	        listProjects: function () {
+	            var fetchProjects = CommittedApp.request('project:entities');
+	            var loadingView = new LoadingView();
+	            CommittedApp.mainRegion.show(loadingView);
+
+	            fetchProjects.then(function (projects) {
+	                var projectsListView = new ProjectsView({
+	                    collection: projects
+	                });
+
+	                setTimeout(function () {
+	                    CommittedApp.mainRegion.show(projectsListView);
+	                }, 2000);
+	            }, function (error) {
+	                console.log(error);
+	            });
+	        }
+	    };
+
+	    module.exports = List.Controller;
 	});
 
 /***/ },
@@ -25143,8 +25120,126 @@
 	 */
 
 	var CommittedApp = __webpack_require__(1),
-	    loadingViewTpl = __webpack_require__(33),
-	    User = __webpack_require__(6).Parse.User;
+	    ProjectView = __webpack_require__(23),
+	    LoadingView = __webpack_require__(26);
+
+	/**
+	 * Show controller
+	 */
+
+	CommittedApp.module('ProjectsApp.Show', function (Show, CommittedApp, Backbone, Marionette, $, _) {
+	    Show.Controller = {
+	        showProject: function (id) {
+	            var loadingView = new LoadingView();
+	            CommittedApp.mainRegion.show(loadingView);
+
+	            var fetchProject = CommittedApp.request('project:entity', id);
+
+	            fetchProject.then(function (project) {
+	                var projectView = new ProjectView({
+	                    model: project
+	                });
+	                setTimeout(function () {
+	                    CommittedApp.mainRegion.show(projectView);
+	                }, 2000);
+	            }, function (error) {
+	                console.log(error);
+	            });
+	        }
+	    };
+
+	    module.exports = Show.Controller;
+	});
+
+/***/ },
+/* 22 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Module dependencies
+	 */
+
+	var CommittedApp = __webpack_require__(1),
+	    LoginView = __webpack_require__(25);
+
+	/**
+	 * AuthApp.Show controller
+	 */
+
+	CommittedApp.module('AuthApp.Show', function (Show, CommittedApp, Backbone, Marionette, $, _) {
+	    Show.Controller = {
+	        showLogin: function () {
+	            var user = CommittedApp.request('user:entity:new'),
+	                loginView = new LoginView({
+	                    model: user
+	                });
+
+	            CommittedApp.mainRegion.show(loginView);
+	        }
+	    };
+
+	    module.exports = Show.Controller;
+	});
+
+/***/ },
+/* 23 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Module dependencies
+	 */
+
+	var CommittedApp = __webpack_require__(1),
+	    ProjectViewTpl = __webpack_require__(30);
+
+	/**
+	 * Show.Project view
+	 */
+
+	CommittedApp.module('ProjectsApp.Show', function (Show, CommittedApp, Backbone, Marionette, $, _) {
+	    Show.Project = Marionette.ItemView.extend({
+	        template: ProjectViewTpl,
+	        className: 'ui raised segment'
+	    });
+
+	    module.exports = Show.Project;
+	});
+
+/***/ },
+/* 24 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Module dependencies
+	 */
+
+	var CommittedApp = __webpack_require__(1),
+	    ProjectView = __webpack_require__(29);
+
+	/**
+	 * List.Projects view module
+	 */
+
+	CommittedApp.module('ProjectsApp.List', function (List, CommittedApp, Backbone, Marionette, $, _) {
+	    List.Projects = Marionette.CollectionView.extend({
+	        className: 'ui horizontal list',
+	        itemView: ProjectView
+	    });
+
+	    module.exports = List.Projects;
+	});
+
+/***/ },
+/* 25 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Module dependencies
+	 */
+
+	var CommittedApp = __webpack_require__(1),
+	    loadingViewTpl = __webpack_require__(31),
+	    User = __webpack_require__(7).Parse.User;
 
 	/**
 	 * Login view
@@ -25190,88 +25285,6 @@
 	});
 
 /***/ },
-/* 22 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Module dependencies
-	 */
-
-	var CommittedApp = __webpack_require__(1),
-	    LoginView = __webpack_require__(21),
-	    User = __webpack_require__(3);
-
-	/**
-	 * AuthApp.Show controller
-	 */
-
-	CommittedApp.module('AuthApp.Show', function (Show, CommittedApp, Backbone, Marionette, $, _) {
-	    Show.Controller = {
-	        showLogin: function () {
-	            var user = new User(),
-	                loginView = new LoginView({
-	                    model: user
-	                });
-	            CommittedApp.mainRegion.show(loginView);
-	        }
-	    };
-
-	    module.exports = Show.Controller;
-	});
-
-/***/ },
-/* 23 */
-/***/ function(module, exports, __webpack_require__) {
-
-
-
-/***/ },
-/* 24 */
-/***/ function(module, exports, __webpack_require__) {
-
-
-
-/***/ },
-/* 25 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 *  Module dependencies
-	 */
-
-	var CommittedApp = __webpack_require__(1),
-	    ProjectsView = __webpack_require__(27),
-	    LoadingView = __webpack_require__(32);
-
-	/**
-	 * ProjectsApp.List controller
-	 */
-
-	CommittedApp.module('ProjectsApp.List', function (List, CommittedApp, Backbone, Marionette, $, _) {
-	    List.Controller = {
-	        listProjects: function () {
-	            var fetchProjects = CommittedApp.request('project:entities');
-	            var loadingView = new LoadingView();
-	            CommittedApp.mainRegion.show(loadingView);
-
-	            fetchProjects.then(function (projects) {
-	                var projectsListView = new ProjectsView({
-	                    collection: projects
-	                });
-
-	                setTimeout(function () {
-	                    CommittedApp.mainRegion.show(projectsListView);
-	                }, 2000);
-	            }, function (error) {
-	                console.log(error);
-	            });
-	        }
-	    };
-
-	    module.exports = List.Controller;
-	});
-
-/***/ },
 /* 26 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -25280,192 +25293,7 @@
 	 */
 
 	var CommittedApp = __webpack_require__(1),
-	    projectTpl = __webpack_require__(35);
-
-	/**
-	 * List.Project view
-	 */
-
-	CommittedApp.module('ProjectsApp.List', function (List, CommittedApp, Backbone, Marionette, $, _) {
-	    List.Project = Marionette.ItemView.extend({
-	        className: 'item',
-	        template: projectTpl
-	    });
-
-	    module.exports = List.Project;
-	});
-
-/***/ },
-/* 27 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Module dependencies
-	 */
-
-	var CommittedApp = __webpack_require__(1),
-	    ProjectView = __webpack_require__(26);
-
-	/**
-	 * List.Projects view module
-	 */
-
-	CommittedApp.module('ProjectsApp.List', function (List, CommittedApp, Backbone, Marionette, $, _) {
-	    List.Projects = Marionette.CollectionView.extend({
-	        className: 'ui horizontal list',
-	        itemView: ProjectView
-	    });
-
-	    module.exports = List.Projects;
-	});
-
-/***/ },
-/* 28 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Module dependencies
-	 */
-
-	var CommittedApp = __webpack_require__(1),
-	    ProjectViewTpl = __webpack_require__(36);
-
-	/**
-	 * Show.Project view
-	 */
-
-	CommittedApp.module('ProjectsApp.Show', function (Show, CommittedApp, Backbone, Marionette, $, _) {
-	    Show.Project = Marionette.ItemView.extend({
-	        template: ProjectViewTpl,
-	        className: 'ui raised segment'
-	    });
-
-	    module.exports = Show.Project;
-	});
-
-/***/ },
-/* 29 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Module dependencies
-	 */
-
-	var CommittedApp = __webpack_require__(1),
-	    ProjectView = __webpack_require__(28),
-	    LoadingView = __webpack_require__(32);
-
-	/**
-	 * Show controller
-	 */
-
-	CommittedApp.module('ProjectsApp.Show', function (Show, CommittedApp, Backbone, Marionette, $, _) {
-	    Show.Controller = {
-	        showProject: function (id) {
-	            var loadingView = new LoadingView();
-	            CommittedApp.mainRegion.show(loadingView);
-
-	            var fetchProject = CommittedApp.request('project:entity', id);
-
-	            fetchProject.then(function (project) {
-	                var projectView = new ProjectView({
-	                    model: project
-	                });
-	                setTimeout(function () {
-	                    CommittedApp.mainRegion.show(projectView);
-	                }, 2000);
-	            }, function (error) {
-	                console.log(error);
-	            });
-	        }
-	    };
-
-	    module.exports = Show.Controller;
-	});
-
-/***/ },
-/* 30 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Module dependencies
-	 */
-
-	var Marionette = __webpack_require__(13),
-	    AppRouter = Marionette.AppRouter,
-	    _ = __webpack_require__(8);
-
-	var originalExecute = AppRouter.prototype.execute;
-
-	// nop - no operation, a function that does nothing
-	var nop = function () { };
-
-	_.extend(AppRouter.prototype, {
-
-	    // Default before filter
-	    before: nop,
-
-	    // Default after filter
-	    after: nop,
-
-	    execute: function (callback, args) {
-	        var router = this;
-
-	        var wrappedCallback = _.bind(function () {
-	            // If before === function -> Run it for all routes
-	            // If before === object -> Get middleware for this route
-	                // If middleware === function, run it for this route
-	                // If middleware === array, run each middleware serially
-
-	            // Run the callback specified for this route if all
-	            // before middleware completes successfully
-	            callback.apply(this);
-
-	            // Repeat same for after as before
-
-	        }, router);
-
-	        console.log(router.appRoutes);
-
-	        return originalExecute.call(router, wrappedCallback, args);
-	    }
-	});
-
-	module.exports = AppRouter;
-
-/***/ },
-/* 31 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Module dependencies
-	 */
-
-	var CommittedApp = __webpack_require__(1),
-	    formViewTpl = __webpack_require__(37);
-
-	CommittedApp.module('Views', function (Views, CommittedApp, Backbone, Marionette, $, _) {
-	    Views.Form = Marionette.ItemView.extend({
-	        template: formViewTpl,
-
-	        triggers: {
-	            'submit .button.js-submit': 'form:submit'
-	        }
-	    });
-
-	    module.exports = Views.Form;
-	});
-
-/***/ },
-/* 32 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Module dependencies
-	 */
-
-	var CommittedApp = __webpack_require__(1),
-	    loadingViewTpl = __webpack_require__(38);
+	    loadingViewTpl = __webpack_require__(32);
 
 	CommittedApp.module('Common.Views', function (Views, CommittedApp, Backbone, Marionette, $, _) {
 
@@ -25492,293 +25320,14 @@
 	});
 
 /***/ },
-/* 33 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = __webpack_require__(41).default.template(function (Handlebars,depth0,helpers,partials,data) {
-	  this.compilerInfo = [4,'>= 1.0.0'];
-	helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-	  
-
-
-	  return "<form class=\"ui form raised segment\">\n    <div class=\"three fields\">\n        <div class=\"field\">\n            <label>Username</label>\n            <input placeholder=\"Username\" id=\"js-email\" name=\"username\" type=\"email\">\n        </div>\n        <div class=\"field\">\n            <label>E-mail</label>\n            <input placeholder=\"E-mail\" id=\"js-email\" name=\"email\" type=\"email\">\n        </div>\n        <div class=\"field\">\n            <label>Password</label>\n            <input placeholder=\"Password\" id=\"js-password\" name=\"password\" type=\"password\">\n        </div>\n    </div>\n    <div class=\"ui blue submit button js-submit\">Login :)</div>\n</form>";
-	  });
-
-/***/ },
-/* 34 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = __webpack_require__(41).default.template(function (Handlebars,depth0,helpers,partials,data) {
-	  this.compilerInfo = [4,'>= 1.0.0'];
-	helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-	  var buffer = "";
-
-
-	  return buffer;
-	  });
-
-/***/ },
-/* 35 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = __webpack_require__(41).default.template(function (Handlebars,depth0,helpers,partials,data) {
-	  this.compilerInfo = [4,'>= 1.0.0'];
-	helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-	  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression;
-
-
-	  buffer += "<div class=\"ui raised segment\">\n    <h2>Project name: ";
-	  if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-	  else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-	  buffer += escapeExpression(stack1)
-	    + "</h2>\n</div>";
-	  return buffer;
-	  });
-
-/***/ },
-/* 36 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = __webpack_require__(41).default.template(function (Handlebars,depth0,helpers,partials,data) {
-	  this.compilerInfo = [4,'>= 1.0.0'];
-	helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-	  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression;
-
-
-	  buffer += "<h2>Project name: ";
-	  if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-	  else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-	  buffer += escapeExpression(stack1)
-	    + "</h2>";
-	  return buffer;
-	  });
-
-/***/ },
-/* 37 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = __webpack_require__(41).default.template(function (Handlebars,depth0,helpers,partials,data) {
-	  this.compilerInfo = [4,'>= 1.0.0'];
-	helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-	  
-
-
-	  return "<div class=\"ui form raised segment\">\n    <div class=\"ui blue submit button js-submit\">Submit</div>\n</div>";
-	  });
-
-/***/ },
-/* 38 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = __webpack_require__(41).default.template(function (Handlebars,depth0,helpers,partials,data) {
-	  this.compilerInfo = [4,'>= 1.0.0'];
-	helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-	  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression;
-
-
-	  buffer += "<div class=\"ui active large inline text loader\">\n    ";
-	  if (helper = helpers.message) { stack1 = helper.call(depth0, {hash:{},data:data}); }
-	  else { helper = (depth0 && depth0.message); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
-	  buffer += escapeExpression(stack1)
-	    + "\n</div>";
-	  return buffer;
-	  });
-
-/***/ },
-/* 39 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// Backbone.BabySitter
-	// -------------------
-	// v0.1.0
-	//
-	// Copyright (c)2014 Derick Bailey, Muted Solutions, LLC.
-	// Distributed under MIT license
-	//
-	// http://github.com/marionettejs/backbone.babysitter
-
-	(function (root, factory) {
-	  if (true) {
-
-	    var underscore = __webpack_require__(8);
-	    var backbone = __webpack_require__(7);
-
-	    module.exports = factory(underscore, backbone);
-
-	  } else if (typeof define === 'function' && define.amd) {
-
-	    define(['underscore', 'backbone'], factory);
-
-	  } 
-	}(this, function (_, Backbone) {
-	  "option strict";
-
-	  // Backbone.ChildViewContainer
-	// ---------------------------
-	//
-	// Provide a container to store, retrieve and
-	// shut down child views.
-
-	Backbone.ChildViewContainer = (function(Backbone, _){
-	  
-	  // Container Constructor
-	  // ---------------------
-
-	  var Container = function(views){
-	    this._views = {};
-	    this._indexByModel = {};
-	    this._indexByCustom = {};
-	    this._updateLength();
-
-	    _.each(views, this.add, this);
-	  };
-
-	  // Container Methods
-	  // -----------------
-
-	  _.extend(Container.prototype, {
-
-	    // Add a view to this container. Stores the view
-	    // by `cid` and makes it searchable by the model
-	    // cid (and model itself). Optionally specify
-	    // a custom key to store an retrieve the view.
-	    add: function(view, customIndex){
-	      var viewCid = view.cid;
-
-	      // store the view
-	      this._views[viewCid] = view;
-
-	      // index it by model
-	      if (view.model){
-	        this._indexByModel[view.model.cid] = viewCid;
-	      }
-
-	      // index by custom
-	      if (customIndex){
-	        this._indexByCustom[customIndex] = viewCid;
-	      }
-
-	      this._updateLength();
-	      return this;
-	    },
-
-	    // Find a view by the model that was attached to
-	    // it. Uses the model's `cid` to find it.
-	    findByModel: function(model){
-	      return this.findByModelCid(model.cid);
-	    },
-
-	    // Find a view by the `cid` of the model that was attached to
-	    // it. Uses the model's `cid` to find the view `cid` and
-	    // retrieve the view using it.
-	    findByModelCid: function(modelCid){
-	      var viewCid = this._indexByModel[modelCid];
-	      return this.findByCid(viewCid);
-	    },
-
-	    // Find a view by a custom indexer.
-	    findByCustom: function(index){
-	      var viewCid = this._indexByCustom[index];
-	      return this.findByCid(viewCid);
-	    },
-
-	    // Find by index. This is not guaranteed to be a
-	    // stable index.
-	    findByIndex: function(index){
-	      return _.values(this._views)[index];
-	    },
-
-	    // retrieve a view by its `cid` directly
-	    findByCid: function(cid){
-	      return this._views[cid];
-	    },
-
-	    // Remove a view
-	    remove: function(view){
-	      var viewCid = view.cid;
-
-	      // delete model index
-	      if (view.model){
-	        delete this._indexByModel[view.model.cid];
-	      }
-
-	      // delete custom index
-	      _.any(this._indexByCustom, function(cid, key) {
-	        if (cid === viewCid) {
-	          delete this._indexByCustom[key];
-	          return true;
-	        }
-	      }, this);
-
-	      // remove the view from the container
-	      delete this._views[viewCid];
-
-	      // update the length
-	      this._updateLength();
-	      return this;
-	    },
-
-	    // Call a method on every view in the container,
-	    // passing parameters to the call method one at a
-	    // time, like `function.call`.
-	    call: function(method){
-	      this.apply(method, _.tail(arguments));
-	    },
-
-	    // Apply a method on every view in the container,
-	    // passing parameters to the call method one at a
-	    // time, like `function.apply`.
-	    apply: function(method, args){
-	      _.each(this._views, function(view){
-	        if (_.isFunction(view[method])){
-	          view[method].apply(view, args || []);
-	        }
-	      });
-	    },
-
-	    // Update the `.length` attribute on this container
-	    _updateLength: function(){
-	      this.length = _.size(this._views);
-	    }
-	  });
-
-	  // Borrowing this code from Backbone.Collection:
-	  // http://backbonejs.org/docs/backbone.html#section-106
-	  //
-	  // Mix in methods from Underscore, for iteration, and other
-	  // collection related features.
-	  var methods = ['forEach', 'each', 'map', 'find', 'detect', 'filter', 
-	    'select', 'reject', 'every', 'all', 'some', 'any', 'include', 
-	    'contains', 'invoke', 'toArray', 'first', 'initial', 'rest', 
-	    'last', 'without', 'isEmpty', 'pluck'];
-
-	  _.each(methods, function(method) {
-	    Container.prototype[method] = function() {
-	      var views = _.values(this._views);
-	      var args = [views].concat(_.toArray(arguments));
-	      return _[method].apply(_, args);
-	    };
-	  });
-
-	  // return the public API
-	  return Container;
-	})(Backbone, _);
-
-	  return Backbone.ChildViewContainer; 
-
-	}));
-
-
-
-/***/ },
-/* 40 */
+/* 27 */
 /***/ function(module, exports, __webpack_require__) {
 
 	(function (root, factory) {
 	  if (true) {
 
-	    var underscore = __webpack_require__(8);
-	    var backbone = __webpack_require__(7);
+	    var underscore = __webpack_require__(9);
+	    var backbone = __webpack_require__(8);
 
 	    module.exports = factory(underscore, backbone);
 
@@ -26054,28 +25603,305 @@
 
 
 /***/ },
-/* 41 */
+/* 28 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// Backbone.BabySitter
+	// -------------------
+	// v0.1.0
+	//
+	// Copyright (c)2014 Derick Bailey, Muted Solutions, LLC.
+	// Distributed under MIT license
+	//
+	// http://github.com/marionettejs/backbone.babysitter
+
+	(function (root, factory) {
+	  if (true) {
+
+	    var underscore = __webpack_require__(9);
+	    var backbone = __webpack_require__(8);
+
+	    module.exports = factory(underscore, backbone);
+
+	  } else if (typeof define === 'function' && define.amd) {
+
+	    define(['underscore', 'backbone'], factory);
+
+	  } 
+	}(this, function (_, Backbone) {
+	  "option strict";
+
+	  // Backbone.ChildViewContainer
+	// ---------------------------
+	//
+	// Provide a container to store, retrieve and
+	// shut down child views.
+
+	Backbone.ChildViewContainer = (function(Backbone, _){
+	  
+	  // Container Constructor
+	  // ---------------------
+
+	  var Container = function(views){
+	    this._views = {};
+	    this._indexByModel = {};
+	    this._indexByCustom = {};
+	    this._updateLength();
+
+	    _.each(views, this.add, this);
+	  };
+
+	  // Container Methods
+	  // -----------------
+
+	  _.extend(Container.prototype, {
+
+	    // Add a view to this container. Stores the view
+	    // by `cid` and makes it searchable by the model
+	    // cid (and model itself). Optionally specify
+	    // a custom key to store an retrieve the view.
+	    add: function(view, customIndex){
+	      var viewCid = view.cid;
+
+	      // store the view
+	      this._views[viewCid] = view;
+
+	      // index it by model
+	      if (view.model){
+	        this._indexByModel[view.model.cid] = viewCid;
+	      }
+
+	      // index by custom
+	      if (customIndex){
+	        this._indexByCustom[customIndex] = viewCid;
+	      }
+
+	      this._updateLength();
+	      return this;
+	    },
+
+	    // Find a view by the model that was attached to
+	    // it. Uses the model's `cid` to find it.
+	    findByModel: function(model){
+	      return this.findByModelCid(model.cid);
+	    },
+
+	    // Find a view by the `cid` of the model that was attached to
+	    // it. Uses the model's `cid` to find the view `cid` and
+	    // retrieve the view using it.
+	    findByModelCid: function(modelCid){
+	      var viewCid = this._indexByModel[modelCid];
+	      return this.findByCid(viewCid);
+	    },
+
+	    // Find a view by a custom indexer.
+	    findByCustom: function(index){
+	      var viewCid = this._indexByCustom[index];
+	      return this.findByCid(viewCid);
+	    },
+
+	    // Find by index. This is not guaranteed to be a
+	    // stable index.
+	    findByIndex: function(index){
+	      return _.values(this._views)[index];
+	    },
+
+	    // retrieve a view by its `cid` directly
+	    findByCid: function(cid){
+	      return this._views[cid];
+	    },
+
+	    // Remove a view
+	    remove: function(view){
+	      var viewCid = view.cid;
+
+	      // delete model index
+	      if (view.model){
+	        delete this._indexByModel[view.model.cid];
+	      }
+
+	      // delete custom index
+	      _.any(this._indexByCustom, function(cid, key) {
+	        if (cid === viewCid) {
+	          delete this._indexByCustom[key];
+	          return true;
+	        }
+	      }, this);
+
+	      // remove the view from the container
+	      delete this._views[viewCid];
+
+	      // update the length
+	      this._updateLength();
+	      return this;
+	    },
+
+	    // Call a method on every view in the container,
+	    // passing parameters to the call method one at a
+	    // time, like `function.call`.
+	    call: function(method){
+	      this.apply(method, _.tail(arguments));
+	    },
+
+	    // Apply a method on every view in the container,
+	    // passing parameters to the call method one at a
+	    // time, like `function.apply`.
+	    apply: function(method, args){
+	      _.each(this._views, function(view){
+	        if (_.isFunction(view[method])){
+	          view[method].apply(view, args || []);
+	        }
+	      });
+	    },
+
+	    // Update the `.length` attribute on this container
+	    _updateLength: function(){
+	      this.length = _.size(this._views);
+	    }
+	  });
+
+	  // Borrowing this code from Backbone.Collection:
+	  // http://backbonejs.org/docs/backbone.html#section-106
+	  //
+	  // Mix in methods from Underscore, for iteration, and other
+	  // collection related features.
+	  var methods = ['forEach', 'each', 'map', 'find', 'detect', 'filter', 
+	    'select', 'reject', 'every', 'all', 'some', 'any', 'include', 
+	    'contains', 'invoke', 'toArray', 'first', 'initial', 'rest', 
+	    'last', 'without', 'isEmpty', 'pluck'];
+
+	  _.each(methods, function(method) {
+	    Container.prototype[method] = function() {
+	      var views = _.values(this._views);
+	      var args = [views].concat(_.toArray(arguments));
+	      return _[method].apply(_, args);
+	    };
+	  });
+
+	  // return the public API
+	  return Container;
+	})(Backbone, _);
+
+	  return Backbone.ChildViewContainer; 
+
+	}));
+
+
+
+/***/ },
+/* 29 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Module dependencies
+	 */
+
+	var CommittedApp = __webpack_require__(1),
+	    projectTpl = __webpack_require__(33);
+
+	/**
+	 * List.Project view
+	 */
+
+	CommittedApp.module('ProjectsApp.List', function (List, CommittedApp, Backbone, Marionette, $, _) {
+	    List.Project = Marionette.ItemView.extend({
+	        className: 'item',
+	        template: projectTpl
+	    });
+
+	    module.exports = List.Project;
+	});
+
+/***/ },
+/* 30 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__(34).default.template(function (Handlebars,depth0,helpers,partials,data) {
+	  this.compilerInfo = [4,'>= 1.0.0'];
+	helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+	  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression;
+
+
+	  buffer += "<h2>Project name: ";
+	  if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+	  else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+	  buffer += escapeExpression(stack1)
+	    + "</h2>";
+	  return buffer;
+	  });
+
+/***/ },
+/* 31 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__(34).default.template(function (Handlebars,depth0,helpers,partials,data) {
+	  this.compilerInfo = [4,'>= 1.0.0'];
+	helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+	  
+
+
+	  return "<form class=\"ui form raised segment\">\n    <div class=\"three fields\">\n        <div class=\"field\">\n            <label>Username</label>\n            <input placeholder=\"Username\" id=\"js-email\" name=\"username\" type=\"email\">\n        </div>\n        <div class=\"field\">\n            <label>E-mail</label>\n            <input placeholder=\"E-mail\" id=\"js-email\" name=\"email\" type=\"email\">\n        </div>\n        <div class=\"field\">\n            <label>Password</label>\n            <input placeholder=\"Password\" id=\"js-password\" name=\"password\" type=\"password\">\n        </div>\n    </div>\n    <div class=\"ui blue submit button js-submit\">Login :)</div>\n</form>";
+	  });
+
+/***/ },
+/* 32 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__(34).default.template(function (Handlebars,depth0,helpers,partials,data) {
+	  this.compilerInfo = [4,'>= 1.0.0'];
+	helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+	  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression;
+
+
+	  buffer += "<div class=\"ui active large inline text loader\">\n    ";
+	  if (helper = helpers.message) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+	  else { helper = (depth0 && depth0.message); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+	  buffer += escapeExpression(stack1)
+	    + "\n</div>";
+	  return buffer;
+	  });
+
+/***/ },
+/* 33 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__(34).default.template(function (Handlebars,depth0,helpers,partials,data) {
+	  this.compilerInfo = [4,'>= 1.0.0'];
+	helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+	  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression;
+
+
+	  buffer += "<div class=\"ui raised segment\">\n    <h2>Project name: ";
+	  if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
+	  else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
+	  buffer += escapeExpression(stack1)
+	    + "</h2>\n</div>";
+	  return buffer;
+	  });
+
+/***/ },
+/* 34 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// Create a simple path alias to allow browserify to resolve
 	// the runtime on a supported path.
-	module.exports = __webpack_require__(42);
+	module.exports = __webpack_require__(35);
 
 
 /***/ },
-/* 42 */
+/* 35 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	/*globals Handlebars: true */
-	var base = __webpack_require__(43);
+	var base = __webpack_require__(36);
 
 	// Each of these augment the Handlebars object. No need to setup here.
 	// (This is done to easily share code between commonjs and browse envs)
-	var SafeString = __webpack_require__(44)["default"];
-	var Exception = __webpack_require__(45)["default"];
-	var Utils = __webpack_require__(46);
-	var runtime = __webpack_require__(47);
+	var SafeString = __webpack_require__(37)["default"];
+	var Exception = __webpack_require__(38)["default"];
+	var Utils = __webpack_require__(39);
+	var runtime = __webpack_require__(40);
 
 	// For compatibility and usage outside of module systems, make the Handlebars object a namespace
 	var create = function() {
@@ -26100,12 +25926,12 @@
 	exports["default"] = Handlebars;
 
 /***/ },
-/* 43 */
+/* 36 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var Utils = __webpack_require__(46);
-	var Exception = __webpack_require__(45)["default"];
+	var Utils = __webpack_require__(39);
+	var Exception = __webpack_require__(38)["default"];
 
 	var VERSION = "1.3.0";
 	exports.VERSION = VERSION;var COMPILER_REVISION = 4;
@@ -26285,7 +26111,7 @@
 	exports.createFrame = createFrame;
 
 /***/ },
-/* 44 */
+/* 37 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -26301,7 +26127,7 @@
 	exports["default"] = SafeString;
 
 /***/ },
-/* 45 */
+/* 38 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -26334,12 +26160,12 @@
 	exports["default"] = Exception;
 
 /***/ },
-/* 46 */
+/* 39 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	/*jshint -W004 */
-	var SafeString = __webpack_require__(44)["default"];
+	var SafeString = __webpack_require__(37)["default"];
 
 	var escape = {
 	  "&": "&amp;",
@@ -26415,14 +26241,14 @@
 	exports.isEmpty = isEmpty;
 
 /***/ },
-/* 47 */
+/* 40 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var Utils = __webpack_require__(46);
-	var Exception = __webpack_require__(45)["default"];
-	var COMPILER_REVISION = __webpack_require__(43).COMPILER_REVISION;
-	var REVISION_CHANGES = __webpack_require__(43).REVISION_CHANGES;
+	var Utils = __webpack_require__(39);
+	var Exception = __webpack_require__(38)["default"];
+	var COMPILER_REVISION = __webpack_require__(36).COMPILER_REVISION;
+	var REVISION_CHANGES = __webpack_require__(36).REVISION_CHANGES;
 
 	function checkRevision(compilerInfo) {
 	  var compilerRevision = compilerInfo && compilerInfo[0] || 1,

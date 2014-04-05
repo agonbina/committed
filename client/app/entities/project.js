@@ -2,13 +2,15 @@
  * Module dependencies
  */
 
-var Parse = require('parse').Parse;
-
-/**
- * Project entity
- */
+var Parse = require('parse').Parse,
+    CommittedApp = require('app');
 
 CommittedApp.module('Entities', function (Entities, CommittedApp, Backbone, Marionette, $, _) {
+
+    /**
+     * Project entity
+     */
+
     var Project = Entities.Project = Parse.Object.extend({
         className: 'Project',
         defaults: {

@@ -2,48 +2,48 @@
  * Module dependencies
  */
 
-var Parse = require('parse').Parse;
+var Parse = require('parse').Parse,
+    CommittedApp = require('app');
 
-/**
- * User Entity
- */
+CommittedApp.module('Entities', function (Entities, CommittedApp, Backbone, Marionette, $, _) {
 
-var User = Parse.User.extend({
-    validation: {
-        email: {
-            required: true,
-            pattern: 'email',
-            msg: 'No e-mail, no fun :)'
-        },
-        password: {
-            required: true,
-            msg: 'Come on, no password? :('
-        }
-    }
-});
+    /**
+     * User Entity
+     */
 
-/**
- * App Handlers for the User entity
- */
-
-var API = {
-    getUserEntity: function (userId) {
-        var user = new User({id: userId});
-        return user.fetch();
-    }
-};
-
-module.exports = function (CommittedApp) {
-
-    CommittedApp.reqres.setHandlers({
-        'user:entity': function () {
-            return API.getUserEntity();
-        },
-
-        'user:entity:new': function () {
-            return new User();
+    var User = Entities.User = Parse.User.extend({
+        validation: {
+            email: {
+                required: true,
+                pattern: 'email',
+                msg: 'No e-mail, no fun :)'
+            },
+            password: {
+                required: true,
+                msg: 'Come on, no password? :('
+            }
         }
     });
 
-    return User;
-};
+    /**
+     * App Handlers for the User entity
+     */
+
+    var API = {
+        getUserEntity: function (userId) {
+            var user = new User({id: userId});
+            return user.fetch();
+        },
+
+        getNewUserEntity: function () {
+            return new User();
+        }
+    };
+
+    CommittedApp.reqres.setHandlers({
+        'user:entity': API.getUserEntity,
+        'user:entity:new': API.getNewUserEntity
+    });
+
+    module.exports = Entities.User;
+});

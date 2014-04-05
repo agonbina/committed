@@ -36,8 +36,7 @@ module.exports = {
             $: 'jquery',
             _: 'underscore',
             Backbone: 'backbone',
-            Marionette: 'backbone.marionette',
-            CommittedApp: 'app'
+            Marionette: 'backbone.marionette'
         })
     ]
 };

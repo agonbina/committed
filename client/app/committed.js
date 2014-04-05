@@ -1,16 +1,15 @@
 /**
  * Module dependencies
  */
-
-var CommittedApp = require('app'),
-    Backbone = require('backbone'),
+var Backbone = require('backbone'),
+    _ = require('underscore'),
     Parse = require('parse').Parse,
-    User = require('./entities/user');
+    CommittedApp = require('app');
 
 /**
  * Helper: set history fragment
- * @param route
- * @param options
+ * @param route ,
+ * @param options ,options you would normally pass to history.navigate
  */
 
 CommittedApp.navigate = function (route, options) {
@@ -43,22 +42,13 @@ CommittedApp.addInitializer(function () {
 });
 
 /**
- * Load all entities, mainly to register the global entity handlers
+ * Load all entities, to register the global entity handlers
  */
 
 CommittedApp.addInitializer(function () {
-    var entities = [
-            'user',
-            'project',
-            'projects'
-        ],
-        entitiesPath = './entities/',
-        loadEntity = function (entity) {
-            console.log(entitiesPath + entity);
-            require(entitiesPath + entity);
-        };
-
-    _(entities).each(loadEntity);
+    require('./entities/user');
+    require('./entities/project');
+    require('./entities/projects');
 });
 
 /**

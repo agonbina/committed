@@ -9,11 +9,9 @@ require('./config/reqres')(CommittedApp.reqres);
 require('./config/vent')(CommittedApp);
 
 // Load any configurations/extensions of Backbone and Marionette
-//require('./config/marionette/router');
+require('./config/vendor/backbone.validation');
 
 require('backbone.routefilter');
 require('backbone.syphon');
-require('backbone.validation');
-_.extend(Backbone.Model.prototype, Backbone.Validation.mixin);
 
 module.exports = CommittedApp;

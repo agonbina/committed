@@ -129,7 +129,7 @@
 /* 1 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(_) {var Marionette = __webpack_require__(14);
+	var Marionette = __webpack_require__(15);
 	var Backbone = __webpack_require__(8);
 	var CommittedApp = new Marionette.Application();
 
@@ -140,15 +140,12 @@
 	__webpack_require__(11)(CommittedApp);
 
 	// Load any configurations/extensions of Backbone and Marionette
-	//require('./config/marionette/router');
+	__webpack_require__(12);
 
-	__webpack_require__(16);
-	__webpack_require__(18);
 	__webpack_require__(17);
-	_.extend(Backbone.Model.prototype, Backbone.Validation.mixin);
+	__webpack_require__(18);
 
 	module.exports = CommittedApp;
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9)))
 
 /***/ },
 /* 2 */
@@ -236,17 +233,15 @@
 	        getProjectEntity: function (projectId) {
 	            var project = new Project({ id: projectId });
 	            return project.fetch();
+	        },
+	        getNewProjectEntity: function () {
+	            return new Project();
 	        }
 	    };
 
 	    CommittedApp.reqres.setHandlers({
-	        'project:entity': function (id) {
-	            return API.getProjectEntity(id);
-	        },
-
-	        'project:entity:new': function () {
-	            return new Project();
-	        }
+	        'project:entity': API.getProjectEntity,
+	        'project:entity:new': API.getNewProjectEntity
 	    });
 
 	    module.exports = Entities.Project;
@@ -340,7 +335,7 @@
 	    ProjectsApp.startWithParent = false;
 
 	    ProjectsApp.onBeforeStart = function () {
-	        __webpack_require__(12);
+	        __webpack_require__(14);
 	    };
 
 	    ProjectsApp.onStart = function () {
@@ -398,7 +393,7 @@
 	        }
 
 	        Parse._ = __webpack_require__(9);
-	        Parse.$ = __webpack_require__(15);
+	        Parse.$ = __webpack_require__(16);
 
 	        exports.Parse = Parse;
 	    }
@@ -8273,7 +8268,7 @@
 
 	  // Set up Backbone appropriately for the environment. Start with AMD.
 	  if (true) {
-	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(9), __webpack_require__(15), exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, $, exports) {
+	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(9), __webpack_require__(16), exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, $, exports) {
 	      // Export global even in AMD case in case this script is loaded with
 	      // others that may still expect a global Backbone.
 	      root.Backbone = factory(root, exports, _, $);
@@ -11159,6 +11154,88 @@
 /* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
+	/* WEBPACK VAR INJECTION */(function(_, $) {var Backbone = __webpack_require__(8);
+
+	__webpack_require__(23);
+	_.extend(Backbone.Model.prototype, Backbone.Validation.mixin);
+
+	// Customize global form error display
+	_.extend(Backbone.Validation.callbacks, {
+	    valid: function ($view, attr, selector) {
+	        var $field = $view.$('[name=' + attr + ']').parent();
+	        $field.removeClass('error');
+
+	        $field.find('.ui.red.pointing.label').remove();
+	     },
+	    invalid: function ($view, attr, error, selector) {
+	        var $field = $view.$('[name=' + attr + ']').parent();
+	        $field.addClass('error');
+
+	        // Remove older errors if present
+	        $field.find('.ui.red.pointing.label').remove();
+
+	        // Add the error field
+	        var $error = $('<div></div>')
+	            .addClass('ui red pointing above label')
+	            .text(error);
+	        $field.append($error);
+	    }
+	});
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9), __webpack_require__(16)))
+
+/***/ },
+/* 13 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Module dependencies
+	 */
+
+	var CommittedApp = __webpack_require__(1);
+
+
+	CommittedApp.module('AuthApp', function (AuthApp, CommittedApp, Backbone, Marionette, $, _) {
+	    AuthApp.Router = Marionette.AppRouter.extend({
+	        appRoutes: {
+	            'login': 'showLogin',
+	            'signup': 'showSignup'
+	        }
+	    });
+
+	    var API = {
+	        showLogin: function () {
+	            var ShowController = __webpack_require__(20);
+	            ShowController.showLogin();
+	        },
+
+	        showSignup: function () {
+	            console.log('showing signup ...');
+	        }
+	    };
+
+	    AuthApp.addInitializer(function () {
+	        var authRouter = new AuthApp.Router({
+	            controller: API
+	        });
+	    });
+
+	    CommittedApp.on('login:show', function () {
+	        CommittedApp.navigate('login');
+	        API.showLogin();
+	    });
+
+	    CommittedApp.on('signup:show', function () {
+	        CommittedApp.navigate('signup');
+	        API.showSignup();
+	    });
+
+	    module.exports = AuthApp.Router;
+	});
+
+/***/ },
+/* 14 */
+/***/ function(module, exports, __webpack_require__) {
+
 	/**
 	 * Module dependencies
 	 */
@@ -11197,11 +11274,11 @@
 
 	    var API = {
 	        listProjects: function () {
-	            var ListController = __webpack_require__(20);
+	            var ListController = __webpack_require__(21);
 	            ListController.listProjects();
 	        },
 	        showProject: function (id) {
-	            var ShowController = __webpack_require__(21);
+	            var ShowController = __webpack_require__(22);
 	            ShowController.showProject(id);
 	        }
 	    };
@@ -11235,56 +11312,7 @@
 	});
 
 /***/ },
-/* 13 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Module dependencies
-	 */
-
-	var CommittedApp = __webpack_require__(1);
-
-
-	CommittedApp.module('AuthApp', function (AuthApp, CommittedApp, Backbone, Marionette, $, _) {
-	    AuthApp.Router = Marionette.AppRouter.extend({
-	        appRoutes: {
-	            'login': 'showLogin',
-	            'signup': 'showSignup'
-	        }
-	    });
-
-	    var API = {
-	        showLogin: function () {
-	            var ShowController = __webpack_require__(22);
-	            ShowController.showLogin();
-	        },
-
-	        showSignup: function () {
-	            console.log('showing signup ...');
-	        }
-	    };
-
-	    AuthApp.addInitializer(function () {
-	        var authRouter = new AuthApp.Router({
-	            controller: API
-	        });
-	    });
-
-	    CommittedApp.on('login:show', function () {
-	        CommittedApp.navigate('login');
-	        API.showLogin();
-	    });
-
-	    CommittedApp.on('signup:show', function () {
-	        CommittedApp.navigate('signup');
-	        API.showSignup();
-	    });
-
-	    module.exports = AuthApp.Router;
-	});
-
-/***/ },
-/* 14 */
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// MarionetteJS (Backbone.Marionette)
@@ -11311,8 +11339,8 @@
 
 	    var underscore = __webpack_require__(9);
 	    var backbone = __webpack_require__(8);
-	    var wreqr = __webpack_require__(27);
-	    var babysitter = __webpack_require__(28);
+	    var wreqr = __webpack_require__(28);
+	    var babysitter = __webpack_require__(29);
 
 	    module.exports = factory(underscore, backbone, wreqr, babysitter);
 
@@ -13437,7 +13465,7 @@
 
 
 /***/ },
-/* 15 */
+/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -23780,7 +23808,7 @@
 
 
 /***/ },
-/* 16 */
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(_, Backbone) {/*! backbone.routefilter - v0.2.0 - 2013-02-16
@@ -23907,7 +23935,667 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9), __webpack_require__(8)))
 
 /***/ },
-/* 17 */
+/* 18 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// Backbone.Syphon, v0.4.1
+	// Copyright (c)2012 Derick Bailey, Muted Solutions, LLC.
+	// Distributed under MIT license
+	// http://github.com/derickbailey/backbone.syphon
+	(function (root, factory) {
+	    if (true) {
+	        // AMD. Register as an anonymous module.
+	        !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(9), __webpack_require__(16), __webpack_require__(8)], __WEBPACK_AMD_DEFINE_RESULT__ = (factory.apply(null, __WEBPACK_AMD_DEFINE_ARRAY__)), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	    }
+	}(this, function (_, jQuery, Backbone) {
+	  Backbone.Syphon = (function(Backbone, $, _){
+	    var Syphon = {};
+	  
+	    // Ignore Element Types
+	    // --------------------
+	  
+	    // Tell Syphon to ignore all elements of these types. You can
+	    // push new types to ignore directly in to this array.
+	    Syphon.ignoredTypes = ["button", "submit", "reset", "fieldset"];
+	  
+	    // Syphon
+	    // ------
+	  
+	    // Get a JSON object that represents
+	    // all of the form inputs, in this view.
+	    // Alternately, pass a form element directly
+	    // in place of the view.
+	    Syphon.serialize = function(view, options){
+	      var data = {};
+	  
+	      // Build the configuration
+	      var config = buildConfig(options);
+	  
+	      // Get all of the elements to process
+	      var elements = getInputElements(view, config);
+	  
+	      // Process all of the elements
+	      _.each(elements, function(el){
+	        var $el = $(el);
+	        var type = getElementType($el); 
+	  
+	        // Get the key for the input
+	        var keyExtractor = config.keyExtractors.get(type);
+	        var key = keyExtractor($el);
+	  
+	        // Get the value for the input
+	        var inputReader = config.inputReaders.get(type);
+	        var value = inputReader($el);
+	  
+	        // Get the key assignment validator and make sure
+	        // it's valid before assigning the value to the key
+	        var validKeyAssignment = config.keyAssignmentValidators.get(type);
+	        if (validKeyAssignment($el, key, value)){
+	          var keychain = config.keySplitter(key);
+	          data = assignKeyValue(data, keychain, value);
+	        }
+	      });
+	  
+	      // Done; send back the results.
+	      return data;
+	    };
+	    
+	    // Use the given JSON object to populate
+	    // all of the form inputs, in this view.
+	    // Alternately, pass a form element directly
+	    // in place of the view.
+	    Syphon.deserialize = function(view, data, options){
+	      // Build the configuration
+	      var config = buildConfig(options);
+	  
+	      // Get all of the elements to process
+	      var elements = getInputElements(view, config);
+	  
+	      // Flatten the data structure that we are deserializing
+	      var flattenedData = flattenData(config, data);
+	  
+	      // Process all of the elements
+	      _.each(elements, function(el){
+	        var $el = $(el);
+	        var type = getElementType($el); 
+	  
+	        // Get the key for the input
+	        var keyExtractor = config.keyExtractors.get(type);
+	        var key = keyExtractor($el);
+	  
+	        // Get the input writer and the value to write
+	        var inputWriter = config.inputWriters.get(type);
+	        var value = flattenedData[key];
+	  
+	        // Write the value to the input
+	        inputWriter($el, value);
+	      });
+	    };
+	  
+	    // Helpers
+	    // -------
+	  
+	    // Retrieve all of the form inputs
+	    // from the form
+	    var getInputElements = function(view, config){
+	      var form = getForm(view);
+	      var elements = form.elements;
+	  
+	      elements = _.reject(elements, function(el){
+	        var reject;
+	        var type = getElementType(el);
+	        var extractor = config.keyExtractors.get(type);
+	        var identifier = extractor($(el));
+	       
+	        var foundInIgnored = _.include(config.ignoredTypes, type);
+	        var foundInInclude = _.include(config.include, identifier);
+	        var foundInExclude = _.include(config.exclude, identifier);
+	  
+	        if (foundInInclude){
+	          reject = false;
+	        } else {
+	          if (config.include){
+	            reject = true;
+	          } else {
+	            reject = (foundInExclude || foundInIgnored);
+	          }
+	        }
+	  
+	        return reject;
+	      });
+	  
+	      return elements;
+	    };
+	  
+	    // Determine what type of element this is. It
+	    // will either return the `type` attribute of
+	    // an `<input>` element, or the `tagName` of
+	    // the element when the element is not an `<input>`.
+	    var getElementType = function(el){
+	      var typeAttr;
+	      var $el = $(el);
+	      var tagName = $el[0].tagName;
+	      var type = tagName;
+	  
+	      if (tagName.toLowerCase() === "input"){
+	        typeAttr = $el.attr("type");
+	        if (typeAttr){
+	          type = typeAttr;
+	        } else {
+	          type = "text";
+	        }
+	      }
+	      
+	      // Always return the type as lowercase
+	      // so it can be matched to lowercase
+	      // type registrations.
+	      return type.toLowerCase();
+	    };
+	    
+	    // If a form element is given, just return it. 
+	    // Otherwise, get the form element from the view.
+	    var getForm = function(viewOrForm){
+	      if (_.isUndefined(viewOrForm.$el) && viewOrForm.tagName.toLowerCase() === 'form'){
+	        return viewOrForm;
+	      } else {
+	        return viewOrForm.$el.is("form") ? viewOrForm.el : viewOrForm.$("form")[0];
+	      }
+	    };
+	  
+	    // Build a configuration object and initialize
+	    // default values.
+	    var buildConfig = function(options){
+	      var config = _.clone(options) || {};
+	      
+	      config.ignoredTypes = _.clone(Syphon.ignoredTypes);
+	      config.inputReaders = config.inputReaders || Syphon.InputReaders;
+	      config.inputWriters = config.inputWriters || Syphon.InputWriters;
+	      config.keyExtractors = config.keyExtractors || Syphon.KeyExtractors;
+	      config.keySplitter = config.keySplitter || Syphon.KeySplitter;
+	      config.keyJoiner = config.keyJoiner || Syphon.KeyJoiner;
+	      config.keyAssignmentValidators = config.keyAssignmentValidators || Syphon.KeyAssignmentValidators;
+	      
+	      return config;
+	    };
+	  
+	    // Assigns `value` to a parsed JSON key. 
+	    //
+	    // The first parameter is the object which will be
+	    // modified to store the key/value pair.
+	    //
+	    // The second parameter accepts an array of keys as a 
+	    // string with an option array containing a 
+	    // single string as the last option.
+	    //
+	    // The third parameter is the value to be assigned.
+	    //
+	    // Examples:
+	    //
+	    // `["foo", "bar", "baz"] => {foo: {bar: {baz: "value"}}}`
+	    // 
+	    // `["foo", "bar", ["baz"]] => {foo: {bar: {baz: ["value"]}}}`
+	    // 
+	    // When the final value is an array with a string, the key
+	    // becomes an array, and values are pushed in to the array,
+	    // allowing multiple fields with the same name to be 
+	    // assigned to the array.
+	    var assignKeyValue = function(obj, keychain, value) {
+	      if (!keychain){ return obj; }
+	  
+	      var key = keychain.shift();
+	  
+	      // build the current object we need to store data
+	      if (!obj[key]){
+	        obj[key] = _.isArray(key) ? [] : {};
+	      }
+	  
+	      // if it's the last key in the chain, assign the value directly
+	      if (keychain.length === 0){
+	        if (_.isArray(obj[key])){
+	          obj[key].push(value);
+	        } else {
+	          obj[key] = value;
+	        }
+	      }
+	  
+	      // recursive parsing of the array, depth-first
+	      if (keychain.length > 0){
+	        assignKeyValue(obj[key], keychain, value);
+	      }
+	      
+	      return obj;
+	    };
+	  
+	    // Flatten the data structure in to nested strings, using the
+	    // provided `KeyJoiner` function.
+	    //
+	    // Example:
+	    //
+	    // This input:
+	    //
+	    // ```js
+	    // {
+	    //   widget: "wombat",
+	    //   foo: {
+	    //     bar: "baz",
+	    //     baz: {
+	    //       quux: "qux"
+	    //     },
+	    //     quux: ["foo", "bar"]
+	    //   }
+	    // }
+	    // ```
+	    //
+	    // With a KeyJoiner that uses [ ] square brackets, 
+	    // should produce this output:
+	    //
+	    // ```js
+	    // {
+	    //  "widget": "wombat",
+	    //  "foo[bar]": "baz",
+	    //  "foo[baz][quux]": "qux",
+	    //  "foo[quux]": ["foo", "bar"]
+	    // }
+	    // ```
+	    var flattenData = function(config, data, parentKey){
+	      var flatData = {};
+	  
+	      _.each(data, function(value, keyName){
+	        var hash = {};
+	  
+	        // If there is a parent key, join it with
+	        // the current, child key.
+	        if (parentKey){
+	          keyName = config.keyJoiner(parentKey, keyName);
+	        }
+	  
+	        if (_.isArray(value)){
+	          keyName += "[]";
+	          hash[keyName] = value;
+	        } else if (_.isObject(value)){
+	          hash = flattenData(config, value, keyName);
+	        } else {
+	          hash[keyName] = value;
+	        }
+	  
+	        // Store the resulting key/value pairs in the
+	        // final flattened data object
+	        _.extend(flatData, hash);
+	      });
+	  
+	      return flatData;
+	    };
+	  
+	    return Syphon;
+	  })(Backbone, jQuery, _);
+	  
+	  // Type Registry
+	  // -------------
+	  
+	  // Type Registries allow you to register something to
+	  // an input type, and retrieve either the item registered
+	  // for a specific type or the default registration
+	  Backbone.Syphon.TypeRegistry = function(){
+	    this.registeredTypes = {};
+	  };
+	  
+	  // Borrow Backbone's `extend` keyword for our TypeRegistry
+	  Backbone.Syphon.TypeRegistry.extend = Backbone.Model.extend;
+	  
+	  _.extend(Backbone.Syphon.TypeRegistry.prototype, {
+	  
+	    // Get the registered item by type. If nothing is
+	    // found for the specified type, the default is
+	    // returned.
+	    get: function(type){
+	      var item = this.registeredTypes[type];
+	  
+	      if (!item){
+	        item = this.registeredTypes["default"];
+	      }
+	  
+	      return item;
+	    },
+	  
+	    // Register a new item for a specified type
+	    register: function(type, item){
+	      this.registeredTypes[type] = item;
+	    },
+	  
+	    // Register a default item to be used when no
+	    // item for a specified type is found
+	    registerDefault: function(item){
+	      this.registeredTypes["default"] = item;
+	    },
+	  
+	    // Remove an item from a given type registration
+	    unregister: function(type){
+	      if (this.registeredTypes[type]){
+	        delete this.registeredTypes[type];
+	      }
+	    }
+	  });
+	  
+	  
+	  
+	  
+	  // Key Extractors
+	  // --------------
+	  
+	  // Key extractors produce the "key" in `{key: "value"}`
+	  // pairs, when serializing.
+	  Backbone.Syphon.KeyExtractorSet = Backbone.Syphon.TypeRegistry.extend();
+	  
+	  // Built-in Key Extractors
+	  Backbone.Syphon.KeyExtractors = new Backbone.Syphon.KeyExtractorSet();
+	  
+	  // The default key extractor, which uses the
+	  // input element's "id" attribute
+	  Backbone.Syphon.KeyExtractors.registerDefault(function($el){
+	    return $el.prop("name");
+	  });
+	  
+	  
+	  // Input Readers
+	  // -------------
+	  
+	  // Input Readers are used to extract the value from
+	  // an input element, for the serialized object result
+	  Backbone.Syphon.InputReaderSet = Backbone.Syphon.TypeRegistry.extend();
+	  
+	  // Built-in Input Readers
+	  Backbone.Syphon.InputReaders = new Backbone.Syphon.InputReaderSet();
+	  
+	  // The default input reader, which uses an input
+	  // element's "value"
+	  Backbone.Syphon.InputReaders.registerDefault(function($el){
+	    return $el.val();
+	  });
+	  
+	  // Checkbox reader, returning a boolean value for
+	  // whether or not the checkbox is checked.
+	  Backbone.Syphon.InputReaders.register("checkbox", function($el){
+	    var checked = $el.prop("checked");
+	    return checked;
+	  });
+	  
+	  
+	  // Input Writers
+	  // -------------
+	  
+	  // Input Writers are used to insert a value from an
+	  // object into an input element.
+	  Backbone.Syphon.InputWriterSet = Backbone.Syphon.TypeRegistry.extend();
+	  
+	  // Built-in Input Writers
+	  Backbone.Syphon.InputWriters = new Backbone.Syphon.InputWriterSet();
+	  
+	  // The default input writer, which sets an input
+	  // element's "value"
+	  Backbone.Syphon.InputWriters.registerDefault(function($el, value){
+	    $el.val(value);
+	  });
+	  
+	  // Checkbox writer, set whether or not the checkbox is checked
+	  // depending on the boolean value.
+	  Backbone.Syphon.InputWriters.register("checkbox", function($el, value){
+	    $el.prop("checked", value);
+	  });
+	  
+	  // Radio button writer, set whether or not the radio button is
+	  // checked.  The button should only be checked if it's value
+	  // equals the given value.
+	  Backbone.Syphon.InputWriters.register("radio", function($el, value){
+	    $el.prop("checked", $el.val() === value);
+	  });
+	  
+	  // Key Assignment Validators
+	  // -------------------------
+	  
+	  // Key Assignment Validators are used to determine whether or not a
+	  // key should be assigned to a value, after the key and value have been
+	  // extracted from the element. This is the last opportunity to prevent
+	  // bad data from getting serialized to your object.
+	  
+	  Backbone.Syphon.KeyAssignmentValidatorSet = Backbone.Syphon.TypeRegistry.extend();
+	  
+	  // Build-in Key Assignment Validators
+	  Backbone.Syphon.KeyAssignmentValidators = new Backbone.Syphon.KeyAssignmentValidatorSet();
+	  
+	  // Everything is valid by default
+	  Backbone.Syphon.KeyAssignmentValidators.registerDefault(function(){ return true; });
+	  
+	  // But only the "checked" radio button for a given
+	  // radio button group is valid
+	  Backbone.Syphon.KeyAssignmentValidators.register("radio", function($el, key, value){ 
+	    return $el.prop("checked");
+	  });
+	  
+	  
+	  // Backbone.Syphon.KeySplitter
+	  // ---------------------------
+	  
+	  // This function is used to split DOM element keys in to an array
+	  // of parts, which are then used to create a nested result structure.
+	  // returning `["foo", "bar"]` results in `{foo: { bar: "value" }}`.
+	  //
+	  // Override this method to use a custom key splitter, such as:
+	  // `<input name="foo.bar.baz">`, `return key.split(".")`
+	  Backbone.Syphon.KeySplitter = function(key){
+	    var matches = key.match(/[^\[\]]+/g);
+	  
+	    if (key.indexOf("[]") === key.length - 2){
+	      lastKey = matches.pop();
+	      matches.push([lastKey]);
+	    }
+	  
+	    return matches;
+	  }
+	  
+	  
+	  // Backbone.Syphon.KeyJoiner
+	  // -------------------------
+	  
+	  // Take two segments of a key and join them together, to create the
+	  // de-normalized key name, when deserializing a data structure back
+	  // in to a form.
+	  //
+	  // Example: 
+	  //
+	  // With this data strucutre `{foo: { bar: {baz: "value", quux: "another"} } }`,
+	  // the key joiner will be called with these parameters, and assuming the
+	  // join happens with "[ ]" square brackets, the specified output:
+	  // 
+	  // `KeyJoiner("foo", "bar")` //=> "foo[bar]"
+	  // `KeyJoiner("foo[bar]", "baz")` //=> "foo[bar][baz]"
+	  // `KeyJoiner("foo[bar]", "quux")` //=> "foo[bar][quux]"
+	  
+	  Backbone.Syphon.KeyJoiner = function(parentKey, childKey){
+	    return parentKey + "[" + childKey + "]";
+	  }
+	  
+	  
+	  return Backbone.Syphon;
+	}));
+
+/***/ },
+/* 19 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// shim for using process in browser
+
+	var process = module.exports = {};
+
+	process.nextTick = (function () {
+	    var canSetImmediate = typeof window !== 'undefined'
+	    && window.setImmediate;
+	    var canPost = typeof window !== 'undefined'
+	    && window.postMessage && window.addEventListener
+	    ;
+
+	    if (canSetImmediate) {
+	        return function (f) { return window.setImmediate(f) };
+	    }
+
+	    if (canPost) {
+	        var queue = [];
+	        window.addEventListener('message', function (ev) {
+	            var source = ev.source;
+	            if ((source === window || source === null) && ev.data === 'process-tick') {
+	                ev.stopPropagation();
+	                if (queue.length > 0) {
+	                    var fn = queue.shift();
+	                    fn();
+	                }
+	            }
+	        }, true);
+
+	        return function nextTick(fn) {
+	            queue.push(fn);
+	            window.postMessage('process-tick', '*');
+	        };
+	    }
+
+	    return function nextTick(fn) {
+	        setTimeout(fn, 0);
+	    };
+	})();
+
+	process.title = 'browser';
+	process.browser = true;
+	process.env = {};
+	process.argv = [];
+
+	function noop() {}
+
+	process.on = noop;
+	process.once = noop;
+	process.off = noop;
+	process.emit = noop;
+
+	process.binding = function (name) {
+	    throw new Error('process.binding is not supported');
+	}
+
+	// TODO(shtylman)
+	process.cwd = function () { return '/' };
+	process.chdir = function (dir) {
+	    throw new Error('process.chdir is not supported');
+	};
+
+
+/***/ },
+/* 20 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Module dependencies
+	 */
+
+	var CommittedApp = __webpack_require__(1),
+	    LoginView = __webpack_require__(24);
+
+	/**
+	 * AuthApp.Show controller
+	 */
+
+	CommittedApp.module('AuthApp.Show', function (Show, CommittedApp, Backbone, Marionette, $, _) {
+	    Show.Controller = {
+	        showLogin: function () {
+	            var user = CommittedApp.request('user:entity:new'),
+	                loginView = new LoginView({
+	                    model: user
+	                });
+
+	            CommittedApp.mainRegion.show(loginView);
+	        }
+	    };
+
+	    module.exports = Show.Controller;
+	});
+
+/***/ },
+/* 21 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 *  Module dependencies
+	 */
+
+	var CommittedApp = __webpack_require__(1),
+	    ProjectsView = __webpack_require__(25),
+	    LoadingView = __webpack_require__(27);
+
+	/**
+	 * ProjectsApp.List controller
+	 */
+
+	CommittedApp.module('ProjectsApp.List', function (List, CommittedApp, Backbone, Marionette, $, _) {
+	    List.Controller = {
+	        listProjects: function () {
+	            var fetchProjects = CommittedApp.request('project:entities');
+	            var loadingView = new LoadingView();
+	            CommittedApp.mainRegion.show(loadingView);
+
+	            fetchProjects.then(function (projects) {
+	                var projectsListView = new ProjectsView({
+	                    collection: projects
+	                });
+
+	                setTimeout(function () {
+	                    CommittedApp.mainRegion.show(projectsListView);
+	                }, 2000);
+	            }, function (error) {
+	                console.log(error);
+	            });
+	        }
+	    };
+
+	    module.exports = List.Controller;
+	});
+
+/***/ },
+/* 22 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Module dependencies
+	 */
+
+	var CommittedApp = __webpack_require__(1),
+	    ProjectView = __webpack_require__(26),
+	    LoadingView = __webpack_require__(27);
+
+	/**
+	 * Show controller
+	 */
+
+	CommittedApp.module('ProjectsApp.Show', function (Show, CommittedApp, Backbone, Marionette, $, _) {
+	    Show.Controller = {
+	        showProject: function (id) {
+	            var loadingView = new LoadingView();
+	            CommittedApp.mainRegion.show(loadingView);
+
+	            var fetchProject = CommittedApp.request('project:entity', id);
+
+	            fetchProject.then(function (project) {
+	                var projectView = new ProjectView({
+	                    model: project
+	                });
+	                setTimeout(function () {
+	                    CommittedApp.mainRegion.show(projectView);
+	                }, 2000);
+	            }, function (error) {
+	                console.log(error);
+	            });
+	        }
+	    };
+
+	    module.exports = Show.Controller;
+	});
+
+/***/ },
+/* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// Backbone.Validation v0.7.1
@@ -24522,715 +25210,7 @@
 	}));
 
 /***/ },
-/* 18 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// Backbone.Syphon, v0.4.1
-	// Copyright (c)2012 Derick Bailey, Muted Solutions, LLC.
-	// Distributed under MIT license
-	// http://github.com/derickbailey/backbone.syphon
-	(function (root, factory) {
-	    if (true) {
-	        // AMD. Register as an anonymous module.
-	        !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(9), __webpack_require__(15), __webpack_require__(8)], __WEBPACK_AMD_DEFINE_RESULT__ = (factory.apply(null, __WEBPACK_AMD_DEFINE_ARRAY__)), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	    }
-	}(this, function (_, jQuery, Backbone) {
-	  Backbone.Syphon = (function(Backbone, $, _){
-	    var Syphon = {};
-	  
-	    // Ignore Element Types
-	    // --------------------
-	  
-	    // Tell Syphon to ignore all elements of these types. You can
-	    // push new types to ignore directly in to this array.
-	    Syphon.ignoredTypes = ["button", "submit", "reset", "fieldset"];
-	  
-	    // Syphon
-	    // ------
-	  
-	    // Get a JSON object that represents
-	    // all of the form inputs, in this view.
-	    // Alternately, pass a form element directly
-	    // in place of the view.
-	    Syphon.serialize = function(view, options){
-	      var data = {};
-	  
-	      // Build the configuration
-	      var config = buildConfig(options);
-	  
-	      // Get all of the elements to process
-	      var elements = getInputElements(view, config);
-	  
-	      // Process all of the elements
-	      _.each(elements, function(el){
-	        var $el = $(el);
-	        var type = getElementType($el); 
-	  
-	        // Get the key for the input
-	        var keyExtractor = config.keyExtractors.get(type);
-	        var key = keyExtractor($el);
-	  
-	        // Get the value for the input
-	        var inputReader = config.inputReaders.get(type);
-	        var value = inputReader($el);
-	  
-	        // Get the key assignment validator and make sure
-	        // it's valid before assigning the value to the key
-	        var validKeyAssignment = config.keyAssignmentValidators.get(type);
-	        if (validKeyAssignment($el, key, value)){
-	          var keychain = config.keySplitter(key);
-	          data = assignKeyValue(data, keychain, value);
-	        }
-	      });
-	  
-	      // Done; send back the results.
-	      return data;
-	    };
-	    
-	    // Use the given JSON object to populate
-	    // all of the form inputs, in this view.
-	    // Alternately, pass a form element directly
-	    // in place of the view.
-	    Syphon.deserialize = function(view, data, options){
-	      // Build the configuration
-	      var config = buildConfig(options);
-	  
-	      // Get all of the elements to process
-	      var elements = getInputElements(view, config);
-	  
-	      // Flatten the data structure that we are deserializing
-	      var flattenedData = flattenData(config, data);
-	  
-	      // Process all of the elements
-	      _.each(elements, function(el){
-	        var $el = $(el);
-	        var type = getElementType($el); 
-	  
-	        // Get the key for the input
-	        var keyExtractor = config.keyExtractors.get(type);
-	        var key = keyExtractor($el);
-	  
-	        // Get the input writer and the value to write
-	        var inputWriter = config.inputWriters.get(type);
-	        var value = flattenedData[key];
-	  
-	        // Write the value to the input
-	        inputWriter($el, value);
-	      });
-	    };
-	  
-	    // Helpers
-	    // -------
-	  
-	    // Retrieve all of the form inputs
-	    // from the form
-	    var getInputElements = function(view, config){
-	      var form = getForm(view);
-	      var elements = form.elements;
-	  
-	      elements = _.reject(elements, function(el){
-	        var reject;
-	        var type = getElementType(el);
-	        var extractor = config.keyExtractors.get(type);
-	        var identifier = extractor($(el));
-	       
-	        var foundInIgnored = _.include(config.ignoredTypes, type);
-	        var foundInInclude = _.include(config.include, identifier);
-	        var foundInExclude = _.include(config.exclude, identifier);
-	  
-	        if (foundInInclude){
-	          reject = false;
-	        } else {
-	          if (config.include){
-	            reject = true;
-	          } else {
-	            reject = (foundInExclude || foundInIgnored);
-	          }
-	        }
-	  
-	        return reject;
-	      });
-	  
-	      return elements;
-	    };
-	  
-	    // Determine what type of element this is. It
-	    // will either return the `type` attribute of
-	    // an `<input>` element, or the `tagName` of
-	    // the element when the element is not an `<input>`.
-	    var getElementType = function(el){
-	      var typeAttr;
-	      var $el = $(el);
-	      var tagName = $el[0].tagName;
-	      var type = tagName;
-	  
-	      if (tagName.toLowerCase() === "input"){
-	        typeAttr = $el.attr("type");
-	        if (typeAttr){
-	          type = typeAttr;
-	        } else {
-	          type = "text";
-	        }
-	      }
-	      
-	      // Always return the type as lowercase
-	      // so it can be matched to lowercase
-	      // type registrations.
-	      return type.toLowerCase();
-	    };
-	    
-	    // If a form element is given, just return it. 
-	    // Otherwise, get the form element from the view.
-	    var getForm = function(viewOrForm){
-	      if (_.isUndefined(viewOrForm.$el) && viewOrForm.tagName.toLowerCase() === 'form'){
-	        return viewOrForm;
-	      } else {
-	        return viewOrForm.$el.is("form") ? viewOrForm.el : viewOrForm.$("form")[0];
-	      }
-	    };
-	  
-	    // Build a configuration object and initialize
-	    // default values.
-	    var buildConfig = function(options){
-	      var config = _.clone(options) || {};
-	      
-	      config.ignoredTypes = _.clone(Syphon.ignoredTypes);
-	      config.inputReaders = config.inputReaders || Syphon.InputReaders;
-	      config.inputWriters = config.inputWriters || Syphon.InputWriters;
-	      config.keyExtractors = config.keyExtractors || Syphon.KeyExtractors;
-	      config.keySplitter = config.keySplitter || Syphon.KeySplitter;
-	      config.keyJoiner = config.keyJoiner || Syphon.KeyJoiner;
-	      config.keyAssignmentValidators = config.keyAssignmentValidators || Syphon.KeyAssignmentValidators;
-	      
-	      return config;
-	    };
-	  
-	    // Assigns `value` to a parsed JSON key. 
-	    //
-	    // The first parameter is the object which will be
-	    // modified to store the key/value pair.
-	    //
-	    // The second parameter accepts an array of keys as a 
-	    // string with an option array containing a 
-	    // single string as the last option.
-	    //
-	    // The third parameter is the value to be assigned.
-	    //
-	    // Examples:
-	    //
-	    // `["foo", "bar", "baz"] => {foo: {bar: {baz: "value"}}}`
-	    // 
-	    // `["foo", "bar", ["baz"]] => {foo: {bar: {baz: ["value"]}}}`
-	    // 
-	    // When the final value is an array with a string, the key
-	    // becomes an array, and values are pushed in to the array,
-	    // allowing multiple fields with the same name to be 
-	    // assigned to the array.
-	    var assignKeyValue = function(obj, keychain, value) {
-	      if (!keychain){ return obj; }
-	  
-	      var key = keychain.shift();
-	  
-	      // build the current object we need to store data
-	      if (!obj[key]){
-	        obj[key] = _.isArray(key) ? [] : {};
-	      }
-	  
-	      // if it's the last key in the chain, assign the value directly
-	      if (keychain.length === 0){
-	        if (_.isArray(obj[key])){
-	          obj[key].push(value);
-	        } else {
-	          obj[key] = value;
-	        }
-	      }
-	  
-	      // recursive parsing of the array, depth-first
-	      if (keychain.length > 0){
-	        assignKeyValue(obj[key], keychain, value);
-	      }
-	      
-	      return obj;
-	    };
-	  
-	    // Flatten the data structure in to nested strings, using the
-	    // provided `KeyJoiner` function.
-	    //
-	    // Example:
-	    //
-	    // This input:
-	    //
-	    // ```js
-	    // {
-	    //   widget: "wombat",
-	    //   foo: {
-	    //     bar: "baz",
-	    //     baz: {
-	    //       quux: "qux"
-	    //     },
-	    //     quux: ["foo", "bar"]
-	    //   }
-	    // }
-	    // ```
-	    //
-	    // With a KeyJoiner that uses [ ] square brackets, 
-	    // should produce this output:
-	    //
-	    // ```js
-	    // {
-	    //  "widget": "wombat",
-	    //  "foo[bar]": "baz",
-	    //  "foo[baz][quux]": "qux",
-	    //  "foo[quux]": ["foo", "bar"]
-	    // }
-	    // ```
-	    var flattenData = function(config, data, parentKey){
-	      var flatData = {};
-	  
-	      _.each(data, function(value, keyName){
-	        var hash = {};
-	  
-	        // If there is a parent key, join it with
-	        // the current, child key.
-	        if (parentKey){
-	          keyName = config.keyJoiner(parentKey, keyName);
-	        }
-	  
-	        if (_.isArray(value)){
-	          keyName += "[]";
-	          hash[keyName] = value;
-	        } else if (_.isObject(value)){
-	          hash = flattenData(config, value, keyName);
-	        } else {
-	          hash[keyName] = value;
-	        }
-	  
-	        // Store the resulting key/value pairs in the
-	        // final flattened data object
-	        _.extend(flatData, hash);
-	      });
-	  
-	      return flatData;
-	    };
-	  
-	    return Syphon;
-	  })(Backbone, jQuery, _);
-	  
-	  // Type Registry
-	  // -------------
-	  
-	  // Type Registries allow you to register something to
-	  // an input type, and retrieve either the item registered
-	  // for a specific type or the default registration
-	  Backbone.Syphon.TypeRegistry = function(){
-	    this.registeredTypes = {};
-	  };
-	  
-	  // Borrow Backbone's `extend` keyword for our TypeRegistry
-	  Backbone.Syphon.TypeRegistry.extend = Backbone.Model.extend;
-	  
-	  _.extend(Backbone.Syphon.TypeRegistry.prototype, {
-	  
-	    // Get the registered item by type. If nothing is
-	    // found for the specified type, the default is
-	    // returned.
-	    get: function(type){
-	      var item = this.registeredTypes[type];
-	  
-	      if (!item){
-	        item = this.registeredTypes["default"];
-	      }
-	  
-	      return item;
-	    },
-	  
-	    // Register a new item for a specified type
-	    register: function(type, item){
-	      this.registeredTypes[type] = item;
-	    },
-	  
-	    // Register a default item to be used when no
-	    // item for a specified type is found
-	    registerDefault: function(item){
-	      this.registeredTypes["default"] = item;
-	    },
-	  
-	    // Remove an item from a given type registration
-	    unregister: function(type){
-	      if (this.registeredTypes[type]){
-	        delete this.registeredTypes[type];
-	      }
-	    }
-	  });
-	  
-	  
-	  
-	  
-	  // Key Extractors
-	  // --------------
-	  
-	  // Key extractors produce the "key" in `{key: "value"}`
-	  // pairs, when serializing.
-	  Backbone.Syphon.KeyExtractorSet = Backbone.Syphon.TypeRegistry.extend();
-	  
-	  // Built-in Key Extractors
-	  Backbone.Syphon.KeyExtractors = new Backbone.Syphon.KeyExtractorSet();
-	  
-	  // The default key extractor, which uses the
-	  // input element's "id" attribute
-	  Backbone.Syphon.KeyExtractors.registerDefault(function($el){
-	    return $el.prop("name");
-	  });
-	  
-	  
-	  // Input Readers
-	  // -------------
-	  
-	  // Input Readers are used to extract the value from
-	  // an input element, for the serialized object result
-	  Backbone.Syphon.InputReaderSet = Backbone.Syphon.TypeRegistry.extend();
-	  
-	  // Built-in Input Readers
-	  Backbone.Syphon.InputReaders = new Backbone.Syphon.InputReaderSet();
-	  
-	  // The default input reader, which uses an input
-	  // element's "value"
-	  Backbone.Syphon.InputReaders.registerDefault(function($el){
-	    return $el.val();
-	  });
-	  
-	  // Checkbox reader, returning a boolean value for
-	  // whether or not the checkbox is checked.
-	  Backbone.Syphon.InputReaders.register("checkbox", function($el){
-	    var checked = $el.prop("checked");
-	    return checked;
-	  });
-	  
-	  
-	  // Input Writers
-	  // -------------
-	  
-	  // Input Writers are used to insert a value from an
-	  // object into an input element.
-	  Backbone.Syphon.InputWriterSet = Backbone.Syphon.TypeRegistry.extend();
-	  
-	  // Built-in Input Writers
-	  Backbone.Syphon.InputWriters = new Backbone.Syphon.InputWriterSet();
-	  
-	  // The default input writer, which sets an input
-	  // element's "value"
-	  Backbone.Syphon.InputWriters.registerDefault(function($el, value){
-	    $el.val(value);
-	  });
-	  
-	  // Checkbox writer, set whether or not the checkbox is checked
-	  // depending on the boolean value.
-	  Backbone.Syphon.InputWriters.register("checkbox", function($el, value){
-	    $el.prop("checked", value);
-	  });
-	  
-	  // Radio button writer, set whether or not the radio button is
-	  // checked.  The button should only be checked if it's value
-	  // equals the given value.
-	  Backbone.Syphon.InputWriters.register("radio", function($el, value){
-	    $el.prop("checked", $el.val() === value);
-	  });
-	  
-	  // Key Assignment Validators
-	  // -------------------------
-	  
-	  // Key Assignment Validators are used to determine whether or not a
-	  // key should be assigned to a value, after the key and value have been
-	  // extracted from the element. This is the last opportunity to prevent
-	  // bad data from getting serialized to your object.
-	  
-	  Backbone.Syphon.KeyAssignmentValidatorSet = Backbone.Syphon.TypeRegistry.extend();
-	  
-	  // Build-in Key Assignment Validators
-	  Backbone.Syphon.KeyAssignmentValidators = new Backbone.Syphon.KeyAssignmentValidatorSet();
-	  
-	  // Everything is valid by default
-	  Backbone.Syphon.KeyAssignmentValidators.registerDefault(function(){ return true; });
-	  
-	  // But only the "checked" radio button for a given
-	  // radio button group is valid
-	  Backbone.Syphon.KeyAssignmentValidators.register("radio", function($el, key, value){ 
-	    return $el.prop("checked");
-	  });
-	  
-	  
-	  // Backbone.Syphon.KeySplitter
-	  // ---------------------------
-	  
-	  // This function is used to split DOM element keys in to an array
-	  // of parts, which are then used to create a nested result structure.
-	  // returning `["foo", "bar"]` results in `{foo: { bar: "value" }}`.
-	  //
-	  // Override this method to use a custom key splitter, such as:
-	  // `<input name="foo.bar.baz">`, `return key.split(".")`
-	  Backbone.Syphon.KeySplitter = function(key){
-	    var matches = key.match(/[^\[\]]+/g);
-	  
-	    if (key.indexOf("[]") === key.length - 2){
-	      lastKey = matches.pop();
-	      matches.push([lastKey]);
-	    }
-	  
-	    return matches;
-	  }
-	  
-	  
-	  // Backbone.Syphon.KeyJoiner
-	  // -------------------------
-	  
-	  // Take two segments of a key and join them together, to create the
-	  // de-normalized key name, when deserializing a data structure back
-	  // in to a form.
-	  //
-	  // Example: 
-	  //
-	  // With this data strucutre `{foo: { bar: {baz: "value", quux: "another"} } }`,
-	  // the key joiner will be called with these parameters, and assuming the
-	  // join happens with "[ ]" square brackets, the specified output:
-	  // 
-	  // `KeyJoiner("foo", "bar")` //=> "foo[bar]"
-	  // `KeyJoiner("foo[bar]", "baz")` //=> "foo[bar][baz]"
-	  // `KeyJoiner("foo[bar]", "quux")` //=> "foo[bar][quux]"
-	  
-	  Backbone.Syphon.KeyJoiner = function(parentKey, childKey){
-	    return parentKey + "[" + childKey + "]";
-	  }
-	  
-	  
-	  return Backbone.Syphon;
-	}));
-
-/***/ },
-/* 19 */
-/***/ function(module, exports, __webpack_require__) {
-
-	// shim for using process in browser
-
-	var process = module.exports = {};
-
-	process.nextTick = (function () {
-	    var canSetImmediate = typeof window !== 'undefined'
-	    && window.setImmediate;
-	    var canPost = typeof window !== 'undefined'
-	    && window.postMessage && window.addEventListener
-	    ;
-
-	    if (canSetImmediate) {
-	        return function (f) { return window.setImmediate(f) };
-	    }
-
-	    if (canPost) {
-	        var queue = [];
-	        window.addEventListener('message', function (ev) {
-	            var source = ev.source;
-	            if ((source === window || source === null) && ev.data === 'process-tick') {
-	                ev.stopPropagation();
-	                if (queue.length > 0) {
-	                    var fn = queue.shift();
-	                    fn();
-	                }
-	            }
-	        }, true);
-
-	        return function nextTick(fn) {
-	            queue.push(fn);
-	            window.postMessage('process-tick', '*');
-	        };
-	    }
-
-	    return function nextTick(fn) {
-	        setTimeout(fn, 0);
-	    };
-	})();
-
-	process.title = 'browser';
-	process.browser = true;
-	process.env = {};
-	process.argv = [];
-
-	function noop() {}
-
-	process.on = noop;
-	process.once = noop;
-	process.off = noop;
-	process.emit = noop;
-
-	process.binding = function (name) {
-	    throw new Error('process.binding is not supported');
-	}
-
-	// TODO(shtylman)
-	process.cwd = function () { return '/' };
-	process.chdir = function (dir) {
-	    throw new Error('process.chdir is not supported');
-	};
-
-
-/***/ },
-/* 20 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 *  Module dependencies
-	 */
-
-	var CommittedApp = __webpack_require__(1),
-	    ProjectsView = __webpack_require__(24),
-	    LoadingView = __webpack_require__(26);
-
-	/**
-	 * ProjectsApp.List controller
-	 */
-
-	CommittedApp.module('ProjectsApp.List', function (List, CommittedApp, Backbone, Marionette, $, _) {
-	    List.Controller = {
-	        listProjects: function () {
-	            var fetchProjects = CommittedApp.request('project:entities');
-	            var loadingView = new LoadingView();
-	            CommittedApp.mainRegion.show(loadingView);
-
-	            fetchProjects.then(function (projects) {
-	                var projectsListView = new ProjectsView({
-	                    collection: projects
-	                });
-
-	                setTimeout(function () {
-	                    CommittedApp.mainRegion.show(projectsListView);
-	                }, 2000);
-	            }, function (error) {
-	                console.log(error);
-	            });
-	        }
-	    };
-
-	    module.exports = List.Controller;
-	});
-
-/***/ },
-/* 21 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Module dependencies
-	 */
-
-	var CommittedApp = __webpack_require__(1),
-	    ProjectView = __webpack_require__(23),
-	    LoadingView = __webpack_require__(26);
-
-	/**
-	 * Show controller
-	 */
-
-	CommittedApp.module('ProjectsApp.Show', function (Show, CommittedApp, Backbone, Marionette, $, _) {
-	    Show.Controller = {
-	        showProject: function (id) {
-	            var loadingView = new LoadingView();
-	            CommittedApp.mainRegion.show(loadingView);
-
-	            var fetchProject = CommittedApp.request('project:entity', id);
-
-	            fetchProject.then(function (project) {
-	                var projectView = new ProjectView({
-	                    model: project
-	                });
-	                setTimeout(function () {
-	                    CommittedApp.mainRegion.show(projectView);
-	                }, 2000);
-	            }, function (error) {
-	                console.log(error);
-	            });
-	        }
-	    };
-
-	    module.exports = Show.Controller;
-	});
-
-/***/ },
-/* 22 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Module dependencies
-	 */
-
-	var CommittedApp = __webpack_require__(1),
-	    LoginView = __webpack_require__(25);
-
-	/**
-	 * AuthApp.Show controller
-	 */
-
-	CommittedApp.module('AuthApp.Show', function (Show, CommittedApp, Backbone, Marionette, $, _) {
-	    Show.Controller = {
-	        showLogin: function () {
-	            var user = CommittedApp.request('user:entity:new'),
-	                loginView = new LoginView({
-	                    model: user
-	                });
-
-	            CommittedApp.mainRegion.show(loginView);
-	        }
-	    };
-
-	    module.exports = Show.Controller;
-	});
-
-/***/ },
-/* 23 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Module dependencies
-	 */
-
-	var CommittedApp = __webpack_require__(1),
-	    ProjectViewTpl = __webpack_require__(30);
-
-	/**
-	 * Show.Project view
-	 */
-
-	CommittedApp.module('ProjectsApp.Show', function (Show, CommittedApp, Backbone, Marionette, $, _) {
-	    Show.Project = Marionette.ItemView.extend({
-	        template: ProjectViewTpl,
-	        className: 'ui raised segment'
-	    });
-
-	    module.exports = Show.Project;
-	});
-
-/***/ },
 /* 24 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Module dependencies
-	 */
-
-	var CommittedApp = __webpack_require__(1),
-	    ProjectView = __webpack_require__(29);
-
-	/**
-	 * List.Projects view module
-	 */
-
-	CommittedApp.module('ProjectsApp.List', function (List, CommittedApp, Backbone, Marionette, $, _) {
-	    List.Projects = Marionette.CollectionView.extend({
-	        className: 'ui horizontal list',
-	        itemView: ProjectView
-	    });
-
-	    module.exports = List.Projects;
-	});
-
-/***/ },
-/* 25 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -25249,6 +25229,10 @@
 	    Show.Login = Marionette.ItemView.extend({
 	        template: loadingViewTpl,
 
+	        tagName: 'form',
+
+	        className: 'ui fluid form raised segment',
+
 	        initialize: function () {
 	            Backbone.Validation.bind(this);
 	        },
@@ -25258,22 +25242,35 @@
 	        },
 
 	        events: {
-	            'click @ui.submitBtn': 'login'
+	            'click @ui.submitBtn': 'submitClicked'
 	        },
 
-	        login: function (e) {
+	        submitClicked: function (e) {
 	            e.preventDefault();
-	            var data = Backbone.Syphon.serialize(this),
-	                user = this.model;
+	            var data = Backbone.Syphon.serialize(this);
+	            this.triggerMethod('form:submit', data);
+	        },
 
+	        onFormSubmit: function (data) {
+	            var view = this,
+	                user = this.model;
 	            user.set(data);
-	            if(user.isValid(true)) {
+
+	            if(user.isValid()) {
+	                view.triggerMethod('loading');
+
 	                user.logIn().then(function (user) {
-	                    console.log('logged in ...');
-	                }, function (error) {
-	                    console.log(error);
+	                    console.log('logged in as, ', user);
+	                    view.triggerMethod('loading');
+	                }, function (err) {
+	                    console.warn(err);
 	                });
 	            }
+	        },
+
+	        onLoading: function () {
+	            var $form = this.$el;
+	            $form.toggleClass('loading');
 	        },
 
 	        onClose: function () {
@@ -25285,6 +25282,30 @@
 	});
 
 /***/ },
+/* 25 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Module dependencies
+	 */
+
+	var CommittedApp = __webpack_require__(1),
+	    ProjectView = __webpack_require__(30);
+
+	/**
+	 * List.Projects view module
+	 */
+
+	CommittedApp.module('ProjectsApp.List', function (List, CommittedApp, Backbone, Marionette, $, _) {
+	    List.Projects = Marionette.CollectionView.extend({
+	        className: 'ui horizontal list',
+	        itemView: ProjectView
+	    });
+
+	    module.exports = List.Projects;
+	});
+
+/***/ },
 /* 26 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -25293,7 +25314,31 @@
 	 */
 
 	var CommittedApp = __webpack_require__(1),
-	    loadingViewTpl = __webpack_require__(32);
+	    ProjectViewTpl = __webpack_require__(32);
+
+	/**
+	 * Show.Project view
+	 */
+
+	CommittedApp.module('ProjectsApp.Show', function (Show, CommittedApp, Backbone, Marionette, $, _) {
+	    Show.Project = Marionette.ItemView.extend({
+	        template: ProjectViewTpl,
+	        className: 'ui raised segment'
+	    });
+
+	    module.exports = Show.Project;
+	});
+
+/***/ },
+/* 27 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Module dependencies
+	 */
+
+	var CommittedApp = __webpack_require__(1),
+	    loadingViewTpl = __webpack_require__(33);
 
 	CommittedApp.module('Common.Views', function (Views, CommittedApp, Backbone, Marionette, $, _) {
 
@@ -25320,7 +25365,7 @@
 	});
 
 /***/ },
-/* 27 */
+/* 28 */
 /***/ function(module, exports, __webpack_require__) {
 
 	(function (root, factory) {
@@ -25603,7 +25648,7 @@
 
 
 /***/ },
-/* 28 */
+/* 29 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// Backbone.BabySitter
@@ -25789,7 +25834,7 @@
 
 
 /***/ },
-/* 29 */
+/* 30 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -25797,7 +25842,7 @@
 	 */
 
 	var CommittedApp = __webpack_require__(1),
-	    projectTpl = __webpack_require__(33);
+	    projectTpl = __webpack_require__(34);
 
 	/**
 	 * List.Project view
@@ -25813,10 +25858,23 @@
 	});
 
 /***/ },
-/* 30 */
+/* 31 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(34).default.template(function (Handlebars,depth0,helpers,partials,data) {
+	module.exports = __webpack_require__(35).default.template(function (Handlebars,depth0,helpers,partials,data) {
+	  this.compilerInfo = [4,'>= 1.0.0'];
+	helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+	  
+
+
+	  return "<div class=\"three fields\">\n    <div class=\"field\">\n        <label>Username</label>\n        <input placeholder=\"Username\" name=\"username\" type=\"text\">\n    </div>\n    <div class=\"field\">\n        <label>E-mail</label>\n        <input placeholder=\"E-mail\" name=\"email\" type=\"email\">\n    </div>\n    <div class=\"field\">\n        <label>Password</label>\n        <input placeholder=\"Password\" name=\"password\" type=\"password\">\n    </div>\n</div>\n<div class=\"ui blue submit button js-submit\">Login :)</div>";
+	  });
+
+/***/ },
+/* 32 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__(35).default.template(function (Handlebars,depth0,helpers,partials,data) {
 	  this.compilerInfo = [4,'>= 1.0.0'];
 	helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 	  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression;
@@ -25831,23 +25889,10 @@
 	  });
 
 /***/ },
-/* 31 */
+/* 33 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(34).default.template(function (Handlebars,depth0,helpers,partials,data) {
-	  this.compilerInfo = [4,'>= 1.0.0'];
-	helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-	  
-
-
-	  return "<form class=\"ui form raised segment\">\n    <div class=\"three fields\">\n        <div class=\"field\">\n            <label>Username</label>\n            <input placeholder=\"Username\" id=\"js-email\" name=\"username\" type=\"email\">\n        </div>\n        <div class=\"field\">\n            <label>E-mail</label>\n            <input placeholder=\"E-mail\" id=\"js-email\" name=\"email\" type=\"email\">\n        </div>\n        <div class=\"field\">\n            <label>Password</label>\n            <input placeholder=\"Password\" id=\"js-password\" name=\"password\" type=\"password\">\n        </div>\n    </div>\n    <div class=\"ui blue submit button js-submit\">Login :)</div>\n</form>";
-	  });
-
-/***/ },
-/* 32 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = __webpack_require__(34).default.template(function (Handlebars,depth0,helpers,partials,data) {
+	module.exports = __webpack_require__(35).default.template(function (Handlebars,depth0,helpers,partials,data) {
 	  this.compilerInfo = [4,'>= 1.0.0'];
 	helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 	  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression;
@@ -25862,10 +25907,10 @@
 	  });
 
 /***/ },
-/* 33 */
+/* 34 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(34).default.template(function (Handlebars,depth0,helpers,partials,data) {
+	module.exports = __webpack_require__(35).default.template(function (Handlebars,depth0,helpers,partials,data) {
 	  this.compilerInfo = [4,'>= 1.0.0'];
 	helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 	  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression;
@@ -25880,28 +25925,28 @@
 	  });
 
 /***/ },
-/* 34 */
+/* 35 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// Create a simple path alias to allow browserify to resolve
 	// the runtime on a supported path.
-	module.exports = __webpack_require__(35);
+	module.exports = __webpack_require__(36);
 
 
 /***/ },
-/* 35 */
+/* 36 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	/*globals Handlebars: true */
-	var base = __webpack_require__(36);
+	var base = __webpack_require__(37);
 
 	// Each of these augment the Handlebars object. No need to setup here.
 	// (This is done to easily share code between commonjs and browse envs)
-	var SafeString = __webpack_require__(37)["default"];
-	var Exception = __webpack_require__(38)["default"];
-	var Utils = __webpack_require__(39);
-	var runtime = __webpack_require__(40);
+	var SafeString = __webpack_require__(38)["default"];
+	var Exception = __webpack_require__(39)["default"];
+	var Utils = __webpack_require__(40);
+	var runtime = __webpack_require__(41);
 
 	// For compatibility and usage outside of module systems, make the Handlebars object a namespace
 	var create = function() {
@@ -25926,12 +25971,12 @@
 	exports["default"] = Handlebars;
 
 /***/ },
-/* 36 */
+/* 37 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var Utils = __webpack_require__(39);
-	var Exception = __webpack_require__(38)["default"];
+	var Utils = __webpack_require__(40);
+	var Exception = __webpack_require__(39)["default"];
 
 	var VERSION = "1.3.0";
 	exports.VERSION = VERSION;var COMPILER_REVISION = 4;
@@ -26111,7 +26156,7 @@
 	exports.createFrame = createFrame;
 
 /***/ },
-/* 37 */
+/* 38 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -26127,7 +26172,7 @@
 	exports["default"] = SafeString;
 
 /***/ },
-/* 38 */
+/* 39 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -26160,12 +26205,12 @@
 	exports["default"] = Exception;
 
 /***/ },
-/* 39 */
+/* 40 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	/*jshint -W004 */
-	var SafeString = __webpack_require__(37)["default"];
+	var SafeString = __webpack_require__(38)["default"];
 
 	var escape = {
 	  "&": "&amp;",
@@ -26241,14 +26286,14 @@
 	exports.isEmpty = isEmpty;
 
 /***/ },
-/* 40 */
+/* 41 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var Utils = __webpack_require__(39);
-	var Exception = __webpack_require__(38)["default"];
-	var COMPILER_REVISION = __webpack_require__(36).COMPILER_REVISION;
-	var REVISION_CHANGES = __webpack_require__(36).REVISION_CHANGES;
+	var Utils = __webpack_require__(40);
+	var Exception = __webpack_require__(39)["default"];
+	var COMPILER_REVISION = __webpack_require__(37).COMPILER_REVISION;
+	var REVISION_CHANGES = __webpack_require__(37).REVISION_CHANGES;
 
 	function checkRevision(compilerInfo) {
 	  var compilerRevision = compilerInfo && compilerInfo[0] || 1,

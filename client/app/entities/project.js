@@ -26,17 +26,15 @@ CommittedApp.module('Entities', function (Entities, CommittedApp, Backbone, Mari
         getProjectEntity: function (projectId) {
             var project = new Project({ id: projectId });
             return project.fetch();
+        },
+        getNewProjectEntity: function () {
+            return new Project();
         }
     };
 
     CommittedApp.reqres.setHandlers({
-        'project:entity': function (id) {
-            return API.getProjectEntity(id);
-        },
-
-        'project:entity:new': function () {
-            return new Project();
-        }
+        'project:entity': API.getProjectEntity,
+        'project:entity:new': API.getNewProjectEntity
     });
 
     module.exports = Entities.Project;

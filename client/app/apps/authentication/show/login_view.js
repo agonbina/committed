@@ -14,6 +14,10 @@ CommittedApp.module('AuthApp.Show', function (Show, CommittedApp, Backbone, Mari
     Show.Login = Marionette.ItemView.extend({
         template: loadingViewTpl,
 
+        tagName: 'form',
+
+        className: 'ui fluid form raised segment',
+
         initialize: function () {
             Backbone.Validation.bind(this);
         },
@@ -23,22 +27,35 @@ CommittedApp.module('AuthApp.Show', function (Show, CommittedApp, Backbone, Mari
         },
 
         events: {
-            'click @ui.submitBtn': 'login'
+            'click @ui.submitBtn': 'submitClicked'
         },
 
-        login: function (e) {
+        submitClicked: function (e) {
             e.preventDefault();
-            var data = Backbone.Syphon.serialize(this),
-                user = this.model;
+            var data = Backbone.Syphon.serialize(this);
+            this.triggerMethod('form:submit', data);
+        },
 
+        onFormSubmit: function (data) {
+            var view = this,
+                user = this.model;
             user.set(data);
-            if(user.isValid(true)) {
+
+            if(user.isValid()) {
+                view.triggerMethod('loading');
+
                 user.logIn().then(function (user) {
-                    console.log('logged in ...');
-                }, function (error) {
-                    console.log(error);
+                    console.log('logged in as, ', user);
+                    view.triggerMethod('loading');
+                }, function (err) {
+                    console.warn(err);
                 });
             }
+        },
+
+        onLoading: function () {
+            var $form = this.$el;
+            $form.toggleClass('loading');
         },
 
         onClose: function () {

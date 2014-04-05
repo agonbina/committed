@@ -11191,7 +11191,8 @@
 	 * Module dependencies
 	 */
 
-	var CommittedApp = __webpack_require__(1);
+	var CommittedApp = __webpack_require__(1),
+	    ShowController = __webpack_require__(20);;
 
 
 	CommittedApp.module('AuthApp', function (AuthApp, CommittedApp, Backbone, Marionette, $, _) {
@@ -11204,12 +11205,11 @@
 
 	    var API = {
 	        showLogin: function () {
-	            var ShowController = __webpack_require__(20);
 	            ShowController.showLogin();
 	        },
 
 	        showSignup: function () {
-	            console.log('showing signup ...');
+	            ShowController.showSignup();
 	        }
 	    };
 
@@ -11339,8 +11339,8 @@
 
 	    var underscore = __webpack_require__(9);
 	    var backbone = __webpack_require__(8);
-	    var wreqr = __webpack_require__(28);
-	    var babysitter = __webpack_require__(29);
+	    var wreqr = __webpack_require__(29);
+	    var babysitter = __webpack_require__(30);
 
 	    module.exports = factory(underscore, backbone, wreqr, babysitter);
 
@@ -24493,7 +24493,8 @@
 	 */
 
 	var CommittedApp = __webpack_require__(1),
-	    LoginView = __webpack_require__(24);
+	    LoginView = __webpack_require__(24),
+	    SignupView = __webpack_require__(25);
 
 	/**
 	 * AuthApp.Show controller
@@ -24507,7 +24508,48 @@
 	                    model: user
 	                });
 
+	            loginView.on('form:submit', function (data) {
+	                user.set(data);
+
+	                if (user.isValid()) {
+	                    loginView.triggerMethod('loading');
+
+	                    user.logIn()
+	                        .then(function (user) {
+	                            console.log('logged in as, ', user);
+	                        },function (err) {
+	                            console.warn(err);
+	                        })
+	                        .then(function () {
+	                            loginView.triggerMethod('loading');
+	                        });
+	                }
+	            });
+
 	            CommittedApp.mainRegion.show(loginView);
+	        },
+
+	        showSignup: function () {
+	            var user = CommittedApp.request('user:entity:new'),
+	                signupView = new SignupView({
+	                    model: user
+	                });
+
+	            signupView.on('form:submit', function (data) {
+	                user.set(data);
+	                signupView.triggerMethod('loading');
+
+	                user.signUp()
+	                    .then(function (user) {
+	                        console.log(user, ' is signed up');
+	                    }, function (err) {
+	                        console.log(err);
+	                    })
+	                    .then(function () {
+	                        signupView.triggerMethod('loading');
+	                    });
+	            });
+	            CommittedApp.mainRegion.show(signupView);
 	        }
 	    };
 
@@ -24523,8 +24565,8 @@
 	 */
 
 	var CommittedApp = __webpack_require__(1),
-	    ProjectsView = __webpack_require__(25),
-	    LoadingView = __webpack_require__(27);
+	    ProjectsView = __webpack_require__(27),
+	    LoadingView = __webpack_require__(28);
 
 	/**
 	 * ProjectsApp.List controller
@@ -24564,7 +24606,7 @@
 
 	var CommittedApp = __webpack_require__(1),
 	    ProjectView = __webpack_require__(26),
-	    LoadingView = __webpack_require__(27);
+	    LoadingView = __webpack_require__(28);
 
 	/**
 	 * Show controller
@@ -25218,64 +25260,16 @@
 	 */
 
 	var CommittedApp = __webpack_require__(1),
-	    loadingViewTpl = __webpack_require__(31),
-	    User = __webpack_require__(7).Parse.User;
+	    FormView = __webpack_require__(32),
+	    loadingViewTpl = __webpack_require__(33);
 
 	/**
 	 * Login view
 	 */
 
 	CommittedApp.module('AuthApp.Show', function (Show, CommittedApp, Backbone, Marionette, $, _) {
-	    Show.Login = Marionette.ItemView.extend({
-	        template: loadingViewTpl,
-
-	        tagName: 'form',
-
-	        className: 'ui fluid form raised segment',
-
-	        initialize: function () {
-	            Backbone.Validation.bind(this);
-	        },
-
-	        ui: {
-	            'submitBtn': '.button.js-submit'
-	        },
-
-	        events: {
-	            'click @ui.submitBtn': 'submitClicked'
-	        },
-
-	        submitClicked: function (e) {
-	            e.preventDefault();
-	            var data = Backbone.Syphon.serialize(this);
-	            this.triggerMethod('form:submit', data);
-	        },
-
-	        onFormSubmit: function (data) {
-	            var view = this,
-	                user = this.model;
-	            user.set(data);
-
-	            if(user.isValid()) {
-	                view.triggerMethod('loading');
-
-	                user.logIn().then(function (user) {
-	                    console.log('logged in as, ', user);
-	                    view.triggerMethod('loading');
-	                }, function (err) {
-	                    console.warn(err);
-	                });
-	            }
-	        },
-
-	        onLoading: function () {
-	            var $form = this.$el;
-	            $form.toggleClass('loading');
-	        },
-
-	        onClose: function () {
-	            Backbone.Validation.unbind(this);
-	        }
+	    Show.Login = FormView.extend({
+	        template: loadingViewTpl
 	    });
 
 	    module.exports = Show.Login;
@@ -25290,19 +25284,19 @@
 	 */
 
 	var CommittedApp = __webpack_require__(1),
-	    ProjectView = __webpack_require__(30);
+	    FormView = __webpack_require__(32),
+	    signupViewTpl = __webpack_require__(34);
 
 	/**
-	 * List.Projects view module
+	 * Signup form view
 	 */
 
-	CommittedApp.module('ProjectsApp.List', function (List, CommittedApp, Backbone, Marionette, $, _) {
-	    List.Projects = Marionette.CollectionView.extend({
-	        className: 'ui horizontal list',
-	        itemView: ProjectView
+	CommittedApp.module('Views', function (Views, CommittedApp, Backbone, Marionette, $, _) {
+	    Views.Signup = FormView.extend({
+	        template: signupViewTpl
 	    });
 
-	    module.exports = List.Projects;
+	    module.exports = Views.Signup;
 	});
 
 /***/ },
@@ -25314,7 +25308,7 @@
 	 */
 
 	var CommittedApp = __webpack_require__(1),
-	    ProjectViewTpl = __webpack_require__(32);
+	    ProjectViewTpl = __webpack_require__(35);
 
 	/**
 	 * Show.Project view
@@ -25338,7 +25332,31 @@
 	 */
 
 	var CommittedApp = __webpack_require__(1),
-	    loadingViewTpl = __webpack_require__(33);
+	    ProjectView = __webpack_require__(31);
+
+	/**
+	 * List.Projects view module
+	 */
+
+	CommittedApp.module('ProjectsApp.List', function (List, CommittedApp, Backbone, Marionette, $, _) {
+	    List.Projects = Marionette.CollectionView.extend({
+	        className: 'ui horizontal list',
+	        itemView: ProjectView
+	    });
+
+	    module.exports = List.Projects;
+	});
+
+/***/ },
+/* 28 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Module dependencies
+	 */
+
+	var CommittedApp = __webpack_require__(1),
+	    loadingViewTpl = __webpack_require__(36);
 
 	CommittedApp.module('Common.Views', function (Views, CommittedApp, Backbone, Marionette, $, _) {
 
@@ -25365,7 +25383,7 @@
 	});
 
 /***/ },
-/* 28 */
+/* 29 */
 /***/ function(module, exports, __webpack_require__) {
 
 	(function (root, factory) {
@@ -25648,7 +25666,7 @@
 
 
 /***/ },
-/* 29 */
+/* 30 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// Backbone.BabySitter
@@ -25834,7 +25852,7 @@
 
 
 /***/ },
-/* 30 */
+/* 31 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -25842,7 +25860,7 @@
 	 */
 
 	var CommittedApp = __webpack_require__(1),
-	    projectTpl = __webpack_require__(34);
+	    projectTpl = __webpack_require__(37);
 
 	/**
 	 * List.Project view
@@ -25858,10 +25876,57 @@
 	});
 
 /***/ },
-/* 31 */
+/* 32 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(35).default.template(function (Handlebars,depth0,helpers,partials,data) {
+	/**
+	 * Module dependencies
+	 */
+
+	var CommittedApp = __webpack_require__(1),
+	    formViewTpl = __webpack_require__(38);
+
+	CommittedApp.module('AuthApp.Common.Views', function (Views, CommittedApp, Backbone, Marionette, $, _) {
+	    Views.Form = Marionette.ItemView.extend({
+	        template: formViewTpl,
+	        tagName: 'form',
+	        className: 'ui fluid form raised segment',
+
+	        initialize: function () {
+	            Backbone.Validation.bind(this);
+	        },
+
+	        ui: {
+	            'submitBtn': '.button.js-submit'
+	        },
+
+	        events: {
+	            'click @ui.submitBtn': 'submitClicked'
+	        },
+
+	        submitClicked: function (e) {
+	            var data = Backbone.Syphon.serialize(this);
+	            this.triggerMethod('form:submit', data);
+	        },
+
+	        onLoading: function () {
+	            var $form = this.$el;
+	            $form.toggleClass('loading');
+	        },
+
+	        onClose: function () {
+	            Backbone.Validation.unbind(this);
+	        }
+	    });
+
+	    module.exports = Views.Form;
+	});
+
+/***/ },
+/* 33 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__(39).default.template(function (Handlebars,depth0,helpers,partials,data) {
 	  this.compilerInfo = [4,'>= 1.0.0'];
 	helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 	  
@@ -25871,10 +25936,23 @@
 	  });
 
 /***/ },
-/* 32 */
+/* 34 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(35).default.template(function (Handlebars,depth0,helpers,partials,data) {
+	module.exports = __webpack_require__(39).default.template(function (Handlebars,depth0,helpers,partials,data) {
+	  this.compilerInfo = [4,'>= 1.0.0'];
+	helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+	  
+
+
+	  return "<div class=\"three fields\">\n    <div class=\"field\">\n        <label>Username</label>\n        <input placeholder=\"Username\" name=\"username\" type=\"text\">\n    </div>\n    <div class=\"field\">\n        <label>E-mail</label>\n        <input placeholder=\"E-mail\" name=\"email\" type=\"email\">\n    </div>\n    <div class=\"field\">\n        <label>Password</label>\n        <input placeholder=\"Password\" name=\"password\" type=\"password\">\n    </div>\n</div>\n<div class=\"ui blue submit button js-submit\">Ready to roll!</div>";
+	  });
+
+/***/ },
+/* 35 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__(39).default.template(function (Handlebars,depth0,helpers,partials,data) {
 	  this.compilerInfo = [4,'>= 1.0.0'];
 	helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 	  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression;
@@ -25889,10 +25967,10 @@
 	  });
 
 /***/ },
-/* 33 */
+/* 36 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(35).default.template(function (Handlebars,depth0,helpers,partials,data) {
+	module.exports = __webpack_require__(39).default.template(function (Handlebars,depth0,helpers,partials,data) {
 	  this.compilerInfo = [4,'>= 1.0.0'];
 	helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 	  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression;
@@ -25907,10 +25985,10 @@
 	  });
 
 /***/ },
-/* 34 */
+/* 37 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(35).default.template(function (Handlebars,depth0,helpers,partials,data) {
+	module.exports = __webpack_require__(39).default.template(function (Handlebars,depth0,helpers,partials,data) {
 	  this.compilerInfo = [4,'>= 1.0.0'];
 	helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 	  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression;
@@ -25925,28 +26003,41 @@
 	  });
 
 /***/ },
-/* 35 */
+/* 38 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__(39).default.template(function (Handlebars,depth0,helpers,partials,data) {
+	  this.compilerInfo = [4,'>= 1.0.0'];
+	helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+	  
+
+
+	  return "<div class=\"ui blue submit button js-submit\">Submit</div>";
+	  });
+
+/***/ },
+/* 39 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// Create a simple path alias to allow browserify to resolve
 	// the runtime on a supported path.
-	module.exports = __webpack_require__(36);
+	module.exports = __webpack_require__(40);
 
 
 /***/ },
-/* 36 */
+/* 40 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	/*globals Handlebars: true */
-	var base = __webpack_require__(37);
+	var base = __webpack_require__(41);
 
 	// Each of these augment the Handlebars object. No need to setup here.
 	// (This is done to easily share code between commonjs and browse envs)
-	var SafeString = __webpack_require__(38)["default"];
-	var Exception = __webpack_require__(39)["default"];
-	var Utils = __webpack_require__(40);
-	var runtime = __webpack_require__(41);
+	var SafeString = __webpack_require__(42)["default"];
+	var Exception = __webpack_require__(43)["default"];
+	var Utils = __webpack_require__(44);
+	var runtime = __webpack_require__(45);
 
 	// For compatibility and usage outside of module systems, make the Handlebars object a namespace
 	var create = function() {
@@ -25971,12 +26062,12 @@
 	exports["default"] = Handlebars;
 
 /***/ },
-/* 37 */
+/* 41 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var Utils = __webpack_require__(40);
-	var Exception = __webpack_require__(39)["default"];
+	var Utils = __webpack_require__(44);
+	var Exception = __webpack_require__(43)["default"];
 
 	var VERSION = "1.3.0";
 	exports.VERSION = VERSION;var COMPILER_REVISION = 4;
@@ -26156,7 +26247,7 @@
 	exports.createFrame = createFrame;
 
 /***/ },
-/* 38 */
+/* 42 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -26172,7 +26263,7 @@
 	exports["default"] = SafeString;
 
 /***/ },
-/* 39 */
+/* 43 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -26205,12 +26296,12 @@
 	exports["default"] = Exception;
 
 /***/ },
-/* 40 */
+/* 44 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	/*jshint -W004 */
-	var SafeString = __webpack_require__(38)["default"];
+	var SafeString = __webpack_require__(42)["default"];
 
 	var escape = {
 	  "&": "&amp;",
@@ -26286,14 +26377,14 @@
 	exports.isEmpty = isEmpty;
 
 /***/ },
-/* 41 */
+/* 45 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var Utils = __webpack_require__(40);
-	var Exception = __webpack_require__(39)["default"];
-	var COMPILER_REVISION = __webpack_require__(37).COMPILER_REVISION;
-	var REVISION_CHANGES = __webpack_require__(37).REVISION_CHANGES;
+	var Utils = __webpack_require__(44);
+	var Exception = __webpack_require__(43)["default"];
+	var COMPILER_REVISION = __webpack_require__(41).COMPILER_REVISION;
+	var REVISION_CHANGES = __webpack_require__(41).REVISION_CHANGES;
 
 	function checkRevision(compilerInfo) {
 	  var compilerRevision = compilerInfo && compilerInfo[0] || 1,

@@ -2,7 +2,8 @@
  * Module dependencies
  */
 
-var CommittedApp = require('app');
+var CommittedApp = require('app'),
+    ShowController = require('./show/show_controller');;
 
 
 CommittedApp.module('AuthApp', function (AuthApp, CommittedApp, Backbone, Marionette, $, _) {
@@ -15,12 +16,11 @@ CommittedApp.module('AuthApp', function (AuthApp, CommittedApp, Backbone, Marion
 
     var API = {
         showLogin: function () {
-            var ShowController = require('./show/show_controller');
             ShowController.showLogin();
         },
 
         showSignup: function () {
-            console.log('showing signup ...');
+            ShowController.showSignup();
         }
     };
 

@@ -3,14 +3,15 @@
  */
 
 var CommittedApp = require('app'),
-    ShowController = require('./show/show_controller');;
+    ShowController = require('./show/show_controller');
 
 
 CommittedApp.module('AuthApp', function (AuthApp, CommittedApp, Backbone, Marionette, $, _) {
     AuthApp.Router = Marionette.AppRouter.extend({
         appRoutes: {
             'login': 'showLogin',
-            'signup': 'showSignup'
+            'signup': 'showSignup',
+            'logout': 'logout'
         }
     });
 
@@ -21,6 +22,10 @@ CommittedApp.module('AuthApp', function (AuthApp, CommittedApp, Backbone, Marion
 
         showSignup: function () {
             ShowController.showSignup();
+        },
+
+        logout: function () {
+            CommittedApp.trigger('user:logout');
         }
     };
 

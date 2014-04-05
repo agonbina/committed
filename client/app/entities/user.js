@@ -45,5 +45,10 @@ CommittedApp.module('Entities', function (Entities, CommittedApp, Backbone, Mari
         'user:entity:new': API.getNewUserEntity
     });
 
+    CommittedApp.on('user:logout', function () {
+        User.logOut();
+        CommittedApp.trigger('login:show');
+    });
+
     module.exports = Entities.User;
 });

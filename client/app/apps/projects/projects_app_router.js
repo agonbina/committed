@@ -20,12 +20,10 @@ CommittedApp.module('ProjectsApp', function (ProjectsApp, CommittedApp, Backbone
          * Middleware for the routes
          */
 
-        before: {
-            'projects/:id': function () {
-                if(!User.current()) {
-                    console.log('You are not logged in ...');
-                    return false;
-                }
+        before: function () {
+            if (!User.current()) {
+                console.log('You are not logged in ...');
+                return false;
             }
         }
     });
@@ -39,6 +37,7 @@ CommittedApp.module('ProjectsApp', function (ProjectsApp, CommittedApp, Backbone
             var ListController = require('./list/list_controller');
             ListController.listProjects();
         },
+
         showProject: function (id) {
             var ShowController = require('./show/show_controller');
             ShowController.showProject(id);

@@ -27,10 +27,8 @@ CommittedApp.module('AuthApp.Show', function (Show, CommittedApp, Backbone, Mari
                     user.logIn()
                         .then(function (user) {
                             console.log('logged in as, ', user);
+                            CommittedApp.trigger('projects:list');
                         },function (err) {
-                            console.warn(err);
-                        })
-                        .then(function () {
                             loginView.triggerMethod('loading');
                         });
                 }
@@ -52,13 +50,13 @@ CommittedApp.module('AuthApp.Show', function (Show, CommittedApp, Backbone, Mari
                 user.signUp()
                     .then(function (user) {
                         console.log(user, ' is signed up');
+                        CommittedApp.trigger('projects:list');
                     }, function (err) {
                         console.log(err);
-                    })
-                    .then(function () {
                         signupView.triggerMethod('loading');
                     });
             });
+
             CommittedApp.mainRegion.show(signupView);
         }
     };

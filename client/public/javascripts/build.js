@@ -198,6 +198,11 @@
 	        'user:entity:new': API.getNewUserEntity
 	    });
 
+	    CommittedApp.on('user:logout', function () {
+	        User.logOut();
+	        CommittedApp.trigger('login:show');
+	    });
+
 	    module.exports = Entities.User;
 	});
 
@@ -11192,14 +11197,15 @@
 	 */
 
 	var CommittedApp = __webpack_require__(1),
-	    ShowController = __webpack_require__(20);;
+	    ShowController = __webpack_require__(20);
 
 
 	CommittedApp.module('AuthApp', function (AuthApp, CommittedApp, Backbone, Marionette, $, _) {
 	    AuthApp.Router = Marionette.AppRouter.extend({
 	        appRoutes: {
 	            'login': 'showLogin',
-	            'signup': 'showSignup'
+	            'signup': 'showSignup',
+	            'logout': 'logout'
 	        }
 	    });
 
@@ -11210,6 +11216,10 @@
 
 	        showSignup: function () {
 	            ShowController.showSignup();
+	        },
+
+	        logout: function () {
+	            CommittedApp.trigger('user:logout');
 	        }
 	    };
 
@@ -11258,12 +11268,10 @@
 	         * Middleware for the routes
 	         */
 
-	        before: {
-	            'projects/:id': function () {
-	                if(!User.current()) {
-	                    console.log('You are not logged in ...');
-	                    return false;
-	                }
+	        before: function () {
+	            if (!User.current()) {
+	                console.log('You are not logged in ...');
+	                return false;
 	            }
 	        }
 	    });
@@ -11277,6 +11285,7 @@
 	            var ListController = __webpack_require__(21);
 	            ListController.listProjects();
 	        },
+
 	        showProject: function (id) {
 	            var ShowController = __webpack_require__(22);
 	            ShowController.showProject(id);
@@ -24517,10 +24526,8 @@
 	                    user.logIn()
 	                        .then(function (user) {
 	                            console.log('logged in as, ', user);
+	                            CommittedApp.trigger('projects:list');
 	                        },function (err) {
-	                            console.warn(err);
-	                        })
-	                        .then(function () {
 	                            loginView.triggerMethod('loading');
 	                        });
 	                }
@@ -24542,13 +24549,13 @@
 	                user.signUp()
 	                    .then(function (user) {
 	                        console.log(user, ' is signed up');
+	                        CommittedApp.trigger('projects:list');
 	                    }, function (err) {
 	                        console.log(err);
-	                    })
-	                    .then(function () {
 	                        signupView.triggerMethod('loading');
 	                    });
 	            });
+
 	            CommittedApp.mainRegion.show(signupView);
 	        }
 	    };
@@ -24565,7 +24572,7 @@
 	 */
 
 	var CommittedApp = __webpack_require__(1),
-	    ProjectsView = __webpack_require__(27),
+	    ProjectsView = __webpack_require__(26),
 	    LoadingView = __webpack_require__(28);
 
 	/**
@@ -24605,7 +24612,7 @@
 	 */
 
 	var CommittedApp = __webpack_require__(1),
-	    ProjectView = __webpack_require__(26),
+	    ProjectView = __webpack_require__(27),
 	    LoadingView = __webpack_require__(28);
 
 	/**
@@ -25261,7 +25268,7 @@
 
 	var CommittedApp = __webpack_require__(1),
 	    FormView = __webpack_require__(32),
-	    loadingViewTpl = __webpack_require__(33);
+	    loadingViewTpl = __webpack_require__(34);
 
 	/**
 	 * Login view
@@ -25285,7 +25292,7 @@
 
 	var CommittedApp = __webpack_require__(1),
 	    FormView = __webpack_require__(32),
-	    signupViewTpl = __webpack_require__(34);
+	    signupViewTpl = __webpack_require__(33);
 
 	/**
 	 * Signup form view
@@ -25308,30 +25315,6 @@
 	 */
 
 	var CommittedApp = __webpack_require__(1),
-	    ProjectViewTpl = __webpack_require__(35);
-
-	/**
-	 * Show.Project view
-	 */
-
-	CommittedApp.module('ProjectsApp.Show', function (Show, CommittedApp, Backbone, Marionette, $, _) {
-	    Show.Project = Marionette.ItemView.extend({
-	        template: ProjectViewTpl,
-	        className: 'ui raised segment'
-	    });
-
-	    module.exports = Show.Project;
-	});
-
-/***/ },
-/* 27 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Module dependencies
-	 */
-
-	var CommittedApp = __webpack_require__(1),
 	    ProjectView = __webpack_require__(31);
 
 	/**
@@ -25345,6 +25328,30 @@
 	    });
 
 	    module.exports = List.Projects;
+	});
+
+/***/ },
+/* 27 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Module dependencies
+	 */
+
+	var CommittedApp = __webpack_require__(1),
+	    ProjectViewTpl = __webpack_require__(35);
+
+	/**
+	 * Show.Project view
+	 */
+
+	CommittedApp.module('ProjectsApp.Show', function (Show, CommittedApp, Backbone, Marionette, $, _) {
+	    Show.Project = Marionette.ItemView.extend({
+	        template: ProjectViewTpl,
+	        className: 'ui raised segment'
+	    });
+
+	    module.exports = Show.Project;
 	});
 
 /***/ },
@@ -25896,15 +25903,12 @@
 	            Backbone.Validation.bind(this);
 	        },
 
-	        ui: {
-	            'submitBtn': '.button.js-submit'
-	        },
-
 	        events: {
-	            'click @ui.submitBtn': 'submitClicked'
+	            'submit': 'submitForm'
 	        },
 
-	        submitClicked: function (e) {
+	        submitForm: function (e) {
+	            e.preventDefault();
 	            var data = Backbone.Syphon.serialize(this);
 	            this.triggerMethod('form:submit', data);
 	        },
@@ -25932,7 +25936,7 @@
 	  
 
 
-	  return "<div class=\"three fields\">\n    <div class=\"field\">\n        <label>Username</label>\n        <input placeholder=\"Username\" name=\"username\" type=\"text\">\n    </div>\n    <div class=\"field\">\n        <label>E-mail</label>\n        <input placeholder=\"E-mail\" name=\"email\" type=\"email\">\n    </div>\n    <div class=\"field\">\n        <label>Password</label>\n        <input placeholder=\"Password\" name=\"password\" type=\"password\">\n    </div>\n</div>\n<div class=\"ui blue submit button js-submit\">Login :)</div>";
+	  return "<div class=\"three fields\">\n    <div class=\"field\">\n        <label>Username</label>\n        <input placeholder=\"Username\" name=\"username\" type=\"text\">\n    </div>\n    <div class=\"field\">\n        <label>E-mail</label>\n        <input placeholder=\"E-mail\" name=\"email\" type=\"email\">\n    </div>\n    <div class=\"field\">\n        <label>Password</label>\n        <input placeholder=\"Password\" name=\"password\" type=\"password\">\n    </div>\n</div>\n<button class=\"ui blue button\" type=\"submit\">Ready to roll!</button>";
 	  });
 
 /***/ },
@@ -25945,7 +25949,7 @@
 	  
 
 
-	  return "<div class=\"three fields\">\n    <div class=\"field\">\n        <label>Username</label>\n        <input placeholder=\"Username\" name=\"username\" type=\"text\">\n    </div>\n    <div class=\"field\">\n        <label>E-mail</label>\n        <input placeholder=\"E-mail\" name=\"email\" type=\"email\">\n    </div>\n    <div class=\"field\">\n        <label>Password</label>\n        <input placeholder=\"Password\" name=\"password\" type=\"password\">\n    </div>\n</div>\n<div class=\"ui blue submit button js-submit\">Ready to roll!</div>";
+	  return "<div class=\"three fields\">\n    <div class=\"field\">\n        <label>Username</label>\n        <input placeholder=\"Username\" name=\"username\" type=\"text\">\n    </div>\n    <div class=\"field\">\n        <label>E-mail</label>\n        <input placeholder=\"E-mail\" name=\"email\" type=\"email\">\n        <i class=\"email icon\"></i>\n        <div class=\"ui corner label\">\n            <i class=\"icon asterisk\"></i>\n        </div>\n    </div>\n    <div class=\"field\">\n        <label>Password</label>\n        <input placeholder=\"Password\" name=\"password\" type=\"password\">\n    </div>\n</div>\n<button class=\"ui blue button\" type=\"submit\">Login :)</button>";
 	  });
 
 /***/ },

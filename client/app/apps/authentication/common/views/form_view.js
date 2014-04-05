@@ -15,15 +15,12 @@ CommittedApp.module('AuthApp.Common.Views', function (Views, CommittedApp, Backb
             Backbone.Validation.bind(this);
         },
 
-        ui: {
-            'submitBtn': '.button.js-submit'
-        },
-
         events: {
-            'click @ui.submitBtn': 'submitClicked'
+            'submit': 'submitForm'
         },
 
-        submitClicked: function (e) {
+        submitForm: function (e) {
+            e.preventDefault();
             var data = Backbone.Syphon.serialize(this);
             this.triggerMethod('form:submit', data);
         },

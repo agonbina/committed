@@ -13,7 +13,7 @@ var CommittedApp = require('app'),
 CommittedApp.module('ProjectsApp.List', function (List, CommittedApp, Backbone, Marionette, $, _) {
     List.Controller = {
         listProjects: function () {
-            var fetchProjects = CommittedApp.request('project:entities');
+            var fetchProjects = CommittedApp.request('projects');
             var loadingView = new LoadingView();
             CommittedApp.mainRegion.show(loadingView);
 
@@ -22,9 +22,7 @@ CommittedApp.module('ProjectsApp.List', function (List, CommittedApp, Backbone, 
                     collection: projects
                 });
 
-                setTimeout(function () {
-                    CommittedApp.mainRegion.show(projectsListView);
-                }, 2000);
+                CommittedApp.mainRegion.show(projectsListView);
             }, function (error) {
                 console.log(error);
             });

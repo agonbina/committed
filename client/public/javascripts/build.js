@@ -191,19 +191,24 @@
 	     */
 
 	    var API = {
-	        getUserEntity: function (userId) {
+	        getUser: function (userId) {
 	            var user = new User({id: userId});
 	            return user.fetch();
 	        },
 
-	        getNewUserEntity: function () {
+	        getNewUser: function () {
 	            return new User();
+	        },
+
+	        getCurrentUser: function () {
+	            return User.current();
 	        }
 	    };
 
 	    CommittedApp.reqres.setHandlers({
-	        'user:entity': API.getUserEntity,
-	        'user:entity:new': API.getNewUserEntity
+	        'user:': API.getUser,
+	        'user:new': API.getNewUser,
+	        'user:current': API.getCurrentUser
 	    });
 
 	    CommittedApp.on('user:logout', function () {
@@ -243,18 +248,22 @@
 	     */
 
 	    var API = {
-	        getProjectEntity: function (projectId) {
+	        getProject: function (projectId) {
 	            var project = new Project({ id: projectId });
 	            return project.fetch();
 	        },
-	        getNewProjectEntity: function () {
-	            return new Project();
+
+	        getNewProject: function () {
+	            var user = CommittedApp.request('user:current'),
+	                project = new Project();
+	            project.set('owner', user);
+	            return project;
 	        }
 	    };
 
 	    CommittedApp.reqres.setHandlers({
-	        'project:entity': API.getProjectEntity,
-	        'project:entity:new': API.getNewProjectEntity
+	        'project': API.getProject,
+	        'project:new': API.getNewProject
 	    });
 
 	    module.exports = Entities.Project;
@@ -283,14 +292,25 @@
 	    });
 
 	    var API = {
-	        getProjectsEntities: function () {
-	            var projects = new Projects();
+	        getProjects: function () {
+	            var user = CommittedApp.request('user:current'),
+	                projects = new Projects();
+	            projects.query = new Parse.Query(Project)
+	                .equalTo('owner', user);
+
 	            return projects.fetch();
+	        },
+
+	        getUserProjects: function (userId) {
+	            var projects = new Projects();
+	            projects.query = new Parse.Query(Project)
+	                .equalTo('owner', userId);
 	        }
 	    };
 
 	    CommittedApp.reqres.setHandlers({
-	        'project:entities': API.getProjectsEntities
+	        'projects': API.getProjects,
+	        'projects:user': API.getUserProjects
 	    });
 
 	    module.exports = Entities.Projects;
@@ -24532,7 +24552,7 @@
 	CommittedApp.module('AuthApp.Show', function (Show, CommittedApp, Backbone, Marionette, $, _) {
 	    Show.Controller = {
 	        showLogin: function () {
-	            var user = CommittedApp.request('user:entity:new'),
+	            var user = CommittedApp.request('user:new'),
 	                loginView = new LoginView({
 	                    model: user
 	                });
@@ -24557,7 +24577,7 @@
 	        },
 
 	        showSignup: function () {
-	            var user = CommittedApp.request('user:entity:new'),
+	            var user = CommittedApp.request('user:new'),
 	                signupView = new SignupView({
 	                    model: user
 	                });
@@ -24604,7 +24624,7 @@
 	CommittedApp.module('ProjectsApp.List', function (List, CommittedApp, Backbone, Marionette, $, _) {
 	    List.Controller = {
 	        listProjects: function () {
-	            var fetchProjects = CommittedApp.request('project:entities');
+	            var fetchProjects = CommittedApp.request('projects');
 	            var loadingView = new LoadingView();
 	            CommittedApp.mainRegion.show(loadingView);
 
@@ -24613,9 +24633,7 @@
 	                    collection: projects
 	                });
 
-	                setTimeout(function () {
-	                    CommittedApp.mainRegion.show(projectsListView);
-	                }, 2000);
+	                CommittedApp.mainRegion.show(projectsListView);
 	            }, function (error) {
 	                console.log(error);
 	            });
@@ -25345,7 +25363,7 @@
 
 	CommittedApp.module('ProjectsApp.List', function (List, CommittedApp, Backbone, Marionette, $, _) {
 	    List.Projects = Marionette.CollectionView.extend({
-	        className: 'ui horizontal list',
+	        className: 'ui three stackable items',
 	        itemView: ProjectView
 	    });
 
@@ -26036,11 +26054,11 @@
 	  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression;
 
 
-	  buffer += "<div class=\"ui raised segment\">\n    <h2>Project name: ";
+	  buffer += "<div class=\"content\">\n    <div class=\"name\">";
 	  if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
 	  else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
 	  buffer += escapeExpression(stack1)
-	    + "</h2>\n</div>";
+	    + "</div>\n    <div class=\"description\">This is the project's description.</div>\n</div>";
 	  return buffer;
 	  });
 

@@ -37,19 +37,24 @@ CommittedApp.module('Entities', function (Entities, CommittedApp, Backbone, Mari
      */
 
     var API = {
-        getUserEntity: function (userId) {
+        getUser: function (userId) {
             var user = new User({id: userId});
             return user.fetch();
         },
 
-        getNewUserEntity: function () {
+        getNewUser: function () {
             return new User();
+        },
+
+        getCurrentUser: function () {
+            return User.current();
         }
     };
 
     CommittedApp.reqres.setHandlers({
-        'user:entity': API.getUserEntity,
-        'user:entity:new': API.getNewUserEntity
+        'user:': API.getUser,
+        'user:new': API.getNewUser,
+        'user:current': API.getCurrentUser
     });
 
     CommittedApp.on('user:logout', function () {

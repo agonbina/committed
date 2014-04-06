@@ -1,1 +1,9 @@
 @import 'semantic-ui';
+
+.main.container {
+  width: auto;
+}
+
+.ui.stackable.items .item {
+  min-height: 100%;
+}

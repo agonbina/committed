@@ -16934,3 +16934,11 @@ ol.ui.horizontal.list li:before,
 /* line 30, ../../sass/semantic-ui/views/_statistic.scss */
 .ui.statistic > .description {
   opacity: 0.8; }
+
+/* line 3, ../../sass/styles.scss */
+.main.container {
+  width: auto; }
+
+/* line 7, ../../sass/styles.scss */
+.ui.stackable.items .item {
+  min-height: 100%; }

@@ -17,14 +17,25 @@ CommittedApp.module('Entities', function (Entities, CommittedApp, Backbone, Mari
     });
 
     var API = {
-        getProjectsEntities: function () {
-            var projects = new Projects();
+        getProjects: function () {
+            var user = CommittedApp.request('user:current'),
+                projects = new Projects();
+            projects.query = new Parse.Query(Project)
+                .equalTo('owner', user);
+
             return projects.fetch();
+        },
+
+        getUserProjects: function (userId) {
+            var projects = new Projects();
+            projects.query = new Parse.Query(Project)
+                .equalTo('owner', userId);
         }
     };
 
     CommittedApp.reqres.setHandlers({
-        'project:entities': API.getProjectsEntities
+        'projects': API.getProjects,
+        'projects:user': API.getUserProjects
     });
 
     module.exports = Entities.Projects;

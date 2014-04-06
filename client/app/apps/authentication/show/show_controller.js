@@ -13,7 +13,7 @@ var CommittedApp = require('app'),
 CommittedApp.module('AuthApp.Show', function (Show, CommittedApp, Backbone, Marionette, $, _) {
     Show.Controller = {
         showLogin: function () {
-            var user = CommittedApp.request('user:entity:new'),
+            var user = CommittedApp.request('user:new'),
                 loginView = new LoginView({
                     model: user
                 });
@@ -38,7 +38,7 @@ CommittedApp.module('AuthApp.Show', function (Show, CommittedApp, Backbone, Mari
         },
 
         showSignup: function () {
-            var user = CommittedApp.request('user:entity:new'),
+            var user = CommittedApp.request('user:new'),
                 signupView = new SignupView({
                     model: user
                 });

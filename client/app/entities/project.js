@@ -23,18 +23,22 @@ CommittedApp.module('Entities', function (Entities, CommittedApp, Backbone, Mari
      */
 
     var API = {
-        getProjectEntity: function (projectId) {
+        getProject: function (projectId) {
             var project = new Project({ id: projectId });
             return project.fetch();
         },
-        getNewProjectEntity: function () {
-            return new Project();
+
+        getNewProject: function () {
+            var user = CommittedApp.request('user:current'),
+                project = new Project();
+            project.set('owner', user);
+            return project;
         }
     };
 
     CommittedApp.reqres.setHandlers({
-        'project:entity': API.getProjectEntity,
-        'project:entity:new': API.getNewProjectEntity
+        'project': API.getProject,
+        'project:new': API.getNewProject
     });
 
     module.exports = Entities.Project;

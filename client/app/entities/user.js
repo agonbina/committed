@@ -12,6 +12,13 @@ CommittedApp.module('Entities', function (Entities, CommittedApp, Backbone, Mari
      */
 
     var User = Entities.User = Parse.User.extend({
+
+        initialize: function () {
+            this.on('change:email', function(user, email) {
+                user.set('username', email);
+            });
+        },
+
         validation: {
             email: {
                 required: true,

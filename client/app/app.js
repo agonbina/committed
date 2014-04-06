@@ -10,6 +10,7 @@ require('./config/vent')(CommittedApp);
 
 // Load any configurations/extensions of Backbone and Marionette
 require('./config/vendor/backbone.validation');
+require('./config/vendor/underscore');
 
 require('backbone.routefilter');
 require('backbone.syphon');

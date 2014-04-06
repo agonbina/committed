@@ -9,7 +9,7 @@ CommittedApp.module('AuthApp.Common.Views', function (Views, CommittedApp, Backb
     Views.Form = Marionette.ItemView.extend({
         template: formViewTpl,
         tagName: 'form',
-        className: 'ui fluid form raised segment',
+        className: 'ui form raised segment',
 
         initialize: function () {
             Backbone.Validation.bind(this);
@@ -23,6 +23,22 @@ CommittedApp.module('AuthApp.Common.Views', function (Views, CommittedApp, Backb
             e.preventDefault();
             var data = Backbone.Syphon.serialize(this);
             this.triggerMethod('form:submit', data);
+        },
+
+        onError: function (error) {
+            var $form = this.$el,
+                errorMessage = _.capitalize(error.message);
+
+            var $error = $('<div></div>')
+                .addClass('ui error message')
+                .append(function () {
+                    return '<div class="header">Oops</div>' +
+                        '<p>' + errorMessage + '</p>';
+                });
+
+            $form.addClass('error');
+            $form.find('.ui.error.message').remove();
+            $form.prepend($error);
         },
 
         onLoading: function () {

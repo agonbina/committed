@@ -26,9 +26,9 @@ CommittedApp.module('AuthApp.Show', function (Show, CommittedApp, Backbone, Mari
 
                     user.logIn()
                         .then(function (user) {
-                            console.log('logged in as, ', user);
                             CommittedApp.trigger('projects:list');
                         },function (err) {
+                            loginView.triggerMethod('error', err);
                             loginView.triggerMethod('loading');
                         });
                 }
@@ -45,16 +45,18 @@ CommittedApp.module('AuthApp.Show', function (Show, CommittedApp, Backbone, Mari
 
             signupView.on('form:submit', function (data) {
                 user.set(data);
-                signupView.triggerMethod('loading');
 
-                user.signUp()
-                    .then(function (user) {
-                        console.log(user, ' is signed up');
-                        CommittedApp.trigger('projects:list');
-                    }, function (err) {
-                        console.log(err);
-                        signupView.triggerMethod('loading');
-                    });
+                if(user.isValid()) {
+                    signupView.triggerMethod('loading');
+
+                    user.signUp()
+                        .then(function (user) {
+                            CommittedApp.trigger('projects:list');
+                        }, function (err) {
+                            signupView.triggerMethod('loading');
+                            signupView.triggerMethod('error', err);
+                        });
+                }
             });
 
             CommittedApp.mainRegion.show(signupView);

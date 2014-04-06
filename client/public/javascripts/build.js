@@ -129,7 +129,7 @@
 /* 1 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Marionette = __webpack_require__(15);
+	var Marionette = __webpack_require__(16);
 	var Backbone = __webpack_require__(8);
 	var CommittedApp = new Marionette.Application();
 
@@ -141,9 +141,10 @@
 
 	// Load any configurations/extensions of Backbone and Marionette
 	__webpack_require__(12);
+	__webpack_require__(13);
 
-	__webpack_require__(17);
 	__webpack_require__(18);
+	__webpack_require__(19);
 
 	module.exports = CommittedApp;
 
@@ -165,6 +166,13 @@
 	     */
 
 	    var User = Entities.User = Parse.User.extend({
+
+	        initialize: function () {
+	            this.on('change:email', function(user, email) {
+	                user.set('username', email);
+	            });
+	        },
+
 	        validation: {
 	            email: {
 	                required: true,
@@ -307,7 +315,7 @@
 	    AuthApp.startWithParent = false;
 
 	    AuthApp.onBeforeStart = function () {
-	        __webpack_require__(13);
+	        __webpack_require__(14);
 	    };
 
 	    AuthApp.onStart = function () {
@@ -340,7 +348,7 @@
 	    ProjectsApp.startWithParent = false;
 
 	    ProjectsApp.onBeforeStart = function () {
-	        __webpack_require__(14);
+	        __webpack_require__(15);
 	    };
 
 	    ProjectsApp.onStart = function () {
@@ -398,7 +406,7 @@
 	        }
 
 	        Parse._ = __webpack_require__(9);
-	        Parse.$ = __webpack_require__(16);
+	        Parse.$ = __webpack_require__(17);
 
 	        exports.Parse = Parse;
 	    }
@@ -8256,7 +8264,7 @@
 	    };
 	}(this));
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(19), __webpack_require__(9)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(20), __webpack_require__(9)))
 
 /***/ },
 /* 8 */
@@ -8273,7 +8281,7 @@
 
 	  // Set up Backbone appropriately for the environment. Start with AMD.
 	  if (true) {
-	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(9), __webpack_require__(16), exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, $, exports) {
+	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(9), __webpack_require__(17), exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, $, exports) {
 	      // Export global even in AMD case in case this script is loaded with
 	      // others that may still expect a global Backbone.
 	      root.Backbone = factory(root, exports, _, $);
@@ -11161,7 +11169,7 @@
 
 	/* WEBPACK VAR INJECTION */(function(_, $) {var Backbone = __webpack_require__(8);
 
-	__webpack_require__(23);
+	__webpack_require__(24);
 	_.extend(Backbone.Model.prototype, Backbone.Validation.mixin);
 
 	// Customize global form error display
@@ -11186,10 +11194,22 @@
 	        $field.append($error);
 	    }
 	});
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9), __webpack_require__(16)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9), __webpack_require__(17)))
 
 /***/ },
 /* 13 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var _ = __webpack_require__(9);
+
+	_.mixin({
+	    capitalize: function(string) {
+	        return string.charAt(0).toUpperCase() + string.substring(1).toLowerCase();
+	    }
+	});
+
+/***/ },
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -11197,7 +11217,7 @@
 	 */
 
 	var CommittedApp = __webpack_require__(1),
-	    ShowController = __webpack_require__(20);
+	    ShowController = __webpack_require__(21);
 
 
 	CommittedApp.module('AuthApp', function (AuthApp, CommittedApp, Backbone, Marionette, $, _) {
@@ -11243,7 +11263,7 @@
 	});
 
 /***/ },
-/* 14 */
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -11282,12 +11302,12 @@
 
 	    var API = {
 	        listProjects: function () {
-	            var ListController = __webpack_require__(21);
+	            var ListController = __webpack_require__(22);
 	            ListController.listProjects();
 	        },
 
 	        showProject: function (id) {
-	            var ShowController = __webpack_require__(22);
+	            var ShowController = __webpack_require__(23);
 	            ShowController.showProject(id);
 	        }
 	    };
@@ -11321,7 +11341,7 @@
 	});
 
 /***/ },
-/* 15 */
+/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// MarionetteJS (Backbone.Marionette)
@@ -11348,8 +11368,8 @@
 
 	    var underscore = __webpack_require__(9);
 	    var backbone = __webpack_require__(8);
-	    var wreqr = __webpack_require__(29);
-	    var babysitter = __webpack_require__(30);
+	    var wreqr = __webpack_require__(30);
+	    var babysitter = __webpack_require__(31);
 
 	    module.exports = factory(underscore, backbone, wreqr, babysitter);
 
@@ -13474,7 +13494,7 @@
 
 
 /***/ },
-/* 16 */
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -23817,7 +23837,7 @@
 
 
 /***/ },
-/* 17 */
+/* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(_, Backbone) {/*! backbone.routefilter - v0.2.0 - 2013-02-16
@@ -23944,7 +23964,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9), __webpack_require__(8)))
 
 /***/ },
-/* 18 */
+/* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// Backbone.Syphon, v0.4.1
@@ -23954,7 +23974,7 @@
 	(function (root, factory) {
 	    if (true) {
 	        // AMD. Register as an anonymous module.
-	        !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(9), __webpack_require__(16), __webpack_require__(8)], __WEBPACK_AMD_DEFINE_RESULT__ = (factory.apply(null, __WEBPACK_AMD_DEFINE_ARRAY__)), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	        !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(9), __webpack_require__(17), __webpack_require__(8)], __WEBPACK_AMD_DEFINE_RESULT__ = (factory.apply(null, __WEBPACK_AMD_DEFINE_ARRAY__)), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	    }
 	}(this, function (_, jQuery, Backbone) {
 	  Backbone.Syphon = (function(Backbone, $, _){
@@ -24428,7 +24448,7 @@
 	}));
 
 /***/ },
-/* 19 */
+/* 20 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// shim for using process in browser
@@ -24494,7 +24514,7 @@
 
 
 /***/ },
-/* 20 */
+/* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -24502,8 +24522,8 @@
 	 */
 
 	var CommittedApp = __webpack_require__(1),
-	    LoginView = __webpack_require__(24),
-	    SignupView = __webpack_require__(25);
+	    LoginView = __webpack_require__(25),
+	    SignupView = __webpack_require__(26);
 
 	/**
 	 * AuthApp.Show controller
@@ -24525,9 +24545,9 @@
 
 	                    user.logIn()
 	                        .then(function (user) {
-	                            console.log('logged in as, ', user);
 	                            CommittedApp.trigger('projects:list');
 	                        },function (err) {
+	                            loginView.triggerMethod('error', err);
 	                            loginView.triggerMethod('loading');
 	                        });
 	                }
@@ -24544,16 +24564,18 @@
 
 	            signupView.on('form:submit', function (data) {
 	                user.set(data);
-	                signupView.triggerMethod('loading');
 
-	                user.signUp()
-	                    .then(function (user) {
-	                        console.log(user, ' is signed up');
-	                        CommittedApp.trigger('projects:list');
-	                    }, function (err) {
-	                        console.log(err);
-	                        signupView.triggerMethod('loading');
-	                    });
+	                if(user.isValid()) {
+	                    signupView.triggerMethod('loading');
+
+	                    user.signUp()
+	                        .then(function (user) {
+	                            CommittedApp.trigger('projects:list');
+	                        }, function (err) {
+	                            signupView.triggerMethod('loading');
+	                            signupView.triggerMethod('error', err);
+	                        });
+	                }
 	            });
 
 	            CommittedApp.mainRegion.show(signupView);
@@ -24564,7 +24586,7 @@
 	});
 
 /***/ },
-/* 21 */
+/* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -24572,8 +24594,8 @@
 	 */
 
 	var CommittedApp = __webpack_require__(1),
-	    ProjectsView = __webpack_require__(26),
-	    LoadingView = __webpack_require__(28);
+	    ProjectsView = __webpack_require__(27),
+	    LoadingView = __webpack_require__(29);
 
 	/**
 	 * ProjectsApp.List controller
@@ -24604,7 +24626,7 @@
 	});
 
 /***/ },
-/* 22 */
+/* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -24612,8 +24634,8 @@
 	 */
 
 	var CommittedApp = __webpack_require__(1),
-	    ProjectView = __webpack_require__(27),
-	    LoadingView = __webpack_require__(28);
+	    ProjectView = __webpack_require__(28),
+	    LoadingView = __webpack_require__(29);
 
 	/**
 	 * Show controller
@@ -24644,7 +24666,7 @@
 	});
 
 /***/ },
-/* 23 */
+/* 24 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// Backbone.Validation v0.7.1
@@ -25259,7 +25281,7 @@
 	}));
 
 /***/ },
-/* 24 */
+/* 25 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -25267,7 +25289,7 @@
 	 */
 
 	var CommittedApp = __webpack_require__(1),
-	    FormView = __webpack_require__(32),
+	    FormView = __webpack_require__(33),
 	    loadingViewTpl = __webpack_require__(34);
 
 	/**
@@ -25283,7 +25305,7 @@
 	});
 
 /***/ },
-/* 25 */
+/* 26 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -25291,8 +25313,8 @@
 	 */
 
 	var CommittedApp = __webpack_require__(1),
-	    FormView = __webpack_require__(32),
-	    signupViewTpl = __webpack_require__(33);
+	    FormView = __webpack_require__(33),
+	    signupViewTpl = __webpack_require__(35);
 
 	/**
 	 * Signup form view
@@ -25307,7 +25329,7 @@
 	});
 
 /***/ },
-/* 26 */
+/* 27 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -25315,7 +25337,7 @@
 	 */
 
 	var CommittedApp = __webpack_require__(1),
-	    ProjectView = __webpack_require__(31);
+	    ProjectView = __webpack_require__(32);
 
 	/**
 	 * List.Projects view module
@@ -25331,7 +25353,7 @@
 	});
 
 /***/ },
-/* 27 */
+/* 28 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -25339,7 +25361,7 @@
 	 */
 
 	var CommittedApp = __webpack_require__(1),
-	    ProjectViewTpl = __webpack_require__(35);
+	    ProjectViewTpl = __webpack_require__(36);
 
 	/**
 	 * Show.Project view
@@ -25355,7 +25377,7 @@
 	});
 
 /***/ },
-/* 28 */
+/* 29 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -25363,7 +25385,7 @@
 	 */
 
 	var CommittedApp = __webpack_require__(1),
-	    loadingViewTpl = __webpack_require__(36);
+	    loadingViewTpl = __webpack_require__(37);
 
 	CommittedApp.module('Common.Views', function (Views, CommittedApp, Backbone, Marionette, $, _) {
 
@@ -25390,7 +25412,7 @@
 	});
 
 /***/ },
-/* 29 */
+/* 30 */
 /***/ function(module, exports, __webpack_require__) {
 
 	(function (root, factory) {
@@ -25673,7 +25695,7 @@
 
 
 /***/ },
-/* 30 */
+/* 31 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// Backbone.BabySitter
@@ -25859,7 +25881,7 @@
 
 
 /***/ },
-/* 31 */
+/* 32 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -25867,7 +25889,7 @@
 	 */
 
 	var CommittedApp = __webpack_require__(1),
-	    projectTpl = __webpack_require__(37);
+	    projectTpl = __webpack_require__(38);
 
 	/**
 	 * List.Project view
@@ -25883,7 +25905,7 @@
 	});
 
 /***/ },
-/* 32 */
+/* 33 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -25891,13 +25913,13 @@
 	 */
 
 	var CommittedApp = __webpack_require__(1),
-	    formViewTpl = __webpack_require__(38);
+	    formViewTpl = __webpack_require__(39);
 
 	CommittedApp.module('AuthApp.Common.Views', function (Views, CommittedApp, Backbone, Marionette, $, _) {
 	    Views.Form = Marionette.ItemView.extend({
 	        template: formViewTpl,
 	        tagName: 'form',
-	        className: 'ui fluid form raised segment',
+	        className: 'ui form raised segment',
 
 	        initialize: function () {
 	            Backbone.Validation.bind(this);
@@ -25911,6 +25933,22 @@
 	            e.preventDefault();
 	            var data = Backbone.Syphon.serialize(this);
 	            this.triggerMethod('form:submit', data);
+	        },
+
+	        onError: function (error) {
+	            var $form = this.$el,
+	                errorMessage = _.capitalize(error.message);
+
+	            var $error = $('<div></div>')
+	                .addClass('ui error message')
+	                .append(function () {
+	                    return '<div class="header">Oops</div>' +
+	                        '<p>' + errorMessage + '</p>';
+	                });
+
+	            $form.addClass('error');
+	            $form.find('.ui.error.message').remove();
+	            $form.prepend($error);
 	        },
 
 	        onLoading: function () {
@@ -25927,36 +25965,36 @@
 	});
 
 /***/ },
-/* 33 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = __webpack_require__(39).default.template(function (Handlebars,depth0,helpers,partials,data) {
-	  this.compilerInfo = [4,'>= 1.0.0'];
-	helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-	  
-
-
-	  return "<div class=\"three fields\">\n    <div class=\"field\">\n        <label>Username</label>\n        <input placeholder=\"Username\" name=\"username\" type=\"text\">\n    </div>\n    <div class=\"field\">\n        <label>E-mail</label>\n        <input placeholder=\"E-mail\" name=\"email\" type=\"email\">\n    </div>\n    <div class=\"field\">\n        <label>Password</label>\n        <input placeholder=\"Password\" name=\"password\" type=\"password\">\n    </div>\n</div>\n<button class=\"ui blue button\" type=\"submit\">Ready to roll!</button>";
-	  });
-
-/***/ },
 /* 34 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(39).default.template(function (Handlebars,depth0,helpers,partials,data) {
+	module.exports = __webpack_require__(40).default.template(function (Handlebars,depth0,helpers,partials,data) {
 	  this.compilerInfo = [4,'>= 1.0.0'];
 	helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 	  
 
 
-	  return "<div class=\"three fields\">\n    <div class=\"field\">\n        <label>Username</label>\n        <input placeholder=\"Username\" name=\"username\" type=\"text\">\n    </div>\n    <div class=\"field\">\n        <label>E-mail</label>\n        <input placeholder=\"E-mail\" name=\"email\" type=\"email\">\n        <i class=\"email icon\"></i>\n        <div class=\"ui corner label\">\n            <i class=\"icon asterisk\"></i>\n        </div>\n    </div>\n    <div class=\"field\">\n        <label>Password</label>\n        <input placeholder=\"Password\" name=\"password\" type=\"password\">\n    </div>\n</div>\n<button class=\"ui blue button\" type=\"submit\">Login :)</button>";
+	  return "<div class=\"two fields\">\n    <div class=\"field\">\n        <div class=\"ui left labeled icon input\">\n            <input placeholder=\"E-mail\" name=\"email\" type=\"email\">\n            <i class=\"mail icon\"></i>\n            <div class=\"ui corner label\">\n                <i class=\"icon asterisk\"></i>\n            </div>\n        </div>\n    </div>\n    <div class=\"field\">\n        <div class=\"ui left labeled icon input\">\n            <input placeholder=\"Password\" name=\"password\" type=\"password\">\n            <i class=\"lock icon\"></i>\n            <div class=\"ui corner label\">\n                <i class=\"icon asterisk\"></i>\n            </div>\n        </div>\n    </div>\n</div>\n<button class=\"ui blue button\" type=\"submit\">Login :)</button>";
 	  });
 
 /***/ },
 /* 35 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(39).default.template(function (Handlebars,depth0,helpers,partials,data) {
+	module.exports = __webpack_require__(40).default.template(function (Handlebars,depth0,helpers,partials,data) {
+	  this.compilerInfo = [4,'>= 1.0.0'];
+	helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+	  
+
+
+	  return "<div class=\"two fields\">\n    <div class=\"field\">\n        <div class=\"ui left labeled icon input\">\n            <input placeholder=\"E-mail\" name=\"email\" type=\"email\">\n            <i class=\"mail icon\"></i>\n            <div class=\"ui corner label\">\n                <i class=\"icon asterisk\"></i>\n            </div>\n        </div>\n    </div>\n    <div class=\"field\">\n        <div class=\"ui left labeled icon input\">\n            <input placeholder=\"Password\" name=\"password\" type=\"password\">\n            <i class=\"lock icon\"></i>\n            <div class=\"ui corner label\">\n                <i class=\"icon asterisk\"></i>\n            </div>\n        </div>\n    </div>\n</div>\n<button class=\"ui blue button\" type=\"submit\">Ready to roll!</button>";
+	  });
+
+/***/ },
+/* 36 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__(40).default.template(function (Handlebars,depth0,helpers,partials,data) {
 	  this.compilerInfo = [4,'>= 1.0.0'];
 	helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 	  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression;
@@ -25971,10 +26009,10 @@
 	  });
 
 /***/ },
-/* 36 */
+/* 37 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(39).default.template(function (Handlebars,depth0,helpers,partials,data) {
+	module.exports = __webpack_require__(40).default.template(function (Handlebars,depth0,helpers,partials,data) {
 	  this.compilerInfo = [4,'>= 1.0.0'];
 	helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 	  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression;
@@ -25989,10 +26027,10 @@
 	  });
 
 /***/ },
-/* 37 */
+/* 38 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(39).default.template(function (Handlebars,depth0,helpers,partials,data) {
+	module.exports = __webpack_require__(40).default.template(function (Handlebars,depth0,helpers,partials,data) {
 	  this.compilerInfo = [4,'>= 1.0.0'];
 	helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 	  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression;
@@ -26007,10 +26045,10 @@
 	  });
 
 /***/ },
-/* 38 */
+/* 39 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(39).default.template(function (Handlebars,depth0,helpers,partials,data) {
+	module.exports = __webpack_require__(40).default.template(function (Handlebars,depth0,helpers,partials,data) {
 	  this.compilerInfo = [4,'>= 1.0.0'];
 	helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 	  
@@ -26020,28 +26058,28 @@
 	  });
 
 /***/ },
-/* 39 */
+/* 40 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// Create a simple path alias to allow browserify to resolve
 	// the runtime on a supported path.
-	module.exports = __webpack_require__(40);
+	module.exports = __webpack_require__(41);
 
 
 /***/ },
-/* 40 */
+/* 41 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	/*globals Handlebars: true */
-	var base = __webpack_require__(41);
+	var base = __webpack_require__(42);
 
 	// Each of these augment the Handlebars object. No need to setup here.
 	// (This is done to easily share code between commonjs and browse envs)
-	var SafeString = __webpack_require__(42)["default"];
-	var Exception = __webpack_require__(43)["default"];
-	var Utils = __webpack_require__(44);
-	var runtime = __webpack_require__(45);
+	var SafeString = __webpack_require__(43)["default"];
+	var Exception = __webpack_require__(44)["default"];
+	var Utils = __webpack_require__(45);
+	var runtime = __webpack_require__(46);
 
 	// For compatibility and usage outside of module systems, make the Handlebars object a namespace
 	var create = function() {
@@ -26066,12 +26104,12 @@
 	exports["default"] = Handlebars;
 
 /***/ },
-/* 41 */
+/* 42 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var Utils = __webpack_require__(44);
-	var Exception = __webpack_require__(43)["default"];
+	var Utils = __webpack_require__(45);
+	var Exception = __webpack_require__(44)["default"];
 
 	var VERSION = "1.3.0";
 	exports.VERSION = VERSION;var COMPILER_REVISION = 4;
@@ -26251,7 +26289,7 @@
 	exports.createFrame = createFrame;
 
 /***/ },
-/* 42 */
+/* 43 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -26267,7 +26305,7 @@
 	exports["default"] = SafeString;
 
 /***/ },
-/* 43 */
+/* 44 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -26300,12 +26338,12 @@
 	exports["default"] = Exception;
 
 /***/ },
-/* 44 */
+/* 45 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	/*jshint -W004 */
-	var SafeString = __webpack_require__(42)["default"];
+	var SafeString = __webpack_require__(43)["default"];
 
 	var escape = {
 	  "&": "&amp;",
@@ -26381,14 +26419,14 @@
 	exports.isEmpty = isEmpty;
 
 /***/ },
-/* 45 */
+/* 46 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var Utils = __webpack_require__(44);
-	var Exception = __webpack_require__(43)["default"];
-	var COMPILER_REVISION = __webpack_require__(41).COMPILER_REVISION;
-	var REVISION_CHANGES = __webpack_require__(41).REVISION_CHANGES;
+	var Utils = __webpack_require__(45);
+	var Exception = __webpack_require__(44)["default"];
+	var COMPILER_REVISION = __webpack_require__(42).COMPILER_REVISION;
+	var REVISION_CHANGES = __webpack_require__(42).REVISION_CHANGES;
 
 	function checkRevision(compilerInfo) {
 	  var compilerRevision = compilerInfo && compilerInfo[0] || 1,

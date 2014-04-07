@@ -27,9 +27,9 @@ CommittedApp.module('ProjectsApp.Show', function (Show, CommittedApp, Backbone, 
 
                 CommittedApp.mainRegion.show(projectView);
             }, function (error) {
-                var missingView = error.code === Parse.Error.OBJECT_NOT_FOUND ?
-                    new MissingProjectView() :
-                    new MissingProjectView({message: 'Something wen\'t wrong. Please try again.' });
+                var message = error.code === Parse.Error.OBJECT_NOT_FOUND ? undefined
+                        : 'Something wen\'t wrong. Please try again.',
+                    missingView =   new MissingProjectView({message: message});
 
                 CommittedApp.mainRegion.show(missingView);
             });

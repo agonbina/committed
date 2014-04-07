@@ -11389,8 +11389,8 @@
 
 	    var underscore = __webpack_require__(9);
 	    var backbone = __webpack_require__(8);
-	    var wreqr = __webpack_require__(32);
-	    var babysitter = __webpack_require__(33);
+	    var wreqr = __webpack_require__(31);
+	    var babysitter = __webpack_require__(32);
 
 	    module.exports = factory(underscore, backbone, wreqr, babysitter);
 
@@ -24543,8 +24543,8 @@
 	 */
 
 	var CommittedApp = __webpack_require__(1),
-	    LoginView = __webpack_require__(25),
-	    SignupView = __webpack_require__(26);
+	    LoginView = __webpack_require__(26),
+	    SignupView = __webpack_require__(27);
 
 	/**
 	 * AuthApp.Show controller
@@ -24615,9 +24615,8 @@
 	 */
 
 	var CommittedApp = __webpack_require__(1),
-	    ProjectsView = __webpack_require__(27),
-	    LoadingView = __webpack_require__(31),
-	    NoProjectsView = __webpack_require__(28);
+	    ProjectsView = __webpack_require__(25),
+	    LoadingView = __webpack_require__(30);
 
 	/**
 	 * ProjectsApp.List controller
@@ -24626,20 +24625,17 @@
 	CommittedApp.module('ProjectsApp.List', function (List, CommittedApp, Backbone, Marionette, $, _) {
 	    List.Controller = {
 	        listProjects: function () {
-	            var fetchProjects = CommittedApp.request('projects');
 	            var loadingView = new LoadingView();
 	            CommittedApp.mainRegion.show(loadingView);
 
+	            var fetchProjects = CommittedApp.request('projects');
 	            fetchProjects.then(function (projects) {
-	                var projectsListView;
-
-	                if(projects.length === 0) {
-	                    projectsListView = new NoProjectsView();
-	                } else {
-	                    projectsListView = new ProjectsView({
-	                        collection: projects
-	                    });
-	                }
+	                var projectsListView = new ProjectsView({
+	                    collection: projects
+	                });
+	                projectsListView.on('itemview:project:show', function (childView, args) {
+	                    console.log(args);
+	                });
 
 	                CommittedApp.mainRegion.show(projectsListView);
 	            }, function (error) {
@@ -24661,9 +24657,9 @@
 
 	var CommittedApp = __webpack_require__(1),
 	    Parse = __webpack_require__(7).Parse,
-	    LoadingView = __webpack_require__(31),
-	    ProjectView = __webpack_require__(29),
-	    MissingProjectView = __webpack_require__(30);
+	    LoadingView = __webpack_require__(30),
+	    ProjectView = __webpack_require__(28),
+	    MissingProjectView = __webpack_require__(29);
 
 	/**
 	 * Show controller
@@ -25320,6 +25316,33 @@
 	 */
 
 	var CommittedApp = __webpack_require__(1),
+	    ProjectView = __webpack_require__(33),
+	    NoProjectsView = __webpack_require__(34);
+
+	/**
+	 * List.Projects view module
+	 */
+
+	CommittedApp.module('ProjectsApp.List', function (List, CommittedApp, Backbone, Marionette, $, _) {
+	    List.Projects = Marionette.CollectionView.extend({
+	        className: 'ui three stackable items',
+	        itemView: ProjectView,
+
+	        emptyView: NoProjectsView
+	    });
+
+	    module.exports = List.Projects;
+	});
+
+/***/ },
+/* 26 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Module dependencies
+	 */
+
+	var CommittedApp = __webpack_require__(1),
 	    FormView = __webpack_require__(35),
 	    loadingViewTpl = __webpack_require__(36);
 
@@ -25336,7 +25359,7 @@
 	});
 
 /***/ },
-/* 26 */
+/* 27 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -25360,30 +25383,6 @@
 	});
 
 /***/ },
-/* 27 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Module dependencies
-	 */
-
-	var CommittedApp = __webpack_require__(1),
-	    ProjectView = __webpack_require__(34);
-
-	/**
-	 * List.Projects view module
-	 */
-
-	CommittedApp.module('ProjectsApp.List', function (List, CommittedApp, Backbone, Marionette, $, _) {
-	    List.Projects = Marionette.CollectionView.extend({
-	        className: 'ui three stackable items',
-	        itemView: ProjectView
-	    });
-
-	    module.exports = List.Projects;
-	});
-
-/***/ },
 /* 28 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -25392,30 +25391,7 @@
 	 */
 
 	var CommittedApp = __webpack_require__(1),
-	    noProjectsTpl = __webpack_require__(38);
-
-	/**
-	 * List.NoProjects view
-	 */
-
-	CommittedApp.module('ProjectsApp.List', function (List, CommittedApp, Backbone, Marionette, $, _) {
-	    List.NoProjects = Marionette.ItemView.extend({
-	        template: noProjectsTpl
-	    });
-
-	    module.exports = List.NoProjects;
-	});
-
-/***/ },
-/* 29 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Module dependencies
-	 */
-
-	var CommittedApp = __webpack_require__(1),
-	    projectViewTpl = __webpack_require__(39);
+	    projectViewTpl = __webpack_require__(38);
 
 	/**
 	 * Show.Project view
@@ -25431,7 +25407,7 @@
 	});
 
 /***/ },
-/* 30 */
+/* 29 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -25439,7 +25415,7 @@
 	 */
 
 	var CommittedApp = __webpack_require__(1),
-	    missingViewTpl = __webpack_require__(40);
+	    missingViewTpl = __webpack_require__(39);
 
 	CommittedApp.module('Show', function (Show, CommittedApp, Backbone, Marionette, $, _) {
 	    Show.Missing = Marionette.ItemView.extend({
@@ -25461,7 +25437,7 @@
 	});
 
 /***/ },
-/* 31 */
+/* 30 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -25469,7 +25445,7 @@
 	 */
 
 	var CommittedApp = __webpack_require__(1),
-	    loadingViewTpl = __webpack_require__(41);
+	    loadingViewTpl = __webpack_require__(40);
 
 	CommittedApp.module('Common.Views', function (Views, CommittedApp, Backbone, Marionette, $, _) {
 
@@ -25496,7 +25472,7 @@
 	});
 
 /***/ },
-/* 32 */
+/* 31 */
 /***/ function(module, exports, __webpack_require__) {
 
 	(function (root, factory) {
@@ -25779,7 +25755,7 @@
 
 
 /***/ },
-/* 33 */
+/* 32 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// Backbone.BabySitter
@@ -25965,7 +25941,7 @@
 
 
 /***/ },
-/* 34 */
+/* 33 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -25982,10 +25958,37 @@
 	CommittedApp.module('ProjectsApp.List', function (List, CommittedApp, Backbone, Marionette, $, _) {
 	    List.Project = Marionette.ItemView.extend({
 	        className: 'item',
-	        template: projectTpl
+	        template: projectTpl,
+
+	        triggers: {
+	            'click .js-project': 'project:show'
+	        }
 	    });
 
 	    module.exports = List.Project;
+	});
+
+/***/ },
+/* 34 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Module dependencies
+	 */
+
+	var CommittedApp = __webpack_require__(1),
+	    noProjectsTpl = __webpack_require__(41);
+
+	/**
+	 * List.NoProjects view
+	 */
+
+	CommittedApp.module('ProjectsApp.List', function (List, CommittedApp, Backbone, Marionette, $, _) {
+	    List.NoProjects = Marionette.ItemView.extend({
+	        template: noProjectsTpl
+	    });
+
+	    module.exports = List.NoProjects;
 	});
 
 /***/ },
@@ -26081,19 +26084,6 @@
 	module.exports = __webpack_require__(44).default.template(function (Handlebars,depth0,helpers,partials,data) {
 	  this.compilerInfo = [4,'>= 1.0.0'];
 	helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-	  
-
-
-	  return "<div class=\"ui huge icon message\">\n    <i class=\"inbox icon\"></i>\n    <div class=\"content\">\n        <div class=\"header\">\n            Awww ...\n        </div>\n        <p>You haven't created any projects yet :(</p>\n    </div>\n</div>";
-	  });
-
-/***/ },
-/* 39 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = __webpack_require__(44).default.template(function (Handlebars,depth0,helpers,partials,data) {
-	  this.compilerInfo = [4,'>= 1.0.0'];
-	helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 	  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression;
 
 
@@ -26106,7 +26096,7 @@
 	  });
 
 /***/ },
-/* 40 */
+/* 39 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__(44).default.template(function (Handlebars,depth0,helpers,partials,data) {
@@ -26124,7 +26114,7 @@
 	  });
 
 /***/ },
-/* 41 */
+/* 40 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__(44).default.template(function (Handlebars,depth0,helpers,partials,data) {
@@ -26142,6 +26132,19 @@
 	  });
 
 /***/ },
+/* 41 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__(44).default.template(function (Handlebars,depth0,helpers,partials,data) {
+	  this.compilerInfo = [4,'>= 1.0.0'];
+	helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+	  
+
+
+	  return "<div class=\"ui huge icon message\">\n    <i class=\"inbox icon\"></i>\n    <div class=\"content\">\n        <div class=\"header\">\n            Awww ...\n        </div>\n        <p>You haven't created any projects yet :(</p>\n    </div>\n</div>";
+	  });
+
+/***/ },
 /* 42 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -26151,7 +26154,7 @@
 	  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression;
 
 
-	  buffer += "<div class=\"content\">\n    <div class=\"name\">";
+	  buffer += "<div class=\"js-project content\">\n    <div class=\"name\">";
 	  if (helper = helpers.name) { stack1 = helper.call(depth0, {hash:{},data:data}); }
 	  else { helper = (depth0 && depth0.name); stack1 = typeof helper === functionType ? helper.call(depth0, {hash:{},data:data}) : helper; }
 	  buffer += escapeExpression(stack1)

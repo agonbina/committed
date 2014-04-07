@@ -12,7 +12,11 @@ var CommittedApp = require('app'),
 CommittedApp.module('ProjectsApp.List', function (List, CommittedApp, Backbone, Marionette, $, _) {
     List.Project = Marionette.ItemView.extend({
         className: 'item',
-        template: projectTpl
+        template: projectTpl,
+
+        triggers: {
+            'click .js-project': 'project:show'
+        }
     });
 
     module.exports = List.Project;

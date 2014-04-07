@@ -4,7 +4,7 @@
 
 var CommittedApp = require('app'),
     FormView = require('../common/views/form_view'),
-    signupViewTpl = require('./templates/signup_view.hbs');
+    signupViewTpl = require('./templates/signup.hbs');
 
 /**
  * Signup form view

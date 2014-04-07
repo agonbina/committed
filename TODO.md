@@ -4,12 +4,20 @@ Other:
 
 Apps(Sub-Apps):
 + Authentication
+    * Show
+        + login
+        + signup
 - Projects
-    + List
+    * List
         + all
         - for userId
-    + Show project
-    + New
-        - new project for user
+    * Show
+        - project by id
+    * New
+        - project for current user
 - Notifications
+    * Show
+        - show triggered notification
 - Commits
+    * List
+        - by projectId

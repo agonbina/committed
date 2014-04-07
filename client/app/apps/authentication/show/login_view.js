@@ -4,7 +4,7 @@
 
 var CommittedApp = require('app'),
     FormView = require('../common/views/form_view'),
-    loadingViewTpl = require('./templates/login_view.hbs');
+    loadingViewTpl = require('./templates/login.hbs');
 
 /**
  * Login view

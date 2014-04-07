@@ -3,7 +3,7 @@
  */
 
 var CommittedApp = require('app'),
-    loadingViewTpl = require('./templates/loading_view.hbs');
+    loadingViewTpl = require('./templates/loading.hbs');
 
 CommittedApp.module('Common.Views', function (Views, CommittedApp, Backbone, Marionette, $, _) {
 

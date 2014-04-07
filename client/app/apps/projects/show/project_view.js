@@ -3,7 +3,7 @@
  */
 
 var CommittedApp = require('app'),
-    ProjectViewTpl = require('./templates/project_view.hbs');
+    ProjectViewTpl = require('./templates/project.hbs');
 
 /**
  * Show.Project view

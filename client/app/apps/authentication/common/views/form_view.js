@@ -3,7 +3,7 @@
  */
 
 var CommittedApp = require('app'),
-    formViewTpl = require('./templates/form_view.hbs');
+    formViewTpl = require('./templates/form.hbs');
 
 CommittedApp.module('AuthApp.Common.Views', function (Views, CommittedApp, Backbone, Marionette, $, _) {
     Views.Form = Marionette.ItemView.extend({

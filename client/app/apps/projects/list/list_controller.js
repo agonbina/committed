@@ -4,7 +4,8 @@
 
 var CommittedApp = require('app'),
     ProjectsView = require('./projects_view'),
-    LoadingView = require('../../../common/views/loading_view');
+    LoadingView = require('../../../common/views/loading_view'),
+    NoProjectsView = require('./no_projects_view');
 
 /**
  * ProjectsApp.List controller
@@ -18,9 +19,15 @@ CommittedApp.module('ProjectsApp.List', function (List, CommittedApp, Backbone, 
             CommittedApp.mainRegion.show(loadingView);
 
             fetchProjects.then(function (projects) {
-                var projectsListView = new ProjectsView({
-                    collection: projects
-                });
+                var projectsListView;
+
+                if(projects.length === 0) {
+                    projectsListView = new NoProjectsView();
+                } else {
+                    projectsListView = new ProjectsView({
+                        collection: projects
+                    });
+                }
 
                 CommittedApp.mainRegion.show(projectsListView);
             }, function (error) {

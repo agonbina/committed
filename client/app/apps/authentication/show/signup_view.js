@@ -3,7 +3,7 @@
  */
 
 var CommittedApp = require('app'),
-    FormView = require('../common/views/form_view'),
+    FormView = require('../../../common/views/form_view'),
     signupViewTpl = require('./templates/signup.hbs');
 
 /**

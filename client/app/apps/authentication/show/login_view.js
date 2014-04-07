@@ -3,8 +3,8 @@
  */
 
 var CommittedApp = require('app'),
-    FormView = require('../common/views/form_view'),
-    loadingViewTpl = require('./templates/login.hbs');
+    FormView = require('../../../common/views/form_view'),
+    loginViewTpl = require('./templates/login.hbs');
 
 /**
  * Login view
@@ -12,7 +12,7 @@ var CommittedApp = require('app'),
 
 CommittedApp.module('AuthApp.Show', function (Show, CommittedApp, Backbone, Marionette, $, _) {
     Show.Login = FormView.extend({
-        template: loadingViewTpl
+        template: loginViewTpl
     });
 
     module.exports = Show.Login;

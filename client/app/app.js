@@ -12,6 +12,7 @@ require('./config/vent')(CommittedApp);
 require('./config/vendor/backbone.validation');
 require('./config/vendor/underscore');
 
+// External libraries
 require('backbone.routefilter');
 require('backbone.syphon');
 

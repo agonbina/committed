@@ -3,7 +3,7 @@
  */
 
 var CommittedApp = require('app'),
-    ProjectViewTpl = require('./templates/project.hbs');
+    projectViewTpl = require('./templates/project.hbs');
 
 /**
  * Show.Project view
@@ -11,7 +11,7 @@ var CommittedApp = require('app'),
 
 CommittedApp.module('ProjectsApp.Show', function (Show, CommittedApp, Backbone, Marionette, $, _) {
     Show.Project = Marionette.ItemView.extend({
-        template: ProjectViewTpl,
+        template: projectViewTpl,
         className: 'ui raised segment'
     });
 

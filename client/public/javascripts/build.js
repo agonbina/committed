@@ -143,7 +143,8 @@
 	__webpack_require__(12);
 	__webpack_require__(13);
 
-	__webpack_require__(17);
+	// External libraries
+	__webpack_require__(18);
 	__webpack_require__(19);
 
 	module.exports = CommittedApp;
@@ -426,7 +427,7 @@
 	        }
 
 	        Parse._ = __webpack_require__(9);
-	        Parse.$ = __webpack_require__(18);
+	        Parse.$ = __webpack_require__(17);
 
 	        exports.Parse = Parse;
 	    }
@@ -8301,7 +8302,7 @@
 
 	  // Set up Backbone appropriately for the environment. Start with AMD.
 	  if (true) {
-	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(9), __webpack_require__(18), exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, $, exports) {
+	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(9), __webpack_require__(17), exports], __WEBPACK_AMD_DEFINE_RESULT__ = (function(_, $, exports) {
 	      // Export global even in AMD case in case this script is loaded with
 	      // others that may still expect a global Backbone.
 	      root.Backbone = factory(root, exports, _, $);
@@ -11214,7 +11215,7 @@
 	        $field.append($error);
 	    }
 	});
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9), __webpack_require__(18)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9), __webpack_require__(17)))
 
 /***/ },
 /* 13 */
@@ -11388,8 +11389,8 @@
 
 	    var underscore = __webpack_require__(9);
 	    var backbone = __webpack_require__(8);
-	    var wreqr = __webpack_require__(31);
-	    var babysitter = __webpack_require__(32);
+	    var wreqr = __webpack_require__(32);
+	    var babysitter = __webpack_require__(33);
 
 	    module.exports = factory(underscore, backbone, wreqr, babysitter);
 
@@ -13515,133 +13516,6 @@
 
 /***/ },
 /* 17 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(_, Backbone) {/*! backbone.routefilter - v0.2.0 - 2013-02-16
-	* https://github.com/boazsender/backbone.routefilter
-	* Copyright (c) 2013 Boaz Sender; Licensed MIT */
-
-	(function(Backbone, _) {
-
-	  // Save a reference to the original route method to be called
-	  // after we pave it over.
-	  var originalRoute = Backbone.Router.prototype.route;
-
-	  // Create a reusable no operation func for the case where a before
-	  // or after filter is not set. Backbone or Underscore should have
-	  // a global one of these in my opinion.
-	  var nop = function(){};
-
-	  // Extend the router prototype with a default before function,
-	  // a default after function, and a pave over of _bindRoutes.
-	  _.extend(Backbone.Router.prototype, {
-
-	    // Add default before filter.
-	    before: nop,
-
-	    // Add default after filter.
-	    after: nop,
-
-	    // Pave over Backbone.Router.prototype.route, the public method used
-	    // for adding routes to a router instance on the fly, and the
-	    // method which backbone uses internally for binding routes to handlers
-	    // on the Backbone.history singleton once it's instantiated.
-	    route: function(route, name, callback) {
-
-	      // If there is no callback present for this route, then set it to
-	      // be the name that was set in the routes property of the constructor,
-	      // or the name arguement of the route method invocation. This is what
-	      // Backbone.Router.route already does. We need to do it again,
-	      // because we are about to wrap the callback in a function that calls
-	      // the before and after filters as well as the original callback that
-	      // was passed in.
-	      if( !callback ){
-	        callback = this[ name ];
-	      }
-
-	      // Create a new callback to replace the original callback that calls
-	      // the before and after filters as well as the original callback
-	      // internally.
-	      var wrappedCallback = _.bind( function() {
-
-	        // Call the before filter and if it returns false, run the
-	        // route's original callback, and after filter. This allows
-	        // the user to return false from within the before filter
-	        // to prevent the original route callback and after
-	        // filter from running.
-	        var callbackArgs = [ route, _.toArray(arguments) ];
-	        var beforeCallback;
-
-	        if ( _.isFunction(this.before) ) {
-
-	          // If the before filter is just a single function, then call
-	          // it with the arguments.
-	          beforeCallback = this.before;
-	        } else if ( typeof this.before[route] !== "undefined" ) {
-
-	          // otherwise, find the appropriate callback for the route name
-	          // and call that.
-	          beforeCallback = this.before[route];
-	        } else {
-
-	          // otherwise, if we have a hash of routes, but no before callback
-	          // for this route, just use a nop function.
-	          beforeCallback = nop;
-	        }
-
-	        // If the before callback fails during its execusion (by returning)
-	        // false, then do not proceed with the route triggering.
-	        if ( beforeCallback.apply(this, callbackArgs) === false ) {
-	          return;
-	        }
-
-	        // If the callback exists, then call it. This means that the before
-	        // and after filters will be called whether or not an actual
-	        // callback function is supplied to handle a given route.
-	        if( callback ) {
-	          callback.apply( this, arguments );
-	        }
-
-	        var afterCallback;
-	        if ( _.isFunction(this.after) ) {
-
-	          // If the after filter is a single funciton, then call it with
-	          // the proper arguments.
-	          afterCallback = this.after;
-
-	        } else if ( typeof this.after[route] !== "undefined" ) {
-
-	          // otherwise if we have a hash of routes, call the appropriate
-	          // callback based on the route name.
-	          afterCallback = this.after[route];
-
-	        } else {
-
-	          // otherwise, if we have a has of routes but no after callback
-	          // for this route, just use the nop function.
-	          afterCallback = nop;
-	        }
-
-	        // Call the after filter.
-	        afterCallback.apply( this, callbackArgs );
-
-	      }, this);
-
-	      // Call our original route, replacing the callback that was originally
-	      // passed in when Backbone.Router.route was invoked with our wrapped
-	      // callback that calls the before and after callbacks as well as the
-	      // original callback.
-	      return originalRoute.call( this, route, name, wrappedCallback );
-	    }
-
-	  });
-
-	}(Backbone, _));
-	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9), __webpack_require__(8)))
-
-/***/ },
-/* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -23984,6 +23858,133 @@
 
 
 /***/ },
+/* 18 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(_, Backbone) {/*! backbone.routefilter - v0.2.0 - 2013-02-16
+	* https://github.com/boazsender/backbone.routefilter
+	* Copyright (c) 2013 Boaz Sender; Licensed MIT */
+
+	(function(Backbone, _) {
+
+	  // Save a reference to the original route method to be called
+	  // after we pave it over.
+	  var originalRoute = Backbone.Router.prototype.route;
+
+	  // Create a reusable no operation func for the case where a before
+	  // or after filter is not set. Backbone or Underscore should have
+	  // a global one of these in my opinion.
+	  var nop = function(){};
+
+	  // Extend the router prototype with a default before function,
+	  // a default after function, and a pave over of _bindRoutes.
+	  _.extend(Backbone.Router.prototype, {
+
+	    // Add default before filter.
+	    before: nop,
+
+	    // Add default after filter.
+	    after: nop,
+
+	    // Pave over Backbone.Router.prototype.route, the public method used
+	    // for adding routes to a router instance on the fly, and the
+	    // method which backbone uses internally for binding routes to handlers
+	    // on the Backbone.history singleton once it's instantiated.
+	    route: function(route, name, callback) {
+
+	      // If there is no callback present for this route, then set it to
+	      // be the name that was set in the routes property of the constructor,
+	      // or the name arguement of the route method invocation. This is what
+	      // Backbone.Router.route already does. We need to do it again,
+	      // because we are about to wrap the callback in a function that calls
+	      // the before and after filters as well as the original callback that
+	      // was passed in.
+	      if( !callback ){
+	        callback = this[ name ];
+	      }
+
+	      // Create a new callback to replace the original callback that calls
+	      // the before and after filters as well as the original callback
+	      // internally.
+	      var wrappedCallback = _.bind( function() {
+
+	        // Call the before filter and if it returns false, run the
+	        // route's original callback, and after filter. This allows
+	        // the user to return false from within the before filter
+	        // to prevent the original route callback and after
+	        // filter from running.
+	        var callbackArgs = [ route, _.toArray(arguments) ];
+	        var beforeCallback;
+
+	        if ( _.isFunction(this.before) ) {
+
+	          // If the before filter is just a single function, then call
+	          // it with the arguments.
+	          beforeCallback = this.before;
+	        } else if ( typeof this.before[route] !== "undefined" ) {
+
+	          // otherwise, find the appropriate callback for the route name
+	          // and call that.
+	          beforeCallback = this.before[route];
+	        } else {
+
+	          // otherwise, if we have a hash of routes, but no before callback
+	          // for this route, just use a nop function.
+	          beforeCallback = nop;
+	        }
+
+	        // If the before callback fails during its execusion (by returning)
+	        // false, then do not proceed with the route triggering.
+	        if ( beforeCallback.apply(this, callbackArgs) === false ) {
+	          return;
+	        }
+
+	        // If the callback exists, then call it. This means that the before
+	        // and after filters will be called whether or not an actual
+	        // callback function is supplied to handle a given route.
+	        if( callback ) {
+	          callback.apply( this, arguments );
+	        }
+
+	        var afterCallback;
+	        if ( _.isFunction(this.after) ) {
+
+	          // If the after filter is a single funciton, then call it with
+	          // the proper arguments.
+	          afterCallback = this.after;
+
+	        } else if ( typeof this.after[route] !== "undefined" ) {
+
+	          // otherwise if we have a hash of routes, call the appropriate
+	          // callback based on the route name.
+	          afterCallback = this.after[route];
+
+	        } else {
+
+	          // otherwise, if we have a has of routes but no after callback
+	          // for this route, just use the nop function.
+	          afterCallback = nop;
+	        }
+
+	        // Call the after filter.
+	        afterCallback.apply( this, callbackArgs );
+
+	      }, this);
+
+	      // Call our original route, replacing the callback that was originally
+	      // passed in when Backbone.Router.route was invoked with our wrapped
+	      // callback that calls the before and after callbacks as well as the
+	      // original callback.
+	      return originalRoute.call( this, route, name, wrappedCallback );
+	    }
+
+	  });
+
+	}(Backbone, _));
+	
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(9), __webpack_require__(8)))
+
+/***/ },
 /* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -23994,7 +23995,7 @@
 	(function (root, factory) {
 	    if (true) {
 	        // AMD. Register as an anonymous module.
-	        !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(9), __webpack_require__(18), __webpack_require__(8)], __WEBPACK_AMD_DEFINE_RESULT__ = (factory.apply(null, __WEBPACK_AMD_DEFINE_ARRAY__)), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	        !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(9), __webpack_require__(17), __webpack_require__(8)], __WEBPACK_AMD_DEFINE_RESULT__ = (factory.apply(null, __WEBPACK_AMD_DEFINE_ARRAY__)), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	    }
 	}(this, function (_, jQuery, Backbone) {
 	  Backbone.Syphon = (function(Backbone, $, _){
@@ -24542,8 +24543,8 @@
 	 */
 
 	var CommittedApp = __webpack_require__(1),
-	    LoginView = __webpack_require__(28),
-	    SignupView = __webpack_require__(29);
+	    LoginView = __webpack_require__(25),
+	    SignupView = __webpack_require__(26);
 
 	/**
 	 * AuthApp.Show controller
@@ -24614,9 +24615,9 @@
 	 */
 
 	var CommittedApp = __webpack_require__(1),
-	    ProjectsView = __webpack_require__(25),
-	    LoadingView = __webpack_require__(30),
-	    NoProjectsView = __webpack_require__(26);
+	    ProjectsView = __webpack_require__(27),
+	    LoadingView = __webpack_require__(31),
+	    NoProjectsView = __webpack_require__(28);
 
 	/**
 	 * ProjectsApp.List controller
@@ -24659,8 +24660,10 @@
 	 */
 
 	var CommittedApp = __webpack_require__(1),
-	    ProjectView = __webpack_require__(27),
-	    LoadingView = __webpack_require__(30);
+	    Parse = __webpack_require__(7).Parse,
+	    LoadingView = __webpack_require__(31),
+	    ProjectView = __webpack_require__(29),
+	    MissingProjectView = __webpack_require__(30);
 
 	/**
 	 * Show controller
@@ -24672,17 +24675,19 @@
 	            var loadingView = new LoadingView();
 	            CommittedApp.mainRegion.show(loadingView);
 
-	            var fetchProject = CommittedApp.request('project:entity', id);
+	            var fetchProject = CommittedApp.request('project', id);
 
 	            fetchProject.then(function (project) {
 	                var projectView = new ProjectView({
 	                    model: project
 	                });
-	                setTimeout(function () {
-	                    CommittedApp.mainRegion.show(projectView);
-	                }, 2000);
+
+	                CommittedApp.mainRegion.show(projectView);
 	            }, function (error) {
-	                console.log(error);
+	                if(error.code === Parse.Error.OBJECT_NOT_FOUND) {
+	                    var missingView = new MissingProjectView();
+	                    CommittedApp.mainRegion.show(missingView);
+	                }
 	            });
 	        }
 	    };
@@ -25314,7 +25319,55 @@
 	 */
 
 	var CommittedApp = __webpack_require__(1),
-	    ProjectView = __webpack_require__(33);
+	    FormView = __webpack_require__(35),
+	    loadingViewTpl = __webpack_require__(36);
+
+	/**
+	 * Login view
+	 */
+
+	CommittedApp.module('AuthApp.Show', function (Show, CommittedApp, Backbone, Marionette, $, _) {
+	    Show.Login = FormView.extend({
+	        template: loadingViewTpl
+	    });
+
+	    module.exports = Show.Login;
+	});
+
+/***/ },
+/* 26 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Module dependencies
+	 */
+
+	var CommittedApp = __webpack_require__(1),
+	    FormView = __webpack_require__(35),
+	    signupViewTpl = __webpack_require__(37);
+
+	/**
+	 * Signup form view
+	 */
+
+	CommittedApp.module('Views', function (Views, CommittedApp, Backbone, Marionette, $, _) {
+	    Views.Signup = FormView.extend({
+	        template: signupViewTpl
+	    });
+
+	    module.exports = Views.Signup;
+	});
+
+/***/ },
+/* 27 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Module dependencies
+	 */
+
+	var CommittedApp = __webpack_require__(1),
+	    ProjectView = __webpack_require__(34);
 
 	/**
 	 * List.Projects view module
@@ -25330,7 +25383,7 @@
 	});
 
 /***/ },
-/* 26 */
+/* 28 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -25338,7 +25391,7 @@
 	 */
 
 	var CommittedApp = __webpack_require__(1),
-	    noProjectsTpl = __webpack_require__(35);
+	    noProjectsTpl = __webpack_require__(38);
 
 	/**
 	 * List.NoProjects view
@@ -25353,54 +25406,6 @@
 	});
 
 /***/ },
-/* 27 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Module dependencies
-	 */
-
-	var CommittedApp = __webpack_require__(1),
-	    ProjectViewTpl = __webpack_require__(36);
-
-	/**
-	 * Show.Project view
-	 */
-
-	CommittedApp.module('ProjectsApp.Show', function (Show, CommittedApp, Backbone, Marionette, $, _) {
-	    Show.Project = Marionette.ItemView.extend({
-	        template: ProjectViewTpl,
-	        className: 'ui raised segment'
-	    });
-
-	    module.exports = Show.Project;
-	});
-
-/***/ },
-/* 28 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Module dependencies
-	 */
-
-	var CommittedApp = __webpack_require__(1),
-	    FormView = __webpack_require__(34),
-	    loadingViewTpl = __webpack_require__(37);
-
-	/**
-	 * Login view
-	 */
-
-	CommittedApp.module('AuthApp.Show', function (Show, CommittedApp, Backbone, Marionette, $, _) {
-	    Show.Login = FormView.extend({
-	        template: loadingViewTpl
-	    });
-
-	    module.exports = Show.Login;
-	});
-
-/***/ },
 /* 29 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -25409,19 +25414,19 @@
 	 */
 
 	var CommittedApp = __webpack_require__(1),
-	    FormView = __webpack_require__(34),
-	    signupViewTpl = __webpack_require__(38);
+	    projectViewTpl = __webpack_require__(39);
 
 	/**
-	 * Signup form view
+	 * Show.Project view
 	 */
 
-	CommittedApp.module('Views', function (Views, CommittedApp, Backbone, Marionette, $, _) {
-	    Views.Signup = FormView.extend({
-	        template: signupViewTpl
+	CommittedApp.module('ProjectsApp.Show', function (Show, CommittedApp, Backbone, Marionette, $, _) {
+	    Show.Project = Marionette.ItemView.extend({
+	        template: projectViewTpl,
+	        className: 'ui raised segment'
 	    });
 
-	    module.exports = Views.Signup;
+	    module.exports = Show.Project;
 	});
 
 /***/ },
@@ -25433,7 +25438,26 @@
 	 */
 
 	var CommittedApp = __webpack_require__(1),
-	    loadingViewTpl = __webpack_require__(39);
+	    missingViewTpl = __webpack_require__(40);
+
+	CommittedApp.module('Show', function (Show, CommittedApp, Backbone, Marionette, $, _) {
+	    Show.Missing = Marionette.ItemView.extend({
+	        template: missingViewTpl
+	    });
+
+	    module.exports = Show.Missing;
+	});
+
+/***/ },
+/* 31 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Module dependencies
+	 */
+
+	var CommittedApp = __webpack_require__(1),
+	    loadingViewTpl = __webpack_require__(41);
 
 	CommittedApp.module('Common.Views', function (Views, CommittedApp, Backbone, Marionette, $, _) {
 
@@ -25460,7 +25484,7 @@
 	});
 
 /***/ },
-/* 31 */
+/* 32 */
 /***/ function(module, exports, __webpack_require__) {
 
 	(function (root, factory) {
@@ -25743,7 +25767,7 @@
 
 
 /***/ },
-/* 32 */
+/* 33 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// Backbone.BabySitter
@@ -25929,7 +25953,7 @@
 
 
 /***/ },
-/* 33 */
+/* 34 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -25937,7 +25961,7 @@
 	 */
 
 	var CommittedApp = __webpack_require__(1),
-	    projectTpl = __webpack_require__(40);
+	    projectTpl = __webpack_require__(42);
 
 	/**
 	 * List.Project view
@@ -25953,7 +25977,7 @@
 	});
 
 /***/ },
-/* 34 */
+/* 35 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -25961,7 +25985,7 @@
 	 */
 
 	var CommittedApp = __webpack_require__(1),
-	    formViewTpl = __webpack_require__(41);
+	    formViewTpl = __webpack_require__(43);
 
 	CommittedApp.module('AuthApp.Common.Views', function (Views, CommittedApp, Backbone, Marionette, $, _) {
 	    Views.Form = Marionette.ItemView.extend({
@@ -26013,10 +26037,36 @@
 	});
 
 /***/ },
-/* 35 */
+/* 36 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(42).default.template(function (Handlebars,depth0,helpers,partials,data) {
+	module.exports = __webpack_require__(44).default.template(function (Handlebars,depth0,helpers,partials,data) {
+	  this.compilerInfo = [4,'>= 1.0.0'];
+	helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+	  
+
+
+	  return "<div class=\"two fields\">\n    <div class=\"field\">\n        <div class=\"ui left labeled icon input\">\n            <input placeholder=\"E-mail\" name=\"email\" type=\"email\">\n            <i class=\"mail icon\"></i>\n            <div class=\"ui corner label\">\n                <i class=\"icon asterisk\"></i>\n            </div>\n        </div>\n    </div>\n    <div class=\"field\">\n        <div class=\"ui left labeled icon input\">\n            <input placeholder=\"Password\" name=\"password\" type=\"password\">\n            <i class=\"lock icon\"></i>\n            <div class=\"ui corner label\">\n                <i class=\"icon asterisk\"></i>\n            </div>\n        </div>\n    </div>\n</div>\n<button class=\"ui blue button\" type=\"submit\">Login :)</button>";
+	  });
+
+/***/ },
+/* 37 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__(44).default.template(function (Handlebars,depth0,helpers,partials,data) {
+	  this.compilerInfo = [4,'>= 1.0.0'];
+	helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+	  
+
+
+	  return "<div class=\"two fields\">\n    <div class=\"field\">\n        <div class=\"ui left labeled icon input\">\n            <input placeholder=\"E-mail\" name=\"email\" type=\"email\">\n            <i class=\"mail icon\"></i>\n            <div class=\"ui corner label\">\n                <i class=\"icon asterisk\"></i>\n            </div>\n        </div>\n    </div>\n    <div class=\"field\">\n        <div class=\"ui left labeled icon input\">\n            <input placeholder=\"Password\" name=\"password\" type=\"password\">\n            <i class=\"lock icon\"></i>\n            <div class=\"ui corner label\">\n                <i class=\"icon asterisk\"></i>\n            </div>\n        </div>\n    </div>\n</div>\n<button class=\"ui blue button\" type=\"submit\">Ready to roll!</button>";
+	  });
+
+/***/ },
+/* 38 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__(44).default.template(function (Handlebars,depth0,helpers,partials,data) {
 	  this.compilerInfo = [4,'>= 1.0.0'];
 	helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 	  
@@ -26026,10 +26076,10 @@
 	  });
 
 /***/ },
-/* 36 */
+/* 39 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(42).default.template(function (Handlebars,depth0,helpers,partials,data) {
+	module.exports = __webpack_require__(44).default.template(function (Handlebars,depth0,helpers,partials,data) {
 	  this.compilerInfo = [4,'>= 1.0.0'];
 	helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 	  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression;
@@ -26044,36 +26094,23 @@
 	  });
 
 /***/ },
-/* 37 */
+/* 40 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(42).default.template(function (Handlebars,depth0,helpers,partials,data) {
+	module.exports = __webpack_require__(44).default.template(function (Handlebars,depth0,helpers,partials,data) {
 	  this.compilerInfo = [4,'>= 1.0.0'];
 	helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 	  
 
 
-	  return "<div class=\"two fields\">\n    <div class=\"field\">\n        <div class=\"ui left labeled icon input\">\n            <input placeholder=\"E-mail\" name=\"email\" type=\"email\">\n            <i class=\"mail icon\"></i>\n            <div class=\"ui corner label\">\n                <i class=\"icon asterisk\"></i>\n            </div>\n        </div>\n    </div>\n    <div class=\"field\">\n        <div class=\"ui left labeled icon input\">\n            <input placeholder=\"Password\" name=\"password\" type=\"password\">\n            <i class=\"lock icon\"></i>\n            <div class=\"ui corner label\">\n                <i class=\"icon asterisk\"></i>\n            </div>\n        </div>\n    </div>\n</div>\n<button class=\"ui blue button\" type=\"submit\">Login :)</button>";
+	  return "<div class=\"ui red icon message\">\n    <i class=\"frown icon\"></i>\n    <div class=\"content\">\n        <div class=\"header\">Project not found</div>\n        <p>Hmmm, seems like this project never existed.</p>\n    </div>\n</div>";
 	  });
 
 /***/ },
-/* 38 */
+/* 41 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(42).default.template(function (Handlebars,depth0,helpers,partials,data) {
-	  this.compilerInfo = [4,'>= 1.0.0'];
-	helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-	  
-
-
-	  return "<div class=\"two fields\">\n    <div class=\"field\">\n        <div class=\"ui left labeled icon input\">\n            <input placeholder=\"E-mail\" name=\"email\" type=\"email\">\n            <i class=\"mail icon\"></i>\n            <div class=\"ui corner label\">\n                <i class=\"icon asterisk\"></i>\n            </div>\n        </div>\n    </div>\n    <div class=\"field\">\n        <div class=\"ui left labeled icon input\">\n            <input placeholder=\"Password\" name=\"password\" type=\"password\">\n            <i class=\"lock icon\"></i>\n            <div class=\"ui corner label\">\n                <i class=\"icon asterisk\"></i>\n            </div>\n        </div>\n    </div>\n</div>\n<button class=\"ui blue button\" type=\"submit\">Ready to roll!</button>";
-	  });
-
-/***/ },
-/* 39 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = __webpack_require__(42).default.template(function (Handlebars,depth0,helpers,partials,data) {
+	module.exports = __webpack_require__(44).default.template(function (Handlebars,depth0,helpers,partials,data) {
 	  this.compilerInfo = [4,'>= 1.0.0'];
 	helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 	  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression;
@@ -26088,10 +26125,10 @@
 	  });
 
 /***/ },
-/* 40 */
+/* 42 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(42).default.template(function (Handlebars,depth0,helpers,partials,data) {
+	module.exports = __webpack_require__(44).default.template(function (Handlebars,depth0,helpers,partials,data) {
 	  this.compilerInfo = [4,'>= 1.0.0'];
 	helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 	  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression;
@@ -26106,10 +26143,10 @@
 	  });
 
 /***/ },
-/* 41 */
+/* 43 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(42).default.template(function (Handlebars,depth0,helpers,partials,data) {
+	module.exports = __webpack_require__(44).default.template(function (Handlebars,depth0,helpers,partials,data) {
 	  this.compilerInfo = [4,'>= 1.0.0'];
 	helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 	  
@@ -26119,28 +26156,28 @@
 	  });
 
 /***/ },
-/* 42 */
+/* 44 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// Create a simple path alias to allow browserify to resolve
 	// the runtime on a supported path.
-	module.exports = __webpack_require__(43);
+	module.exports = __webpack_require__(45);
 
 
 /***/ },
-/* 43 */
+/* 45 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	/*globals Handlebars: true */
-	var base = __webpack_require__(44);
+	var base = __webpack_require__(46);
 
 	// Each of these augment the Handlebars object. No need to setup here.
 	// (This is done to easily share code between commonjs and browse envs)
-	var SafeString = __webpack_require__(45)["default"];
-	var Exception = __webpack_require__(46)["default"];
-	var Utils = __webpack_require__(47);
-	var runtime = __webpack_require__(48);
+	var SafeString = __webpack_require__(47)["default"];
+	var Exception = __webpack_require__(48)["default"];
+	var Utils = __webpack_require__(49);
+	var runtime = __webpack_require__(50);
 
 	// For compatibility and usage outside of module systems, make the Handlebars object a namespace
 	var create = function() {
@@ -26165,12 +26202,12 @@
 	exports["default"] = Handlebars;
 
 /***/ },
-/* 44 */
+/* 46 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var Utils = __webpack_require__(47);
-	var Exception = __webpack_require__(46)["default"];
+	var Utils = __webpack_require__(49);
+	var Exception = __webpack_require__(48)["default"];
 
 	var VERSION = "1.3.0";
 	exports.VERSION = VERSION;var COMPILER_REVISION = 4;
@@ -26350,7 +26387,7 @@
 	exports.createFrame = createFrame;
 
 /***/ },
-/* 45 */
+/* 47 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -26366,7 +26403,7 @@
 	exports["default"] = SafeString;
 
 /***/ },
-/* 46 */
+/* 48 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -26399,12 +26436,12 @@
 	exports["default"] = Exception;
 
 /***/ },
-/* 47 */
+/* 49 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	/*jshint -W004 */
-	var SafeString = __webpack_require__(45)["default"];
+	var SafeString = __webpack_require__(47)["default"];
 
 	var escape = {
 	  "&": "&amp;",
@@ -26480,14 +26517,14 @@
 	exports.isEmpty = isEmpty;
 
 /***/ },
-/* 48 */
+/* 50 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var Utils = __webpack_require__(47);
-	var Exception = __webpack_require__(46)["default"];
-	var COMPILER_REVISION = __webpack_require__(44).COMPILER_REVISION;
-	var REVISION_CHANGES = __webpack_require__(44).REVISION_CHANGES;
+	var Utils = __webpack_require__(49);
+	var Exception = __webpack_require__(48)["default"];
+	var COMPILER_REVISION = __webpack_require__(46).COMPILER_REVISION;
+	var REVISION_CHANGES = __webpack_require__(46).REVISION_CHANGES;
 
 	function checkRevision(compilerInfo) {
 	  var compilerRevision = compilerInfo && compilerInfo[0] || 1,

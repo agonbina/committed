@@ -3,8 +3,10 @@
  */
 
 var CommittedApp = require('app'),
+    Parse = require('parse').Parse,
+    LoadingView = require('../../../common/views/loading_view'),
     ProjectView = require('./project_view'),
-    LoadingView = require('../../../common/views/loading_view');
+    MissingProjectView = require('./missing_view');
 
 /**
  * Show controller
@@ -16,17 +18,19 @@ CommittedApp.module('ProjectsApp.Show', function (Show, CommittedApp, Backbone, 
             var loadingView = new LoadingView();
             CommittedApp.mainRegion.show(loadingView);
 
-            var fetchProject = CommittedApp.request('project:entity', id);
+            var fetchProject = CommittedApp.request('project', id);
 
             fetchProject.then(function (project) {
                 var projectView = new ProjectView({
                     model: project
                 });
-                setTimeout(function () {
-                    CommittedApp.mainRegion.show(projectView);
-                }, 2000);
+
+                CommittedApp.mainRegion.show(projectView);
             }, function (error) {
-                console.log(error);
+                if(error.code === Parse.Error.OBJECT_NOT_FOUND) {
+                    var missingView = new MissingProjectView();
+                    CommittedApp.mainRegion.show(missingView);
+                }
             });
         }
     };

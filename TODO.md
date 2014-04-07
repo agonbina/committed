@@ -12,7 +12,7 @@ Apps(Sub-Apps):
         + all
         - for userId
     * Show
-        - project by id
+        + project by id
     * New
         - project for current user
 - Notifications

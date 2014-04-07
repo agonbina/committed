@@ -15,7 +15,7 @@ CommittedApp.module('ProjectsApp.List', function (List, CommittedApp, Backbone, 
         template: projectTpl,
 
         triggers: {
-            'click .js-project': 'project:show'
+            'click': 'project:show'
         }
     });
 

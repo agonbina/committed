@@ -22,7 +22,7 @@ CommittedApp.module('ProjectsApp.List', function (List, CommittedApp, Backbone, 
                     collection: projects
                 });
                 projectsListView.on('itemview:project:show', function (childView, args) {
-                    console.log(args);
+                    CommittedApp.trigger('project:show', args.model.id);
                 });
 
                 CommittedApp.mainRegion.show(projectsListView);

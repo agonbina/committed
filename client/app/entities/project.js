@@ -15,6 +15,13 @@ CommittedApp.module('Entities', function (Entities, CommittedApp, Backbone, Mari
         className: 'Project',
         defaults: {
             name: 'Un-named project'
+        },
+
+        validation: {
+            name: {
+                required: true,
+                minLength: 4
+            }
         }
     });
 

@@ -13,6 +13,7 @@ CommittedApp.module('ProjectsApp', function (ProjectsApp, CommittedApp, Backbone
     ProjectsApp.Router = Marionette.AppRouter.extend({
         appRoutes: {
             'projects': 'listProjects',
+            'projects/new': 'newProject',
             'projects/:id': 'showProject'
         },
 
@@ -41,6 +42,11 @@ CommittedApp.module('ProjectsApp', function (ProjectsApp, CommittedApp, Backbone
         showProject: function (id) {
             var ShowController = require('./show/show_controller');
             ShowController.showProject(id);
+        },
+
+        newProject: function () {
+            var NewController = require('./new/new_controller');
+            NewController.newProject();
         }
     };
 

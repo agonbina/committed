@@ -241,6 +241,13 @@
 	        className: 'Project',
 	        defaults: {
 	            name: 'Un-named project'
+	        },
+
+	        validation: {
+	            name: {
+	                required: true,
+	                minLength: 4
+	            }
 	        }
 	    });
 
@@ -289,7 +296,11 @@
 	     */
 
 	    var Projects = Entities.Projects = Parse.Collection.extend({
-	        model: Project
+	        model: Project,
+
+	        comparator: function (model) {
+	            return -model.updatedAt;
+	        }
 	    });
 
 	    var API = {
@@ -11190,7 +11201,7 @@
 
 	/* WEBPACK VAR INJECTION */(function(_, $) {var Backbone = __webpack_require__(8);
 
-	__webpack_require__(24);
+	__webpack_require__(25);
 	_.extend(Backbone.Model.prototype, Backbone.Validation.mixin);
 
 	// Customize global form error display
@@ -11302,6 +11313,7 @@
 	    ProjectsApp.Router = Marionette.AppRouter.extend({
 	        appRoutes: {
 	            'projects': 'listProjects',
+	            'projects/new': 'newProject',
 	            'projects/:id': 'showProject'
 	        },
 
@@ -11330,6 +11342,11 @@
 	        showProject: function (id) {
 	            var ShowController = __webpack_require__(23);
 	            ShowController.showProject(id);
+	        },
+
+	        newProject: function () {
+	            var NewController = __webpack_require__(24);
+	            NewController.newProject();
 	        }
 	    };
 
@@ -11389,8 +11406,8 @@
 
 	    var underscore = __webpack_require__(9);
 	    var backbone = __webpack_require__(8);
-	    var wreqr = __webpack_require__(31);
-	    var babysitter = __webpack_require__(32);
+	    var wreqr = __webpack_require__(33);
+	    var babysitter = __webpack_require__(34);
 
 	    module.exports = factory(underscore, backbone, wreqr, babysitter);
 
@@ -24543,8 +24560,8 @@
 	 */
 
 	var CommittedApp = __webpack_require__(1),
-	    LoginView = __webpack_require__(25),
-	    SignupView = __webpack_require__(26);
+	    LoginView = __webpack_require__(26),
+	    SignupView = __webpack_require__(27);
 
 	/**
 	 * AuthApp.Show controller
@@ -24615,8 +24632,8 @@
 	 */
 
 	var CommittedApp = __webpack_require__(1),
-	    ProjectsView = __webpack_require__(27),
-	    LoadingView = __webpack_require__(30);
+	    ProjectsView = __webpack_require__(28),
+	    LoadingView = __webpack_require__(32);
 
 	/**
 	 * ProjectsApp.List controller
@@ -24657,9 +24674,9 @@
 
 	var CommittedApp = __webpack_require__(1),
 	    Parse = __webpack_require__(7).Parse,
-	    LoadingView = __webpack_require__(30),
-	    ProjectView = __webpack_require__(28),
-	    MissingProjectView = __webpack_require__(29);
+	    LoadingView = __webpack_require__(32),
+	    ProjectView = __webpack_require__(29),
+	    MissingProjectView = __webpack_require__(30);
 
 	/**
 	 * Show controller
@@ -24694,6 +24711,47 @@
 
 /***/ },
 /* 24 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Module dependencies
+	 */
+
+	var CommittedApp = __webpack_require__(1),
+	    NewProjectFormView = __webpack_require__(31);
+
+	CommittedApp.module('ProjectsApp.New', function (New, CommittedApp, Backbone, Marionette, $, _) {
+	    New.Controller = {
+	        newProject: function () {
+	            var project = CommittedApp.request('project:new'),
+	                newProjectView = new NewProjectFormView({
+	                    model: project
+	                });
+
+	            newProjectView.on('form:submit', function (data) {
+	                project.set(data);
+
+	                if(project.isValid()) {
+	                    newProjectView.triggerMethod('loading');
+
+	                    project.save().then(function (project) {
+	                        CommittedApp.trigger('project:show', project.id);
+	                    }, function (error) {
+	                        newProjectView.triggerMethod('loading');
+	                        newProjectView.triggerMethod('error', error.message);
+	                    });
+	                }
+	            });
+
+	            CommittedApp.mainRegion.show(newProjectView);
+	        }
+	    };
+
+	    module.exports = New.Controller;
+	});
+
+/***/ },
+/* 25 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// Backbone.Validation v0.7.1
@@ -25308,7 +25366,7 @@
 	}));
 
 /***/ },
-/* 25 */
+/* 26 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -25316,8 +25374,8 @@
 	 */
 
 	var CommittedApp = __webpack_require__(1),
-	    FormView = __webpack_require__(33),
-	    loginViewTpl = __webpack_require__(37);
+	    FormView = __webpack_require__(35),
+	    loginViewTpl = __webpack_require__(38);
 
 	/**
 	 * Login view
@@ -25332,7 +25390,7 @@
 	});
 
 /***/ },
-/* 26 */
+/* 27 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -25340,8 +25398,8 @@
 	 */
 
 	var CommittedApp = __webpack_require__(1),
-	    FormView = __webpack_require__(33),
-	    signupViewTpl = __webpack_require__(36);
+	    FormView = __webpack_require__(35),
+	    signupViewTpl = __webpack_require__(39);
 
 	/**
 	 * Signup form view
@@ -25356,7 +25414,7 @@
 	});
 
 /***/ },
-/* 27 */
+/* 28 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -25364,8 +25422,8 @@
 	 */
 
 	var CommittedApp = __webpack_require__(1),
-	    ProjectView = __webpack_require__(34),
-	    NoProjectsView = __webpack_require__(35);
+	    ProjectView = __webpack_require__(36),
+	    NoProjectsView = __webpack_require__(37);
 
 	/**
 	 * List.Projects view module
@@ -25383,7 +25441,7 @@
 	});
 
 /***/ },
-/* 28 */
+/* 29 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -25391,7 +25449,7 @@
 	 */
 
 	var CommittedApp = __webpack_require__(1),
-	    projectViewTpl = __webpack_require__(38);
+	    projectViewTpl = __webpack_require__(40);
 
 	/**
 	 * Show.Project view
@@ -25407,7 +25465,7 @@
 	});
 
 /***/ },
-/* 29 */
+/* 30 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -25415,7 +25473,7 @@
 	 */
 
 	var CommittedApp = __webpack_require__(1),
-	    missingViewTpl = __webpack_require__(39);
+	    missingViewTpl = __webpack_require__(41);
 
 	CommittedApp.module('Show', function (Show, CommittedApp, Backbone, Marionette, $, _) {
 	    Show.Missing = Marionette.ItemView.extend({
@@ -25437,7 +25495,7 @@
 	});
 
 /***/ },
-/* 30 */
+/* 31 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -25445,7 +25503,31 @@
 	 */
 
 	var CommittedApp = __webpack_require__(1),
-	    loadingViewTpl = __webpack_require__(40);
+	    newProjectTpl = __webpack_require__(42),
+	    FormView = __webpack_require__(35);
+
+	/**
+	 * ProjectsApp.New project view
+	 */
+
+	CommittedApp.module('ProjectsApp.New', function (New, CommittedApp, Backbone, Marionette, $, _) {
+	    New.Project = FormView.extend({
+	        template: newProjectTpl
+	    });
+
+	    module.exports = New.Project;
+	});
+
+/***/ },
+/* 32 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * Module dependencies
+	 */
+
+	var CommittedApp = __webpack_require__(1),
+	    loadingViewTpl = __webpack_require__(43);
 
 	CommittedApp.module('Common.Views', function (Views, CommittedApp, Backbone, Marionette, $, _) {
 
@@ -25472,7 +25554,7 @@
 	});
 
 /***/ },
-/* 31 */
+/* 33 */
 /***/ function(module, exports, __webpack_require__) {
 
 	(function (root, factory) {
@@ -25755,7 +25837,7 @@
 
 
 /***/ },
-/* 32 */
+/* 34 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// Backbone.BabySitter
@@ -25941,7 +26023,7 @@
 
 
 /***/ },
-/* 33 */
+/* 35 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -25949,7 +26031,7 @@
 	 */
 
 	var CommittedApp = __webpack_require__(1),
-	    formViewTpl = __webpack_require__(41);
+	    formViewTpl = __webpack_require__(44);
 
 	CommittedApp.module('AuthApp.Common.Views', function (Views, CommittedApp, Backbone, Marionette, $, _) {
 	    Views.Form = Marionette.ItemView.extend({
@@ -26001,7 +26083,7 @@
 	});
 
 /***/ },
-/* 34 */
+/* 36 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -26009,7 +26091,7 @@
 	 */
 
 	var CommittedApp = __webpack_require__(1),
-	    projectTpl = __webpack_require__(43);
+	    projectTpl = __webpack_require__(46);
 
 	/**
 	 * List.Project view
@@ -26029,7 +26111,7 @@
 	});
 
 /***/ },
-/* 35 */
+/* 37 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -26037,7 +26119,7 @@
 	 */
 
 	var CommittedApp = __webpack_require__(1),
-	    noProjectsTpl = __webpack_require__(42);
+	    noProjectsTpl = __webpack_require__(45);
 
 	/**
 	 * List.NoProjects view
@@ -26052,23 +26134,10 @@
 	});
 
 /***/ },
-/* 36 */
+/* 38 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(44).default.template(function (Handlebars,depth0,helpers,partials,data) {
-	  this.compilerInfo = [4,'>= 1.0.0'];
-	helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
-	  
-
-
-	  return "<div class=\"two fields\">\n    <div class=\"field\">\n        <div class=\"ui left labeled icon input\">\n            <input placeholder=\"E-mail\" name=\"email\" type=\"email\">\n            <i class=\"mail icon\"></i>\n            <div class=\"ui corner label\">\n                <i class=\"icon asterisk\"></i>\n            </div>\n        </div>\n    </div>\n    <div class=\"field\">\n        <div class=\"ui left labeled icon input\">\n            <input placeholder=\"Password\" name=\"password\" type=\"password\">\n            <i class=\"lock icon\"></i>\n            <div class=\"ui corner label\">\n                <i class=\"icon asterisk\"></i>\n            </div>\n        </div>\n    </div>\n</div>\n<button class=\"ui blue button\" type=\"submit\">Ready to roll!</button>";
-	  });
-
-/***/ },
-/* 37 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = __webpack_require__(44).default.template(function (Handlebars,depth0,helpers,partials,data) {
+	module.exports = __webpack_require__(47).default.template(function (Handlebars,depth0,helpers,partials,data) {
 	  this.compilerInfo = [4,'>= 1.0.0'];
 	helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 	  
@@ -26078,10 +26147,23 @@
 	  });
 
 /***/ },
-/* 38 */
+/* 39 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(44).default.template(function (Handlebars,depth0,helpers,partials,data) {
+	module.exports = __webpack_require__(47).default.template(function (Handlebars,depth0,helpers,partials,data) {
+	  this.compilerInfo = [4,'>= 1.0.0'];
+	helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+	  
+
+
+	  return "<div class=\"two fields\">\n    <div class=\"field\">\n        <div class=\"ui left labeled icon input\">\n            <input placeholder=\"E-mail\" name=\"email\" type=\"email\">\n            <i class=\"mail icon\"></i>\n            <div class=\"ui corner label\">\n                <i class=\"icon asterisk\"></i>\n            </div>\n        </div>\n    </div>\n    <div class=\"field\">\n        <div class=\"ui left labeled icon input\">\n            <input placeholder=\"Password\" name=\"password\" type=\"password\">\n            <i class=\"lock icon\"></i>\n            <div class=\"ui corner label\">\n                <i class=\"icon asterisk\"></i>\n            </div>\n        </div>\n    </div>\n</div>\n<button class=\"ui blue button\" type=\"submit\">Ready to roll!</button>";
+	  });
+
+/***/ },
+/* 40 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__(47).default.template(function (Handlebars,depth0,helpers,partials,data) {
 	  this.compilerInfo = [4,'>= 1.0.0'];
 	helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 	  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression;
@@ -26096,10 +26178,10 @@
 	  });
 
 /***/ },
-/* 39 */
+/* 41 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(44).default.template(function (Handlebars,depth0,helpers,partials,data) {
+	module.exports = __webpack_require__(47).default.template(function (Handlebars,depth0,helpers,partials,data) {
 	  this.compilerInfo = [4,'>= 1.0.0'];
 	helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 	  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression;
@@ -26114,10 +26196,23 @@
 	  });
 
 /***/ },
-/* 40 */
+/* 42 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(44).default.template(function (Handlebars,depth0,helpers,partials,data) {
+	module.exports = __webpack_require__(47).default.template(function (Handlebars,depth0,helpers,partials,data) {
+	  this.compilerInfo = [4,'>= 1.0.0'];
+	helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
+	  
+
+
+	  return "<div class=\"field\">\n    <div class=\"ui left labeled icon input\">\n        <input placeholder=\"Name\" name=\"name\" type=\"text\">\n        <i class=\"mail icon\"></i>\n        <div class=\"ui corner label\">\n            <i class=\"icon asterisk\"></i>\n        </div>\n    </div>\n</div>\n<button class=\"ui blue button\" type=\"submit\">Start Project</button>";
+	  });
+
+/***/ },
+/* 43 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__(47).default.template(function (Handlebars,depth0,helpers,partials,data) {
 	  this.compilerInfo = [4,'>= 1.0.0'];
 	helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 	  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression;
@@ -26132,10 +26227,10 @@
 	  });
 
 /***/ },
-/* 41 */
+/* 44 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(44).default.template(function (Handlebars,depth0,helpers,partials,data) {
+	module.exports = __webpack_require__(47).default.template(function (Handlebars,depth0,helpers,partials,data) {
 	  this.compilerInfo = [4,'>= 1.0.0'];
 	helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 	  
@@ -26145,10 +26240,10 @@
 	  });
 
 /***/ },
-/* 42 */
+/* 45 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(44).default.template(function (Handlebars,depth0,helpers,partials,data) {
+	module.exports = __webpack_require__(47).default.template(function (Handlebars,depth0,helpers,partials,data) {
 	  this.compilerInfo = [4,'>= 1.0.0'];
 	helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 	  
@@ -26158,10 +26253,10 @@
 	  });
 
 /***/ },
-/* 43 */
+/* 46 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(44).default.template(function (Handlebars,depth0,helpers,partials,data) {
+	module.exports = __webpack_require__(47).default.template(function (Handlebars,depth0,helpers,partials,data) {
 	  this.compilerInfo = [4,'>= 1.0.0'];
 	helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 	  var buffer = "", stack1, helper, functionType="function", escapeExpression=this.escapeExpression;
@@ -26176,28 +26271,28 @@
 	  });
 
 /***/ },
-/* 44 */
+/* 47 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// Create a simple path alias to allow browserify to resolve
 	// the runtime on a supported path.
-	module.exports = __webpack_require__(45);
+	module.exports = __webpack_require__(48);
 
 
 /***/ },
-/* 45 */
+/* 48 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	/*globals Handlebars: true */
-	var base = __webpack_require__(46);
+	var base = __webpack_require__(49);
 
 	// Each of these augment the Handlebars object. No need to setup here.
 	// (This is done to easily share code between commonjs and browse envs)
-	var SafeString = __webpack_require__(47)["default"];
-	var Exception = __webpack_require__(48)["default"];
-	var Utils = __webpack_require__(49);
-	var runtime = __webpack_require__(50);
+	var SafeString = __webpack_require__(50)["default"];
+	var Exception = __webpack_require__(51)["default"];
+	var Utils = __webpack_require__(52);
+	var runtime = __webpack_require__(53);
 
 	// For compatibility and usage outside of module systems, make the Handlebars object a namespace
 	var create = function() {
@@ -26222,12 +26317,12 @@
 	exports["default"] = Handlebars;
 
 /***/ },
-/* 46 */
+/* 49 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var Utils = __webpack_require__(49);
-	var Exception = __webpack_require__(48)["default"];
+	var Utils = __webpack_require__(52);
+	var Exception = __webpack_require__(51)["default"];
 
 	var VERSION = "1.3.0";
 	exports.VERSION = VERSION;var COMPILER_REVISION = 4;
@@ -26407,7 +26502,7 @@
 	exports.createFrame = createFrame;
 
 /***/ },
-/* 47 */
+/* 50 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -26423,7 +26518,7 @@
 	exports["default"] = SafeString;
 
 /***/ },
-/* 48 */
+/* 51 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -26456,12 +26551,12 @@
 	exports["default"] = Exception;
 
 /***/ },
-/* 49 */
+/* 52 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	/*jshint -W004 */
-	var SafeString = __webpack_require__(47)["default"];
+	var SafeString = __webpack_require__(50)["default"];
 
 	var escape = {
 	  "&": "&amp;",
@@ -26537,14 +26632,14 @@
 	exports.isEmpty = isEmpty;
 
 /***/ },
-/* 50 */
+/* 53 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var Utils = __webpack_require__(49);
-	var Exception = __webpack_require__(48)["default"];
-	var COMPILER_REVISION = __webpack_require__(46).COMPILER_REVISION;
-	var REVISION_CHANGES = __webpack_require__(46).REVISION_CHANGES;
+	var Utils = __webpack_require__(52);
+	var Exception = __webpack_require__(51)["default"];
+	var COMPILER_REVISION = __webpack_require__(49).COMPILER_REVISION;
+	var REVISION_CHANGES = __webpack_require__(49).REVISION_CHANGES;
 
 	function checkRevision(compilerInfo) {
 	  var compilerRevision = compilerInfo && compilerInfo[0] || 1,

@@ -13,7 +13,11 @@ CommittedApp.module('Entities', function (Entities, CommittedApp, Backbone, Mari
      */
 
     var Projects = Entities.Projects = Parse.Collection.extend({
-        model: Project
+        model: Project,
+
+        comparator: function (model) {
+            return -model.updatedAt;
+        }
     });
 
     var API = {

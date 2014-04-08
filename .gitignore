@@ -16,4 +16,6 @@ node_modules
 
 .idea
 **/**/.sass-cache
+
+client/public/javascripts/build.js
 client/bower_components

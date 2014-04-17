@@ -1,13 +1,10 @@
 committed
 ========
 
-Structure
-========
-
-* CommittedApp (Main Application)
-    - Authenticate
-    - ProjectsApp
-        - Router
-        - Controller
-        - Sub-apps
-            - List
+Dependencies: 
+- BackboneJS / MarionetteJS
+- Handlebars
+- Bower
+- Gulp build
+- Webpack for module loading
+- Parse.com as a data store
